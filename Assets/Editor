@@ -1,0 +1,68 @@
+using UnityEditor;
+using UnityEngine;
+
+class TextureAutoImporter : AssetPostprocessor
+{
+    void OnPreprocessTexture()
+    {
+        var imp = (TextureImporter)assetImporter;
+        string path = assetPath.ToLower();
+
+        // 既定
+        imp.textureType = TextureImporterType.Default;
+        imp.sRGBTexture = false; // データ前提（個別に上書き）
+        imp.mipmapEnabled = true;
+        imp.wrapMode = TextureWrapMode.Repeat;
+        imp.filterMode = FilterMode.Trilinear;
+        imp.anisoLevel = 2;
+
+        bool Is(params string[] keys)
+        {
+            foreach (var k in keys)
+                if (path.Contains(k)) return true;
+            return false;
+        }
+
+        // Albedo / BaseColor
+        if (Is("_albedo", "_basecolor", "base_color"))
+        {
+            imp.sRGBTexture = true;                // 色はsRGB
+            imp.alphaIsTransparency = false;
+        }
+        // Normal
+        else if (Is("_normal", "_n"))
+        {
+            imp.textureType = TextureImporterType.NormalMap;
+            imp.sRGBTexture = false;
+        }
+        // Roughness / AO / Height / Metallic はデータ（線形）
+        else if (Is("_roughness", "_rgh"))
+        {
+            imp.sRGBTexture = false;
+        }
+        else if (Is("_ao", "_occlusion"))
+        {
+            imp.sRGBTexture = false;
+        }
+        else if (Is("_height", "_displacement"))
+        {
+            imp.sRGBTexture = false;
+        }
+        else if (Is("_metallic", "_metalness"))
+        {
+            imp.sRGBTexture = false;
+        }
+
+        // 代表的な最大サイズ（必要ならここを好みで）
+        imp.maxTextureSize = Is("_albedo","_basecolor") ? 2048 : 2048;
+
+        // プラットフォーム別（例：Android, iOS）
+        // ※ プロジェクトの方針に合わせて変更してください
+        imp.SetPlatformTextureSettings(new TextureImporterPlatformSettings {
+            name = "Android", overridden = true, maxTextureSize = imp.maxTextureSize, format = TextureImporterFormat.ASTC_6x6
+        });
+        imp.SetPlatformTextureSettings(new TextureImporterPlatformSettings {
+            name = "iPhone", overridden = true, maxTextureSize = imp.maxTextureSize, format = TextureImporterFormat.ASTC_6x6
+        });
+    }
+}

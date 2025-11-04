@@ -75,6 +75,6 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
 # Ignore specific large font asset
-[Aa]ssets/[Ff]onts/
+[Aa]ssets/TextMesh Pro/[Ff]onts/
 
 # aaaa
