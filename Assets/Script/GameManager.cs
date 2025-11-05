@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 using System;
 
 public class GameManager : MonoBehaviour
-{ 
+{
     /// SurveyManagerからアンケート結果 (1～5) を受け取る関数
     /// </summary>
     /// <param name="surveyResult">受け取った選択肢ID (1, 2, 3, 4, 5 のいずれか)</param>
@@ -37,5 +37,10 @@ public class GameManager : MonoBehaviour
 
         // ロード画面１に移動する
         UnityEngine.SceneManagement.SceneManager.LoadScene("RestScene1");
+    }
+
+    public void LoadStage1()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Stage1");
     }
 }
