@@ -5,7 +5,8 @@ public class CameraLookInputSystem : MonoBehaviour
 {
     public Transform playerBody;                 // Player を割り当て
     public InputActionReference lookAction;      // Controls.Player.Look
-    public float mouseSensitivity = 0.1f;        // Mouse deltaは大きいので係数小さめ
+    public float mouseSensitivity = 0.1f;        // Mouse deltaは大きいので係数小さめtesttest
+    
     public float gamepadSensitivity = 120f;      // 右スティック用（deg/sec）
     public float minPitch = -80f, maxPitch = 80f;
 
