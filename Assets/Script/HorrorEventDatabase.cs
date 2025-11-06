@@ -1,20 +1,40 @@
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 
-[System.Serializable]
-public class HorrorEventCategory
-{
-    public string categoryName; // Inspectorでの見出し用 (例: "1. 異形の恐怖")
-    public int categoryId;      // 1
-    
-    // このカテゴリに属するイベント（ScriptableObject）のリスト
-    public List<HorrorEventData> events;
-}
-
-// データベース本体
-[CreateAssetMenu(fileName = "HorrorEventDatabase", menuName = "Horror/Event Database")]
+[CreateAssetMenu(fileName = "HorrorEventDatabase", menuName = "HorrorGame/Horror Event Database")]
 public class HorrorEventDatabase : ScriptableObject
 {
-    // カテゴリのリスト
-    public List<HorrorEventCategory> categories;
+    [SerializeField]
+    private List<HorrorEventData> horrorEvents = new List<HorrorEventData>(); // ← null防止の初期化
+
+    private Dictionary<int, HorrorEventData> eventDictionary = new Dictionary<int, HorrorEventData>();
+
+    public void Initialize()
+    {
+        eventDictionary.Clear();
+
+        foreach (var evt in horrorEvents)
+        {
+            if (evt == null) continue; // ← これで「None」要素を無視
+            if (!eventDictionary.ContainsKey(evt.eventType))
+                eventDictionary.Add(evt.eventType, evt);
+        }
+    }
+
+    public HorrorEventData GetEventData(int eventType)
+    {
+        eventDictionary.TryGetValue(eventType, out HorrorEventData data);
+        return data;
+    }
+
+    public List<HorrorEventData> GetEventsByCategory(int category)
+    {
+        List<HorrorEventData> result = new List<HorrorEventData>();
+        foreach (var evt in horrorEvents)
+        {
+            if (evt != null && evt.category == category)
+                result.Add(evt);
+        }
+        return result;
+    }
 }
