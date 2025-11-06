@@ -5,31 +5,31 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/ResultScene.unity
     guid: 545a876082d56f94398117bd13d60bc0
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/RestScene2.unity
-    guid: 2966dddcb44071444bb6814802b71110
-  - enabled: 0
+    guid: 88ca7594c687edd4da1e18575c6b7ffb
+  - enabled: 1
     path: Assets/Scenes/ConfinementWalk.unity
     guid: 4a0ddbc7dd755f64091749ee9a5b0f65
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/99_BPMTestScene.unity
     guid: 7a946fd9e502c574894efac3f7a4b68c
   - enabled: 0
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/RestScene1.unity
     guid: 18e9d2a8f3ffbd74ab0c0abf23a8633b
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/Stage1.unity
     guid: 51735c829f7e7d04da4290b8f084b732
   - enabled: 1
     path: Assets/Scenes/SurveyScene.unity
     guid: 3c67b16e2d9ee2844884fdadd9f383f3
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/Stage2.unity
     guid: 7fbfb07726355b1439ecab218ba3e83c
   m_configObjects:
