@@ -67,5 +67,5 @@
         "*.sln": "*.csproj",
         "*.slnx": "*.csproj"
     },
-    "dotnet.defaultSolution": "Osampo.slnx"
+    "dotnet.defaultSolution": "Osampo-1.slnx"
 }
