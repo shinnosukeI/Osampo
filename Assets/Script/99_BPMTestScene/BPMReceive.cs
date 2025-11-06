@@ -1,36 +1,15 @@
 using UnityEngine;
 using TMPro;
-using System.IO; // ファイル書き出し(I/O)のために追加
-using System;     // 日時(DateTime)のために追加
-using System.Collections; // ★ コルーチン(Coroutine)のために追加
+using System.IO; // ★ ファイル書き出し(I/O)のために追加
+using System;     // ★ 日時(DateTime)のために追加
 
 //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 /// <summary>
-/// メインクラス (接続確認機能付き)
+/// メインクラス (心拍数受信＆CSV書き出しテスト用)
 /// </summary>
 //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 public sealed class BPMReceive : MonoBehaviour
 {
-    //================================================================================
-    // 状態定義
-    //================================================================================
-
-    /// <summary>
-    /// 現在の動作ステータス
-    /// </summary>
-    private enum Status
-    {
-        Checking,   // 接続確認中
-        Connected,  // 接続成功（ログ記録中）
-        Failed      // 接続失敗
-    }
-    private Status currentStatus = Status.Checking;
-
-    /// <summary>
-    /// 接続確認フェーズ中にデータを受信したか
-    /// </summary>
-    private bool hasReceivedDataInCheckPhase = false;
-
     //================================================================================
     // Fields.
     //================================================================================
@@ -59,45 +38,40 @@ public sealed class BPMReceive : MonoBehaviour
     /// </summary>
     void Start()
     {
-        // 1. UIを「接続確認中」に設定
-        if (Label != null)
+        // 1. 保存先ディレクトリのパスを決定 (Assets/CSV/)
+        // Application.dataPath は "Assets" フォルダを指します
+        string logDirectoryPath = Path.Combine(Application.dataPath, "CSV");
+
+        // 2. ログファイルのフルパスを決定
+        logFilePath = Path.Combine(logDirectoryPath, "heart_rate_log.csv");
+
+        try
         {
-            Label.SetText("接続確認中...");
-        }
-
-        // 2. 5秒後に接続状態を判定するコルーチンを開始
-        StartCoroutine(CheckConnectionProcess(5.0f));
-    }
-
-    /// <summary>
-    /// 接続確認のプロセス（5秒タイマー）
-    /// </summary>
-    private IEnumerator CheckConnectionProcess(float duration)
-    {
-        // 指定された秒数だけ待機
-        yield return new WaitForSeconds(duration);
-
-        // --- 5秒経過後 ---
-
-        if (hasReceivedDataInCheckPhase)
-        {
-            // 接続成功
-            currentStatus = Status.Connected;
-            Debug.Log("接続成功。CSVログ記録を開始します。");
-            
-            // ★ このタイミングで初めてCSVファイルを開く
-            InitializeCsvWriter();
-        }
-        else
-        {
-            // 接続失敗
-            currentStatus = Status.Failed;
-            Debug.LogWarning("接続確認できませんでした。CSV書き出しは行いません。");
-
-            if (Label != null)
+            // 3. ディレクトリが存在しない場合は、まずディレクトリを作成する
+            if (!Directory.Exists(logDirectoryPath))
             {
-                Label.SetText("接続確認できませんでした");
+                Directory.CreateDirectory(logDirectoryPath);
+                Debug.Log($"作成されたディレクトリ: {logDirectoryPath}");
             }
+
+            // 4. ファイルを「追記モード(true)」で開く
+            heartRateLogWriter = new StreamWriter(logFilePath, true, System.Text.Encoding.UTF8);
+
+            // 5. ファイルが新規作成（空）の場合のみ、ヘッダーを書き込む
+            if (heartRateLogWriter.BaseStream.Length == 0)
+            {
+                heartRateLogWriter.WriteLine("Timestamp,BPM");
+            }
+            
+            // 6. ヘッダーを確実に書き込むために一度フラッシュ（バッファを書き出し）
+            heartRateLogWriter.Flush();
+
+            Debug.Log($"CSVログの書き出しを開始します: {logFilePath}");
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"ログファイルを開けませんでした: {e.Message}");
+            heartRateLogWriter = null; // 開けなかったらnullにしておく
         }
     }
 
@@ -106,12 +80,11 @@ public sealed class BPMReceive : MonoBehaviour
     /// </summary>
     void OnDestroy()
     {
-        // もしファイルが開かれていれば（＝接続成功していれば）閉じる
         if (heartRateLogWriter != null)
         {
             Debug.Log("CSVログを閉じます。");
-            heartRateLogWriter.Flush();
-            heartRateLogWriter.Close();
+            heartRateLogWriter.Flush(); // ★ 停止前に、残っているデータをすべて書き出す
+            heartRateLogWriter.Close(); // ★ ファイルを閉じる
             heartRateLogWriter = null;
         }
     }
@@ -126,89 +99,36 @@ public sealed class BPMReceive : MonoBehaviour
     /// <param name="value">値 (心拍数).</param>
     public void OnIntEvent(int value)
     {
-        // 現在のステータスによって処理を分岐
-        switch (currentStatus)
+        // 1. UIのテキストを更新 (既存の処理)
+        if (Label != null)
         {
-            case Status.Checking:
-                // 接続確認フェーズ中にデータを受信
-                hasReceivedDataInCheckPhase = true; // フラグを立てる
-                // UIは「接続確認中...」のまま変更しない
-                break;
+            Label.SetText($"{value}");
+        }
 
-            case Status.Connected:
-                // 接続成功（ログ記録中）フェーズ
+        // 2. CSVファイルへの書き込み処理
+        if (heartRateLogWriter != null)
+        {
+            try
+            {
+                // 3. 現在時刻を「年-月-日 時:分:秒」の形式で取得
+                string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+                // 4. CSVに1行書き込む (例: "2025-11-05 11:45:01,80")
+                heartRateLogWriter.WriteLine($"{timestamp},{value}");
                 
-                // 1. UIのテキストを更新
-                if (Label != null)
-                {
-                    Label.SetText($"{value}");
-                }
-                // 2. CSVファイルへの書き込み処理
-                WriteToCsv(value);
-                break;
-
-            case Status.Failed:
-                // 接続失敗フェーズ
-                // UIもCSVも処理しない
-                break;
-        }
-    }
-
-    //================================================================================
-    // Helper Methods
-    //================================================================================
-
-    /// <summary>
-    /// CSVファイルを開く（接続成功時に呼ばれる）
-    /// </summary>
-    private void InitializeCsvWriter()
-    {
-        string logDirectoryPath = Path.Combine(Application.dataPath, "CSV");
-        logFilePath = Path.Combine(logDirectoryPath, "heart_rate_log.csv");
-
-        try
-        {
-            if (!Directory.Exists(logDirectoryPath))
-            {
-                Directory.CreateDirectory(logDirectoryPath);
+                // 5. (★重要★) テストのため、書き込むたびに即時フラッシュ
+                // これにより、Unityが停止してもデータが失われるのを防ぎます
+                heartRateLogWriter.Flush();
             }
-
-            heartRateLogWriter = new StreamWriter(logFilePath, true, System.Text.Encoding.UTF8);
-
-            if (heartRateLogWriter.BaseStream.Length == 0)
+            catch (Exception e)
             {
-                heartRateLogWriter.WriteLine("Timestamp,BPM");
+                Debug.LogError($"CSVへの書き込みエラー: {e.Message}");
             }
-            
-            heartRateLogWriter.Flush();
-            Debug.Log($"CSVログの書き出しを初期化しました: {logFilePath}");
         }
-        catch (Exception e)
+        else
         {
-            Debug.LogError($"ログファイルを開けませんでした: {e.Message}");
-            heartRateLogWriter = null;
-            // 万が一CSVオープンに失敗したら、ステータスをFailedに戻す
-            currentStatus = Status.Failed; 
-            if (Label != null) Label.SetText("CSVファイルエラー");
-        }
-    }
-
-    /// <summary>
-    /// CSVに1行書き込む（接続成功時に呼ばれる）
-    /// </summary>
-    private void WriteToCsv(int value)
-    {
-        if (heartRateLogWriter == null) return; // 念のため
-
-        try
-        {
-            string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-            heartRateLogWriter.WriteLine($"{timestamp},{value}");
-            heartRateLogWriter.Flush(); // 即時書き込み
-        }
-        catch (Exception e)
-        {
-            Debug.LogError($"CSVへの書き込みエラー: {e.Message}");
+            // Start()で失敗していた場合に備える
+            Debug.LogWarning("heartRateLogWriterが初期化されていません。ログは書き込まれません。");
         }
     }
 }
