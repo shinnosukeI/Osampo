@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3347fd789e7bfc4d8709da32dc2f013, type: 3}
+  m_Name: HorrorEvent_11
+  m_EditorClassIdentifier: Assembly-CSharp::HorrorEventData
+  eventType: 11
+  eventName: "\u30C9\u30A2\u306E\u4E0B\u306E\u9699\u9593\u304B\u3089\u5927\u91CF\u306E\u30B4\u30AD\u30D6\u30EA"
+  category: 1
+  onTriggerEvent:
+    m_PersistentCalls:
+      m_Calls: []
