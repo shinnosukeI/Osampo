@@ -77,4 +77,5 @@ crashlytics-build.properties
 # Ignore specific large font asset
 [Aa]ssets/TextMesh Pro/[Ff]onts/
 
-# aaaa
+# CSV
+/[Aa]ssets/CSV/

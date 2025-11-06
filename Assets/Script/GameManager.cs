@@ -4,9 +4,14 @@ using System.Linq;
 using UnityEngine.SceneManagement;
 using System;
 
+<<<<<<< HEAD
 public class GameManager : MonoBehaviour
 {
     /// SurveyManagerからアンケート結果 (1～5) を受け取る関数aaaaaaaaaaaaaaaaa
+=======
+public class GameManager : MonoBehaviour{
+    /// SurveyManagerからアンケート結果 (1～5) を受け取る関数
+>>>>>>> 162a0f57ac510ba62d3ca3e10eaf104ccf36cf99
     /// </summary>
     /// <param name="surveyResult">受け取った選択肢ID (1, 2, 3, 4, 5 のいずれか)</param>
     public void ReceiveSurveyResult(int surveyResult)
@@ -39,8 +44,15 @@ public class GameManager : MonoBehaviour
         UnityEngine.SceneManagement.SceneManager.LoadScene("RestScene1");
     }
 
+    //stage1に移動
     public void LoadStage1()
     {
         UnityEngine.SceneManagement.SceneManager.LoadScene("Stage1");
+    }
+
+    //stage2に移動
+    public void LoadStage2()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Stage2");
     }
 }
