@@ -8,7 +8,7 @@ public class HorrorEventManager : MonoBehaviour
     private HorrorEventDatabase eventDatabase;
 
     [SerializeField]
-    private Rigidbody objectToFallTarget; // 54：物が落ちるイベント用
+    private FallingObjectAudio objectToFallTarget; // 54：物が落ちるイベント用
 
     public List<(string Timestamp, int eventType)> eventLog = new List<(string, int)>();
 
@@ -71,24 +71,19 @@ public class HorrorEventManager : MonoBehaviour
     // ======== 各イベント処理 ========
 
     // 54:物が落ちる
-    public void TriggerFallEvent()
+public void TriggerFallEvent()
+{
+    // MakeObjectFall(objectToFallTarget); // ←古いコード
+    
+    if (objectToFallTarget != null)
     {
-        MakeObjectFall(objectToFallTarget);
+        objectToFallTarget.StartFall(); // ★ 落下オブジェクト自身の「StartFall」を呼び出す
     }
-
-    private void MakeObjectFall(Rigidbody objectToFall)
+    else
     {
-        if (objectToFall == null)
-        {
-            Debug.LogError("落下対象の Rigidbody が設定されていません。");
-            return;
-        }
-
-        if (!objectToFall.isKinematic) return;
-
-        Debug.Log($"🪣 {objectToFall.gameObject.name} を落下させます。");
-        objectToFall.isKinematic = false;
+        Debug.LogError("落下対象(FallingObjectAudio)が設定されていません。");
     }
+}
 
 ////////ここに関数を追加////////
 
