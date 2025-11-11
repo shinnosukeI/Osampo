@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI; // ToggleGroup や Button を使うために必要
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// アンケート画面の選択(1～5)を管理し、GameManagerに送信するクラス
@@ -33,7 +34,7 @@ public class SurveyManager : MonoBehaviour
         // GameManager がインスペクタで設定されていなければ探す
         if (gameManager == null)
         {
-            gameManager = FindObjectOfType<GameManager>();
+            gameManager = FindFirstObjectByType<GameManager>();
         }
 
         if (gameManager == null)
@@ -90,5 +91,9 @@ public class SurveyManager : MonoBehaviour
 
         // （任意）送信後にこのアンケート画面のCanvasを非表示にするなど
         // this.gameObject.SetActive(false);
+    }
+    public void OnstartButton()
+    {
+        SceneManager.LoadScene("Stag1");
     }
 }
