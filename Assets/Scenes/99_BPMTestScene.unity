@@ -1939,7 +1939,7 @@ MonoBehaviour:
   heartIcon: {fileID: 1453017780}
   minScale: 1
   maxScale: 1.2
-  decaySpeed: 10
+  decaySpeed: 15
 --- !u!114 &1661045380
 MonoBehaviour:
   m_ObjectHideFlags: 0
