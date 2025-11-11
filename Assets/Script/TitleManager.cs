@@ -5,7 +5,7 @@ public class TitleManager : MonoBehaviour
 {
     public void OnstartButton()
     {
-        SceneManager.LoadScene("SurveryScene");
+        SceneManager.LoadScene("SurveyScene");
     }
     
 }
