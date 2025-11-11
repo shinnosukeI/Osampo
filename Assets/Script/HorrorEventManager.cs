@@ -8,7 +8,10 @@ public class HorrorEventManager : MonoBehaviour
     private HorrorEventDatabase eventDatabase;
 
     [SerializeField]
-    private Rigidbody objectToFallTarget; // 54：物が落ちるイベント用
+    private FallingObjectAudio objectToFallTarget; // 54：物が落ちるイベント用
+
+    [SerializeField]
+    private CockroachSwarm cockroachSwarmTarget;// ★ 11：ゴキブリイベント用
 
     public List<(string Timestamp, int eventType)> eventLog = new List<(string, int)>();
 
@@ -26,6 +29,7 @@ public class HorrorEventManager : MonoBehaviour
 
         /////////// 🎬 起動時テスト（必要に応じてコメントアウト）//////////
         TriggerHorrorEvent(54);
+        TriggerHorrorEvent(11);
     }
 
     /// <summary>
@@ -35,7 +39,7 @@ public class HorrorEventManager : MonoBehaviour
     {
 
         eventActionMap[54] = TriggerFallEvent; // 54:物が落ちる
-
+        eventActionMap[11] = TriggerCockroachSwarm;
         /////////////////ここに追加/////////////////
     }
 
@@ -69,25 +73,33 @@ public class HorrorEventManager : MonoBehaviour
     }
 
     // ======== 各イベント処理 ========
+    
+    // 11: 大量のゴキブリが出現する
+    public void TriggerCockroachSwarm()
+    {
+        if (cockroachSwarmTarget != null)
+        {
+            cockroachSwarmTarget.StartSwarm();
+        }
+        else
+        {
+            Debug.LogError("ゴキブリ(CockroachSwarm)が設定されていません。");
+        }
+    }
 
     // 54:物が落ちる
     public void TriggerFallEvent()
     {
-        MakeObjectFall(objectToFallTarget);
-    }
+        // MakeObjectFall(objectToFallTarget); // ←古いコード
 
-    private void MakeObjectFall(Rigidbody objectToFall)
-    {
-        if (objectToFall == null)
+        if (objectToFallTarget != null)
         {
-            Debug.LogError("落下対象の Rigidbody が設定されていません。");
-            return;
+            objectToFallTarget.StartFall(); // ★ 落下オブジェクト自身の「StartFall」を呼び出す
         }
-
-        if (!objectToFall.isKinematic) return;
-
-        Debug.Log($"🪣 {objectToFall.gameObject.name} を落下させます。");
-        objectToFall.isKinematic = false;
+        else
+        {
+            Debug.LogError("落下対象(FallingObjectAudio)が設定されていません。");
+        }
     }
 
 ////////ここに関数を追加////////
