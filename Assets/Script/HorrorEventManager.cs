@@ -28,8 +28,8 @@ public class HorrorEventManager : MonoBehaviour
         RegisterEventActions();
 
         /////////// 🎬 起動時テスト（必要に応じてコメントアウト）//////////
-        TriggerHorrorEvent(54);
-        TriggerHorrorEvent(11);
+        //TriggerHorrorEvent(54);
+        //TriggerHorrorEvent(11);
     }
 
     /// <summary>
