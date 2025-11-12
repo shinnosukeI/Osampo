@@ -79,3 +79,5 @@ crashlytics-build.properties
 
 # CSV
 /[Aa]ssets/CSV/
+
+/Assets/Materials/
