@@ -9,7 +9,7 @@ using System.Linq; // Average
 
 //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 /// <summary>
-/// メインクラス (メリハリのある心拍アニメーション版)
+/// メインクラス (接続確認ロジック修正版)
 /// </summary>
 //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 public sealed class BPMReceive : MonoBehaviour
@@ -28,19 +28,19 @@ public sealed class BPMReceive : MonoBehaviour
 
     [Header("Heart Animation")]
     [SerializeField] private RectTransform heartIcon = default;
-    [SerializeField] private float minScale = 1.0f; // 通常時のサイズ
-    [SerializeField] private float maxScale = 1.3f; // ドクッといった瞬間のサイズ(少し大きくしました)
-    [SerializeField] private float decaySpeed = 10.0f; // ★追加: 縮む速さ（大きいほどキレが良い）
+    [SerializeField] private float minScale = 1.0f;
+    [SerializeField] private float maxScale = 1.3f;
+    [SerializeField] private float decaySpeed = 10.0f;
 
     //================================================================================
     // Fields - Animation
     //================================================================================
 
-    private float beatTimer = 0f;      // ビートのタイミングを計るタイマー
-    private float currentPulse = 0f;   // 現在の膨らみ具合 (0.0 ~ 1.0)
-    private float targetBpm = 60f;     // 目標のBPM
-    private float displayBpm = 60f;    // アニメーション用の滑らかなBPM
-    private int lastValidBpm = 60;     // 最後の正常値
+    private float beatTimer = 0f;
+    private float currentPulse = 0f;
+    private float targetBpm = 60f;
+    private float displayBpm = 60f;
+    private int lastValidBpm = 60;
 
     //================================================================================
     // Fields - CSV & Logging
@@ -68,22 +68,17 @@ public sealed class BPMReceive : MonoBehaviour
     void Start()
     {
         PrepareLogFile();
-
-        // ボタンのリスナー設定
         StartButton.onClick.AddListener(OnStartButtonPressed);
         StopButton.onClick.AddListener(OnStopButtonPressed);
         ResetButton.onClick.AddListener(OnResetButtonPressed);
         AvarageButton.onClick.AddListener(OnAvarageButtonPressed);
         NextButton.onClick.AddListener(OnNextButtonPressed);
-
-        // UIの初期状態を設定
         Label.SetText("待機中");
         UpdateButtons(AppStatus.Idle);
     }
 
     void Update()
     {
-        // アプリの状態に関わらず、心臓のアニメーションを常に実行
         AnimateHeart();
     }
 
@@ -103,25 +98,20 @@ public sealed class BPMReceive : MonoBehaviour
         {
             targetBpm = (float)value;
             lastValidBpm = value;
-            
             if (currentStatus == AppStatus.Idle || currentStatus == AppStatus.Logging)
-            {
-                Label.SetText($"{value}");
-            }
+            { Label.SetText($"{value}"); }
         }
         else
         {
-            targetBpm = (float)lastValidBpm; // 異常時は最後の正常値で動かす
-            
+            targetBpm = (float)lastValidBpm;
             if (currentStatus == AppStatus.Idle)
-            {
-                Label.SetText("心拍が正常に確認できません");
-            }
+            { Label.SetText("心拍が正常に確認できません"); }
         }
 
         // --- 2. アプリの状態に応じたロジック ---
         switch (currentStatus)
         {
+            // ★ 接続確認中(Checking)は、このロジックで状態を更新
             case AppStatus.Checking_Start:
             case AppStatus.Checking_Avarage:
                 if (value >= 30) { connectionCheckStatus = ConnectionCheckStatus.Connected; }
@@ -155,33 +145,20 @@ public sealed class BPMReceive : MonoBehaviour
     }
 
     //================================================================================
-    // ★ アニメーション処理 (修正版)
+    // Animation (変更なし)
     //================================================================================
     private void AnimateHeart()
     {
         if (heartIcon == null) return;
-
-        // 1. BPMを滑らかに追従させる
         displayBpm = Mathf.Lerp(displayBpm, targetBpm, Time.deltaTime * 5.0f);
-
-        // 2. ビートの間隔(秒)を計算 (例: 60BPM -> 1.0秒, 120BPM -> 0.5秒)
-        float beatInterval = 60.0f / Mathf.Max(displayBpm, 1.0f); // 0除算防止
-
-        // 3. タイマーを進める
+        float beatInterval = 60.0f / Mathf.Max(displayBpm, 1.0f);
         beatTimer += Time.deltaTime;
-
-        // 4. タイマーが間隔を超えたら「ドクッ」とさせる
         if (beatTimer >= beatInterval)
         {
-            beatTimer -= beatInterval; // タイマーをリセット（余剰分は持ち越し）
-            currentPulse = 1.0f;       // 膨らみ具合をMAXにする
+            beatTimer -= beatInterval;
+            currentPulse = 1.0f;
         }
-
-        // 5. 膨らみ具合(currentPulse)を、時間経過ですぐに0に戻す（減衰）
-        //    Time.deltaTime * decaySpeed の速さで 0 に近づける
         currentPulse = Mathf.Lerp(currentPulse, 0f, Time.deltaTime * decaySpeed);
-
-        // 6. サイズに反映 (minScale から maxScale の間で変化)
         float currentScale = Mathf.Lerp(minScale, maxScale, currentPulse);
         heartIcon.localScale = new Vector3(currentScale, currentScale, 1f);
     }
@@ -214,7 +191,7 @@ public sealed class BPMReceive : MonoBehaviour
     }
     public void OnAvarageButtonPressed()
     {
-        Debug.Log("Avarageボタン押下: 接続確認(3秒)を開始");
+        Debug.Log("Avarageボタン押下: 接続確認(最大3秒)を開始");
         currentStatus = AppStatus.Checking_Avarage;
         UpdateButtons(AppStatus.Checking_Avarage);
         StartCoroutine(CheckConnection_Avarage());
@@ -228,13 +205,31 @@ public sealed class BPMReceive : MonoBehaviour
     }
 
     //================================================================================
-    // Coroutines (Timers) (変更なし)
+    // ★ Coroutines (Timers) (ロジック修正)
     //================================================================================
+
+    /// <summary>
+    /// (Startボタン用) 接続確認 (最大3秒待機)
+    /// </summary>
     private IEnumerator CheckConnection_Start()
     {
         connectionCheckStatus = ConnectionCheckStatus.NotChecked;
         Label.SetText("接続確認中");
-        yield return new WaitForSeconds(3f);
+        
+        float startTime = Time.time;
+        
+        // 最大3秒間、または接続状態が確定するまで待機
+        while (Time.time - startTime < 3.0f)
+        {
+            if (connectionCheckStatus == ConnectionCheckStatus.Connected || 
+                connectionCheckStatus == ConnectionCheckStatus.Failed_LowBPM)
+            {
+                break; // 正常または異常データを受信したので待機(while)を抜ける
+            }
+            yield return null; // 1フレーム待つ
+        }
+        
+        // --- 判定 ---
         if (connectionCheckStatus == ConnectionCheckStatus.Connected)
         {
             Debug.Log("接続成功。ログ書き出しを開始します。");
@@ -244,31 +239,60 @@ public sealed class BPMReceive : MonoBehaviour
         }
         else
         {
+            // 失敗 (BPM異常 または 3秒間データ未受信)
             currentStatus = AppStatus.Failed;
             if (connectionCheckStatus == ConnectionCheckStatus.Failed_LowBPM)
             { Label.SetText("心拍が正常に確認できません"); }
-            else { Label.SetText("接続できませんでした"); }
+            else // NotChecked のまま
+            { Label.SetText("接続できませんでした"); }
             currentStatus = AppStatus.Idle;
             UpdateButtons(AppStatus.Idle);
         }
     }
+
+    /// <summary>
+    /// (Avarageボタン用) 接続確認 (最大3秒待機)
+    /// </summary>
     private IEnumerator CheckConnection_Avarage()
     {
         connectionCheckStatus = ConnectionCheckStatus.NotChecked;
         Label.SetText("接続確認中");
-        yield return new WaitForSeconds(3f);
+
+        float startTime = Time.time;
+
+        // 最大3秒間、または接続状態が確定するまで待機
+        while (Time.time - startTime < 3.0f)
+        {
+            if (connectionCheckStatus == ConnectionCheckStatus.Connected || 
+                connectionCheckStatus == ConnectionCheckStatus.Failed_LowBPM)
+            {
+                break; // 正常または異常データを受信したので待機(while)を抜ける
+            }
+            yield return null; // 1フレーム待つ
+        }
+
+        // --- 判定 ---
         if (connectionCheckStatus == ConnectionCheckStatus.Connected)
-        { StartCoroutine(Measure_Avarage()); }
+        {
+            // 接続成功 -> 12秒測定フェーズに移行
+            StartCoroutine(Measure_Avarage());
+        }
         else
         {
+            // 失敗 (BPM異常 または 3秒間データ未受信)
             currentStatus = AppStatus.Failed;
             if (connectionCheckStatus == ConnectionCheckStatus.Failed_LowBPM)
             { Label.SetText("心拍が正常に確認できません"); }
-            else { Label.SetText("接続できませんでした"); }
+            else // NotChecked のまま
+            { Label.SetText("接続できませんでした"); }
             currentStatus = AppStatus.Idle;
             UpdateButtons(AppStatus.Idle);
         }
     }
+
+    /// <summary>
+    /// (Avarageボタン用) 12秒間の測定処理 (変更なし)
+    /// </summary>
     private IEnumerator Measure_Avarage()
     {
         Debug.Log("12秒間の平均心拍数測定を開始");
