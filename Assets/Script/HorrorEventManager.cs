@@ -13,6 +13,12 @@ public class HorrorEventManager : MonoBehaviour
     [SerializeField]
     private CockroachSwarm cockroachSwarmTarget;// ★ 11：ゴキブリイベント用
 
+    [Header("14: ゾンビ落下イベント")]
+    [SerializeField]
+    private GameObject zombiePrefab; // ★ ステップ1で作成した物理演算ゾンビのプレハブ
+    [SerializeField]
+    private Transform zombieSpawnPoint;
+
     public List<(string Timestamp, int eventType)> eventLog = new List<(string, int)>();
 
     // イベントタイプ → 実行アクション のマップ
@@ -30,6 +36,7 @@ public class HorrorEventManager : MonoBehaviour
         /////////// 🎬 起動時テスト（必要に応じてコメントアウト）//////////
         //TriggerHorrorEvent(54);
         //TriggerHorrorEvent(11);
+        TriggerHorrorEvent(14);
     }
 
     /// <summary>
@@ -40,6 +47,7 @@ public class HorrorEventManager : MonoBehaviour
 
         eventActionMap[54] = TriggerFallEvent; // 54:物が落ちる
         eventActionMap[11] = TriggerCockroachSwarm;
+        eventActionMap[14] = TriggerZombieFall;
         /////////////////ここに追加/////////////////
     }
 
@@ -85,6 +93,21 @@ public class HorrorEventManager : MonoBehaviour
         {
             Debug.LogError("ゴキブリ(CockroachSwarm)が設定されていません。");
         }
+    }
+
+    // 14: ゾンビが降ってくる
+    public void TriggerZombieFall()
+    {
+        if (zombiePrefab == null || zombieSpawnPoint == null)
+        {
+            Debug.LogError("14: ゾンビのプレハブまたは出現位置が設定されていません。");
+            return;
+        }
+
+        Debug.Log("😱 ゾンビが降ってきます！");
+        
+        // 指定した出現位置(zombieSpawnPoint)に、プレハブ(zombiePrefab)を生成する
+        Instantiate(zombiePrefab, zombieSpawnPoint.position, zombieSpawnPoint.rotation);
     }
 
     // 54:物が落ちる
