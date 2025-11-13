@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: ac9899a0b63e5b74c97e366542c1008d
+guid: 89e22ddc5b0a1b3418cb69661783ffb2
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -120,10 +120,3 @@ TextureImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 226029
-  packageName: Skinless Zombie
-  packageVersion: 1.1.0
-  assetPath: Assets/Tensori/SkinlessZombie/Art/Textures/zombie pants low_zombie pants_Normal.png
-  uploadId: 518731
