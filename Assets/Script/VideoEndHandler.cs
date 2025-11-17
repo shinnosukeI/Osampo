@@ -1,16 +1,21 @@
 using UnityEngine;
-using UnityEngine.Video; // VideoPlayer を使うために必要
+using UnityEngine.Video;
+using UnityEngine.Events; // ★追加: UnityEventを使うために必要
 
 public class VideoEndHandler : MonoBehaviour
 {
     // インスペクタから設定する
+    [Header("UI Settings")]
     [SerializeField]
-    private GameObject imageToShow; // 動画終了後に表示する画像
+    private GameObject imageToShow; // 動画終了後に表示する画像 (RestSceneでは使わないなら空欄でOK)
 
-    // ▼▼▼【追加】▼▼▼
     [SerializeField]
-    private GameObject buttonToShow; // 動画終了後に表示するボタン
-    // ▲▲▲▲▲▲▲▲▲▲
+    private GameObject buttonToShow; // 動画終了後に表示するボタン (RestSceneでは使わないなら空欄でOK)
+
+    // ▼▼▼【追加】他のスクリプトに動画終了を知らせるイベント ▼▼▼
+    [Header("Events")]
+    public UnityEvent onVideoEnd; 
+    // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 
     private VideoPlayer videoPlayer;
 
@@ -20,32 +25,38 @@ public class VideoEndHandler : MonoBehaviour
         videoPlayer = GetComponent<VideoPlayer>();
 
         // 再生終了イベント(loopPointReached)に関数を登録
-        videoPlayer.loopPointReached += OnVideoFinished;
+        if (videoPlayer != null)
+        {
+            videoPlayer.loopPointReached += OnVideoFinished;
+        }
     }
 
     void OnDestroy()
     {
-        videoPlayer.loopPointReached -= OnVideoFinished;
+        if (videoPlayer != null)
+        {
+            videoPlayer.loopPointReached -= OnVideoFinished;
+        }
     }
 
     // ▼ 動画の再生が終了したときに呼び出される関数 ▼
     void OnVideoFinished(VideoPlayer vp)
     {
-        // 画像を表示
+        Debug.Log("Video finished.");
+
+        // 1. 既存の機能（画像やボタンを表示）
         if (imageToShow != null)
         {
             imageToShow.SetActive(true);
         }
 
-        // ▼▼▼【追加】▼▼▼
-        // ボタンを表示
         if (buttonToShow != null)
         {
             buttonToShow.SetActive(true);
         }
-        // ▲▲▲▲▲▲▲▲▲▲
-        
-        // オプション：動画プレイヤーのオブジェクト自体を非表示にする
-        // vp.gameObject.SetActive(false);
+
+        // ▼▼▼【追加】登録されたイベントを実行（RestSceneManagerへ通知）▼▼▼
+        onVideoEnd?.Invoke();
+        // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
     }
 }
