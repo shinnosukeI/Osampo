@@ -255,6 +255,74 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4841488}
   m_CullTransparentMesh: 1
+--- !u!1001 &17838712
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 819307704061143569, guid: 2f9f96b92e6abc74293fc37131e64eb7, type: 3}
+      propertyPath: m_Name
+      value: GameManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 2941889992063130159, guid: 2f9f96b92e6abc74293fc37131e64eb7, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 595.0297
+      objectReference: {fileID: 0}
+    - target: {fileID: 2941889992063130159, guid: 2f9f96b92e6abc74293fc37131e64eb7, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 550.6254
+      objectReference: {fileID: 0}
+    - target: {fileID: 2941889992063130159, guid: 2f9f96b92e6abc74293fc37131e64eb7, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.53328
+      objectReference: {fileID: 0}
+    - target: {fileID: 2941889992063130159, guid: 2f9f96b92e6abc74293fc37131e64eb7, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2941889992063130159, guid: 2f9f96b92e6abc74293fc37131e64eb7, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2941889992063130159, guid: 2f9f96b92e6abc74293fc37131e64eb7, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2941889992063130159, guid: 2f9f96b92e6abc74293fc37131e64eb7, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2941889992063130159, guid: 2f9f96b92e6abc74293fc37131e64eb7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2941889992063130159, guid: 2f9f96b92e6abc74293fc37131e64eb7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2941889992063130159, guid: 2f9f96b92e6abc74293fc37131e64eb7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 2f9f96b92e6abc74293fc37131e64eb7, type: 3}
+--- !u!114 &17838713 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1454818713441743836, guid: 2f9f96b92e6abc74293fc37131e64eb7, type: 3}
+  m_PrefabInstance: {fileID: 17838712}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 135b9432d20d6bc4ea7f6a4638c27b1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameManager
 --- !u!1 &36409378
 GameObject:
   m_ObjectHideFlags: 0
@@ -476,7 +544,7 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1291186197}
+      - m_Target: {fileID: 1816812253}
         m_TargetAssemblyTypeName: SurveyManager, Assembly-CSharp
         m_MethodName: SelectOption
         m_Mode: 3
@@ -574,7 +642,7 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1291186197}
+      - m_Target: {fileID: 1816812253}
         m_TargetAssemblyTypeName: SurveyManager, Assembly-CSharp
         m_MethodName: SelectOption
         m_Mode: 3
@@ -672,7 +740,7 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1291186197}
+      - m_Target: {fileID: 1816812253}
         m_TargetAssemblyTypeName: SurveyManager, Assembly-CSharp
         m_MethodName: SelectOption
         m_Mode: 3
@@ -1351,7 +1419,7 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1291186197}
+      - m_Target: {fileID: 1816812253}
         m_TargetAssemblyTypeName: SurveyManager, Assembly-CSharp
         m_MethodName: SelectOption
         m_Mode: 3
@@ -1736,12 +1804,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1076765403}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -461.8802, y: -259.80762, z: 0}
+  m_LocalScale: {x: 0.4811252, y: 0.4811252, z: 0.4811252}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1291186196}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1089852790
 GameObject:
@@ -2378,6 +2446,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 278652353}
+  - {fileID: 1076765406}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -2693,19 +2762,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1406595298}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1816812253}
-        m_TargetAssemblyTypeName: SurveyManager, Assembly-CSharp
-        m_MethodName: OnstartButton
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1406595298
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3305,9 +3362,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6cd791d6eb0e01645947136f19704409, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SurveyManager
-  optionsToggleGroup: {fileID: 0}
-  submitButton: {fileID: 0}
-  gameManager: {fileID: 0}
+  optionsToggleGroup: {fileID: 1479965995}
+  submitButton: {fileID: 1406595297}
+  gameManager: {fileID: 17838713}
 --- !u!4 &1816812254
 Transform:
   m_ObjectHideFlags: 0
@@ -3785,7 +3842,7 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1291186197}
+      - m_Target: {fileID: 1816812253}
         m_TargetAssemblyTypeName: SurveyManager, Assembly-CSharp
         m_MethodName: SelectOption
         m_Mode: 3
@@ -3956,5 +4013,5 @@ SceneRoots:
   - {fileID: 1985595132}
   - {fileID: 269548044}
   - {fileID: 1291186196}
-  - {fileID: 1076765406}
   - {fileID: 1816812254}
+  - {fileID: 17838712}

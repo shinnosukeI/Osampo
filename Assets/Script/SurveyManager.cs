@@ -92,8 +92,5 @@ public class SurveyManager : MonoBehaviour
         // （任意）送信後にこのアンケート画面のCanvasを非表示にするなど
         // this.gameObject.SetActive(false);
     }
-    public void OnstartButton()
-    {
-        SceneManager.LoadScene("Stag1");
-    }
+    
 }
