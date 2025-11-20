@@ -617,6 +617,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -2144990787317247848, guid: 47cd291f78cadd844afceba74791f90a, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 47cd291f78cadd844afceba74791f90a, type: 3}
       propertyPath: m_Name
       value: 55
@@ -772,6 +776,8 @@ MonoBehaviour:
   cockroachSwarmTarget: {fileID: 0}
   zombiePrefab: {fileID: 1948203423468440467, guid: c13cdf2e8c81b794e880d81a75c6ef5d, type: 3}
   zombieSpawnPoint: {fileID: 392810272}
+  normalWindowObject: {fileID: 0}
+  brokenWindowObject: {fileID: 0}
 --- !u!4 &392810272
 Transform:
   m_ObjectHideFlags: 0

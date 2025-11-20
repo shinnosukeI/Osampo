@@ -19,6 +19,12 @@ public class HorrorEventManager : MonoBehaviour
     [SerializeField]
     private Transform zombieSpawnPoint;
 
+    [Header("55: 窓ガラスが割れるイベント")]
+[SerializeField]
+private GameObject normalWindowObject; // 割れる前の窓（普段表示）
+[SerializeField]
+private GameObject brokenWindowObject;
+
     public List<(string Timestamp, int eventType)> eventLog = new List<(string, int)>();
 
     // イベントタイプ → 実行アクション のマップ
@@ -124,6 +130,20 @@ public class HorrorEventManager : MonoBehaviour
             Debug.LogError("落下対象(FallingObjectAudio)が設定されていません。");
         }
     }
+
+    public void TriggerWindowBreak()
+{
+    if (normalWindowObject != null && brokenWindowObject != null)
+    {
+        Debug.Log("💥 窓ガラスが割れます！");
+        normalWindowObject.SetActive(false); // 通常の窓を非表示
+        brokenWindowObject.SetActive(true);  // 割れるアニメーション付きの窓を表示
+    }
+    else
+    {
+        Debug.LogError("55: 窓ガラスのGameObjectが設定されていません。");
+    }
+}
 
     
 
