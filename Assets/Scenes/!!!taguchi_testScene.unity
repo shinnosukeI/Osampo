@@ -778,6 +778,8 @@ MonoBehaviour:
   zombieSpawnPoint: {fileID: 392810272}
   normalWindowObject: {fileID: 0}
   brokenWindowObject: {fileID: 0}
+  ballPrefab: {fileID: 0}
+  ballSpawnPoint: {fileID: 0}
 --- !u!4 &392810272
 Transform:
   m_ObjectHideFlags: 0
@@ -877,6 +879,138 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f593b27ae2220004cb6ff5131d77ec36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FallingObjectAudio
+--- !u!1001 &1560189570
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 5934ba5b2f6dcc940a6b140778f3d1a4, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.45511
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 5934ba5b2f6dcc940a6b140778f3d1a4, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 5934ba5b2f6dcc940a6b140778f3d1a4, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -2.60955
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 5934ba5b2f6dcc940a6b140778f3d1a4, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 5934ba5b2f6dcc940a6b140778f3d1a4, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 5934ba5b2f6dcc940a6b140778f3d1a4, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 5934ba5b2f6dcc940a6b140778f3d1a4, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 5934ba5b2f6dcc940a6b140778f3d1a4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 5934ba5b2f6dcc940a6b140778f3d1a4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 5934ba5b2f6dcc940a6b140778f3d1a4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 5934ba5b2f6dcc940a6b140778f3d1a4, type: 3}
+      propertyPath: m_Name
+      value: dirty_football_1k
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5934ba5b2f6dcc940a6b140778f3d1a4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1560189573}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5934ba5b2f6dcc940a6b140778f3d1a4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1560189572}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5934ba5b2f6dcc940a6b140778f3d1a4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1560189574}
+  m_SourcePrefab: {fileID: 100100000, guid: 5934ba5b2f6dcc940a6b140778f3d1a4, type: 3}
+--- !u!1 &1560189571 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 5934ba5b2f6dcc940a6b140778f3d1a4, type: 3}
+  m_PrefabInstance: {fileID: 1560189570}
+  m_PrefabAsset: {fileID: 0}
+--- !u!135 &1560189572
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1560189571}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &1560189573
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1560189571}
+  serializedVersion: 5
+  m_Mass: 0.5
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!114 &1560189574
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1560189571}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5094554157233a346a7c84cc414e9cf3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RollingBall
+  rollForce: 5
 --- !u!1 &1604710020
 GameObject:
   m_ObjectHideFlags: 0
@@ -1284,6 +1418,59 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2094429533
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2094429535}
+  - component: {fileID: 2094429534}
+  m_Layer: 0
+  m_Name: 56
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2094429534
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2094429533}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b0cd99ec2c206348900fb6790453a1b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HorrorEventManager
+  eventDatabase: {fileID: 11400000, guid: cd95c981533df444aaccb542fbea63e9, type: 2}
+  objectToFallTarget: {fileID: 0}
+  cockroachSwarmTarget: {fileID: 0}
+  zombiePrefab: {fileID: 0}
+  zombieSpawnPoint: {fileID: 0}
+  normalWindowObject: {fileID: 0}
+  brokenWindowObject: {fileID: 0}
+  ballPrefab: {fileID: 1560189571}
+  ballSpawnPoint: {fileID: 2094429535}
+--- !u!4 &2094429535
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2094429533}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.48, y: 0.21, z: -2.44}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &2129901339 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: e9d0f72eb6878a74ebaacd1c440784ce, type: 3}
@@ -1603,3 +1790,5 @@ SceneRoots:
   - {fileID: 18429222}
   - {fileID: 1629538183}
   - {fileID: 285192274}
+  - {fileID: 1560189570}
+  - {fileID: 2094429535}

@@ -20,10 +20,16 @@ public class HorrorEventManager : MonoBehaviour
     private Transform zombieSpawnPoint;
 
     [Header("55: 窓ガラスが割れるイベント")]
-[SerializeField]
-private GameObject normalWindowObject; // 割れる前の窓（普段表示）
-[SerializeField]
-private GameObject brokenWindowObject;
+    [SerializeField]
+    private GameObject normalWindowObject; // 割れる前の窓（普段表示）
+    [SerializeField]
+    private GameObject brokenWindowObject;
+
+    [Header("56: ボールが転がるイベント")] // ★ 追加
+    [SerializeField]
+    private GameObject ballPrefab;     // ボールのプレハブ
+    [SerializeField]
+    private Transform ballSpawnPoint;  // 出現位置
 
     public List<(string Timestamp, int eventType)> eventLog = new List<(string, int)>();
 
@@ -43,6 +49,7 @@ private GameObject brokenWindowObject;
         //TriggerHorrorEvent(54);
         //TriggerHorrorEvent(11);
         TriggerHorrorEvent(14);
+
     }
 
     /// <summary>
@@ -54,6 +61,7 @@ private GameObject brokenWindowObject;
         eventActionMap[54] = TriggerFallEvent; // 54:物が落ちる
         eventActionMap[11] = TriggerCockroachSwarm;
         eventActionMap[14] = TriggerZombieFall;
+        eventActionMap[56] = TriggerBallRoll;
         /////////////////ここに追加/////////////////
     }
 
@@ -87,7 +95,7 @@ private GameObject brokenWindowObject;
     }
 
     // ======== 各イベント処理 ========
-    
+
     // 11: 大量のゴキブリが出現する
     public void TriggerCockroachSwarm()
     {
@@ -111,7 +119,7 @@ private GameObject brokenWindowObject;
         }
 
         Debug.Log("😱 ゾンビが降ってきます！");
-        
+
         // 指定した出現位置(zombieSpawnPoint)に、プレハブ(zombiePrefab)を生成する
         Instantiate(zombiePrefab, zombieSpawnPoint.position, zombieSpawnPoint.rotation);
     }
@@ -132,21 +140,37 @@ private GameObject brokenWindowObject;
     }
 
     public void TriggerWindowBreak()
-{
-    if (normalWindowObject != null && brokenWindowObject != null)
     {
-        Debug.Log("💥 窓ガラスが割れます！");
-        normalWindowObject.SetActive(false); // 通常の窓を非表示
-        brokenWindowObject.SetActive(true);  // 割れるアニメーション付きの窓を表示
+        if (normalWindowObject != null && brokenWindowObject != null)
+        {
+            Debug.Log("💥 窓ガラスが割れます！");
+            normalWindowObject.SetActive(false); // 通常の窓を非表示
+            brokenWindowObject.SetActive(true);  // 割れるアニメーション付きの窓を表示
+        }
+        else
+        {
+            Debug.LogError("55: 窓ガラスのGameObjectが設定されていません。");
+        }
     }
-    else
+
+    // 56: ボールが転がってくる
+    public void TriggerBallRoll()
     {
-        Debug.LogError("55: 窓ガラスのGameObjectが設定されていません。");
+        if (ballPrefab != null && ballSpawnPoint != null)
+        {
+            Debug.Log("⚽ ボールが転がってきます！");
+            
+            // スポーン位置に、スポーン位置の向き(Rotation)でボールを生成
+            Instantiate(ballPrefab, ballSpawnPoint.position, ballSpawnPoint.rotation);
+        }
+        else
+        {
+            Debug.LogError("56: ボールのプレハブまたは出現位置が設定されていません。");
+        }
     }
-}
 
-    
 
-////////ここに関数を追加////////
+
+    ////////ここに関数を追加////////
 
 }
