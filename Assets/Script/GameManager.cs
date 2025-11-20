@@ -6,6 +6,68 @@ using System;
 
 public class GameManager : MonoBehaviour
 {
+    // ▼▼▼ 追加: ScreenFaderへの参照 ▼▼▼
+    [Header("Fade System")]
+    [SerializeField]
+    private ScreenFader screenFader; 
+    // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
+    // ▼▼▼ 追加: 初期化とイベント登録 ▼▼▼
+    void Awake()
+    {
+        // ScreenFaderがインスペクタで設定されていない場合、自動で探す
+        if (screenFader == null)
+        {
+            screenFader = FindFirstObjectByType<ScreenFader>();
+            if (screenFader == null)
+            {
+                Debug.LogWarning("GameManager: シーン内にScreenFaderが見つかりません。フェードなしで遷移します。");
+            }
+        }
+    }
+
+    void OnEnable()
+    {
+        // シーン読み込み完了イベントを登録
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnDisable()
+    {
+        // イベント登録解除
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    // シーン読み込み完了時に呼ばれる（フェードインを開始）
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (screenFader != null)
+        {
+            screenFader.FadeIn();
+        }
+    }
+    // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
+
+    /// <summary>
+    /// 汎用的なフェード付きシーン遷移関数
+    /// </summary>
+    private void LoadSceneWithFade(string sceneName)
+    {
+        if (screenFader != null)
+        {
+            // フェードアウト完了後にシーン遷移する
+            screenFader.FadeOut(() =>
+            {
+                SceneManager.LoadScene(sceneName);
+            });
+        }
+        else
+        {
+            // フェード機能がない場合は即座に遷移
+            SceneManager.LoadScene(sceneName);
+        }
+    }
     // 平常時心拍数
     public float BaseHeartRate { get; private set; }
     /// SurveyManagerからアンケート結果 (1～5) を受け取る関数
