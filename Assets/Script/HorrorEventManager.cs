@@ -125,6 +125,8 @@ public class HorrorEventManager : MonoBehaviour
         }
     }
 
+    
+
 ////////ここに関数を追加////////
 
 }
