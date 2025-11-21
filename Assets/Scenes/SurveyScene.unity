@@ -2367,7 +2367,6 @@ GameObject:
   - component: {fileID: 1291186195}
   - component: {fileID: 1291186194}
   - component: {fileID: 1291186193}
-  - component: {fileID: 1291186197}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -2460,22 +2459,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &1291186197
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1291186192}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6cd791d6eb0e01645947136f19704409, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SurveyManager
-  optionsToggleGroup: {fileID: 1479965995}
-  submitButton: {fileID: 1406595297}
-  gameManager: {fileID: 278652356}
-  warningMessageObj: {fileID: 0}
 --- !u!1 &1294860558
 GameObject:
   m_ObjectHideFlags: 0
@@ -3479,7 +3462,7 @@ GameObject:
   - component: {fileID: 1816812254}
   - component: {fileID: 1816812253}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: SurveyManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

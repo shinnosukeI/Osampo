@@ -34,10 +34,13 @@ public class GameManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        // ▼▼▼ 追加: シーンが切り替わったら、そのシーンにある新しいScreenFaderを探し直す ▼▼▼
+        screenFader = FindFirstObjectByType<ScreenFader>();
+        // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
         if (screenFader != null)
         {
             // 記憶しておいたタイプでフェードイン開始
-            // ScreenFaderはAwakeで「真っ黒」になっているため、ここから明るくなり始める
             screenFader.FadeIn(nextFadeType);
         }
     }
