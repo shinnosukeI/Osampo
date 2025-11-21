@@ -191,4 +191,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ScreenFader
   fadePanel: {fileID: 1477370868478305114}
-  fadeDuration: 0.5
+  simpleFadeDuration: 0.5
+  noiseFadeDuration: 1
+  noiseFadeMaterialSource: {fileID: 2100000, guid: 22df3cfbe9e47154b98a3bac253b4660, type: 2}
