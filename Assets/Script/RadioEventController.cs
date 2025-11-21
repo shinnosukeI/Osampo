@@ -1,71 +1,111 @@
 using UnityEngine;
 using System.Collections;
-using TMPro; // TextMeshProを使うために必要
+using TMPro;
 
 [RequireComponent(typeof(AudioSource))]
 public class RadioEventController : MonoBehaviour
 {
     [Header("オーディオクリップ")]
-    [SerializeField] private AudioClip radioStoryClip; // 最初に流すラジオ音声
-    [SerializeField] private AudioClip noiseLoopClip;  // 後に流すノイズ音声
+    [SerializeField] private AudioClip radioStoryClip; // 会話（英語）
+    [SerializeField] private AudioClip noiseLoopClip;  // ノイズ（ループ）
+
+    [Header("再生設定")]
+    [SerializeField] private bool playNoiseOnStart = false; // チェックを入れると、ゲーム開始直後からノイズが流れます
+
+    [Header("音量バランス")]
+    [Range(0f, 1f)] [SerializeField] private float talkVolume = 1.0f; 
+    [Range(0f, 1f)] [SerializeField] private float noiseVolume = 0.3f; 
 
     [Header("字幕設定")]
-    [SerializeField] private TextMeshProUGUI subtitleText; // 画面のテキストオブジェクト
+    [SerializeField] private TextMeshProUGUI subtitleText;
     [TextArea(3, 10)] 
-    [SerializeField] private string subtitleContent; // 表示する文章
+    [SerializeField] private string subtitleContent;
 
-    private AudioSource audioSource;
+    private AudioSource talkSource;  // 会話用
+    private AudioSource noiseSource; // ノイズ用
 
     void Awake()
     {
-        audioSource = GetComponent<AudioSource>();
-        audioSource.playOnAwake = false; // 勝手に再生しない
+        // スピーカーの準備
+        talkSource = GetComponent<AudioSource>();
+        noiseSource = gameObject.AddComponent<AudioSource>();
+
+        // 設定コピー
+        noiseSource.spatialBlend = talkSource.spatialBlend;
+        noiseSource.minDistance = talkSource.minDistance;
+        noiseSource.maxDistance = talkSource.maxDistance;
+        noiseSource.rolloffMode = talkSource.rolloffMode;
+
+        // 自動再生はオフ（スクリプトで制御するため）
+        talkSource.playOnAwake = false;
+        noiseSource.playOnAwake = false;
     }
 
-    // EventManagerから呼ばれる関数
-    public void PlayRadioSequence()
+    void Start()
     {
-        StartCoroutine(SequenceCoroutine());
+        // ★「最初からノイズを流す」設定の場合、ここで再生開始
+        if (playNoiseOnStart)
+        {
+            PlayNoiseLoop();
+        }
     }
 
-    // 一連の流れを処理するコルーチン
-    private IEnumerator SequenceCoroutine()
+    // ノイズ再生専用の関数（ずっとループ再生）
+    public void PlayNoiseLoop()
     {
-        Debug.Log("📻 ラジオイベント開始");
-
-        // --- 1. ラジオ音声（会話）の再生 ---
-        if (radioStoryClip != null)
-        {
-            // 字幕を表示
-            if (subtitleText != null)
-            {
-                subtitleText.text = subtitleContent; // 文章をセット
-                subtitleText.gameObject.SetActive(true); // 表示ON
-            }
-
-            // 音声を再生
-            audioSource.clip = radioStoryClip;
-            audioSource.loop = false; // 会話はループしない
-            audioSource.Play();
-
-            // 音声が終わるまで待機 (秒数待つ)
-            yield return new WaitForSeconds(radioStoryClip.length);
-        }
-
-        // --- 2. ノイズ音声への切り替え ---
-        
-        // 字幕を非表示
-        if (subtitleText != null)
-        {
-            subtitleText.gameObject.SetActive(false); // 表示OFF
-        }
+        if (noiseSource.isPlaying) return; // 既に鳴っていたら何もしない
 
         if (noiseLoopClip != null)
         {
-            audioSource.clip = noiseLoopClip;
-            audioSource.loop = true; // ノイズはループする
-            audioSource.Play();
-            Debug.Log("📻 ノイズ再生中...");
+            noiseSource.clip = noiseLoopClip;
+            noiseSource.loop = true;          // ★重要：ループON
+            noiseSource.volume = noiseVolume; 
+            noiseSource.Play();
+            Debug.Log("📻 ノイズ再生開始（ループ）");
         }
+    }
+
+    // イベント：会話を再生（ノイズがまだなら、ついでにノイズも開始）
+    public void PlayRadioSequence()
+    {
+        // もしノイズがまだ鳴っていなければ、ここで開始（以降ずっと鳴りっぱなし）
+        PlayNoiseLoop();
+
+        // 会話のコルーチンを開始
+        StartCoroutine(TalkSequenceCoroutine());
+    }
+
+    private IEnumerator TalkSequenceCoroutine()
+    {
+        Debug.Log("📻 会話イベント開始");
+
+        if (radioStoryClip != null)
+        {
+            // 字幕表示
+            if (subtitleText != null)
+            {
+                subtitleText.text = subtitleContent;
+                subtitleText.gameObject.SetActive(true);
+            }
+
+            // 会話再生
+            talkSource.clip = radioStoryClip;
+            talkSource.loop = false;        // 会話は1回だけ
+            talkSource.volume = talkVolume; 
+            talkSource.Play();
+
+            // 会話が終わるまで待つ
+            yield return new WaitForSeconds(radioStoryClip.length);
+        }
+
+        // --- 会話終了後の処理 ---
+        
+        // 字幕だけ消す（ノイズは止めない！）
+        if (subtitleText != null)
+        {
+            subtitleText.gameObject.SetActive(false);
+        }
+        
+        Debug.Log("📻 会話終了（ノイズはそのまま継続）");
     }
 }
