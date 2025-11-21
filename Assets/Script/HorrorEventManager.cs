@@ -25,6 +25,10 @@ public class HorrorEventManager : MonoBehaviour
     [SerializeField]
     private GameObject bloodDripObject;
 
+    [Header("45: ラジオイベント")] // ★ 追加
+    [SerializeField]
+    private RadioEventController radioController;
+
     [Header("55: 窓ガラスが割れるイベント")]
     [SerializeField]
     private GameObject normalWindowObject; // 割れる前の窓（普段表示）
@@ -52,7 +56,7 @@ public class HorrorEventManager : MonoBehaviour
         RegisterEventActions();
 
         /////////// 🎬 起動時テスト（必要に応じてコメントアウト）//////////
-        //TriggerHorrorEvent(54);
+        TriggerHorrorEvent(54);
         //TriggerHorrorEvent(11);
         TriggerHorrorEvent(14);
         TriggerHorrorEvent(31);
@@ -69,6 +73,7 @@ public class HorrorEventManager : MonoBehaviour
         eventActionMap[11] = TriggerCockroachSwarm;
         eventActionMap[14] = TriggerZombieFall;
         eventActionMap[31] = TriggerBloodDrip;
+        eventActionMap[45] = TriggerRadio;
         eventActionMap[56] = TriggerBallRoll;
         /////////////////ここに追加/////////////////
     }
@@ -145,6 +150,20 @@ public class HorrorEventManager : MonoBehaviour
         else
         {
             Debug.LogError("31: 血のパーティクルが設定されていません。");
+        }
+    }
+
+    // 45: ラジオから音がする
+    public void TriggerRadio()
+    {
+        if (radioController != null)
+        {
+            // ラジオコントローラーのシーケンスを開始
+            radioController.PlayRadioSequence();
+        }
+        else
+        {
+            Debug.LogError("45: ラジオコントローラーが設定されていません。");
         }
     }
 
