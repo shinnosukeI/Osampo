@@ -1,94 +1,158 @@
 using UnityEngine;
-using UnityEngine.UI; // Imageを使うため
-using System.Collections; // コルーチンを使うため
-using System; // Actionを使うため
+using UnityEngine.UI;
+using System.Collections;
+using System;
 
-/// <summary>
-/// 画面のフェードイン・アウトを制御するスクリプト
-/// </summary>
+public enum FadeType
+{
+    Simple,
+    Noise
+}
+
 public class ScreenFader : MonoBehaviour
 {
     [SerializeField]
-    private Image fadePanel; // フェード用の黒いパネルをここに割り当てる
+    private Image fadePanel;
 
+    [Header("Settings")]
     [SerializeField]
-    private float fadeDuration = 0.5f; // フェードにかかる時間 (秒)
+    private float simpleFadeDuration = 0.5f;
+    [SerializeField]
+    private float noiseFadeDuration = 1.5f;
 
-    private bool isFading = false; // 現在フェード中かどうか
+    [Header("Noise Material")]
+    [SerializeField]
+    private Material noiseFadeMaterialSource;
 
-    // フェード完了時に外部に通知するイベント
-    public event Action OnFadeOutComplete;
-    public event Action OnFadeInComplete;
+    private Material noiseFadeMaterialInstance;
+    private bool isFading = false;
+    private int cutoffPropertyId;
 
     void Awake()
     {
-        // フェードパネルが設定されているか確認
         if (fadePanel == null)
         {
-            Debug.LogError("ScreenFader: Fade Panelが割り当てられていません！");
-            enabled = false; // スクリプトを無効にする
+            enabled = false;
             return;
         }
 
-        // 初期状態は透明にしておく
-        Color color = fadePanel.color;
-        color.a = 0f;
-        fadePanel.color = color;
-        fadePanel.gameObject.SetActive(false); // 初期は非表示
+        cutoffPropertyId = Shader.PropertyToID("_Cutoff");
+
+        if (noiseFadeMaterialSource != null)
+        {
+            noiseFadeMaterialInstance = Instantiate(noiseFadeMaterialSource);
+        }
+
+        // 初期状態は「真っ黒(Active)」
+        fadePanel.gameObject.SetActive(true);
+        
+        // マテリアルをセットして真っ黒(0)にしておく
+        if (noiseFadeMaterialInstance != null)
+        {
+            fadePanel.material = noiseFadeMaterialInstance;
+            fadePanel.color = Color.black;
+            // Shader修正により 0 = 黒
+            noiseFadeMaterialInstance.SetFloat(cutoffPropertyId, 0.0f); 
+        }
+        else
+        {
+            fadePanel.material = null;
+            fadePanel.color = Color.black; 
+        }
     }
 
-    /// <summary>
-    /// 画面を徐々に暗くする (フェードアウト)
-    /// </summary>
-    public void FadeOut(Action onComplete = null)
+    public void FadeOut(FadeType type, Action onComplete = null)
     {
-        if (isFading) return; // フェード中なら何もしない
+        if (isFading) return;
         isFading = true;
-        fadePanel.gameObject.SetActive(true); // フェードパネルを表示
-        StartCoroutine(PerformFade(0f, 1f, onComplete + OnFadeOutComplete));
+        fadePanel.gameObject.SetActive(true);
+
+        if (type == FadeType.Simple)
+        {
+            fadePanel.material = null;
+            Color c = Color.black;
+            c.a = 0f; // 透明から
+            fadePanel.color = c;
+            StartCoroutine(PerformSimpleFade(0f, 1f, simpleFadeDuration, onComplete));
+        }
+        else
+        {
+            // Noise: 1(透明) -> 0(黒)
+            fadePanel.material = noiseFadeMaterialInstance;
+            fadePanel.color = Color.black;
+            
+            if (noiseFadeMaterialInstance != null)
+                noiseFadeMaterialInstance.SetFloat(cutoffPropertyId, 1.0f); // 透明から
+
+            // 1.0(透明) から 0.0(黒) へ減らす
+            StartCoroutine(PerformNoiseFade(1.0f, 0.0f, noiseFadeDuration, onComplete));
+        }
     }
 
-    /// <summary>
-    /// 画面を徐々に明るくする (フェードイン)
-    /// </summary>
-    public void FadeIn(Action onComplete = null)
+    public void FadeIn(FadeType type, Action onComplete = null)
     {
-        if (isFading) return; // フェード中なら何もしない
+        if (isFading) return;
         isFading = true;
-        fadePanel.gameObject.SetActive(true); // フェードパネルを表示
-        StartCoroutine(PerformFade(1f, 0f, onComplete + OnFadeInComplete));
+        fadePanel.gameObject.SetActive(true);
+
+        if (type == FadeType.Simple)
+        {
+            fadePanel.material = null;
+            Color c = Color.black;
+            c.a = 1f; // 黒から
+            fadePanel.color = c;
+            StartCoroutine(PerformSimpleFade(1f, 0f, simpleFadeDuration, () => {
+                fadePanel.gameObject.SetActive(false);
+                onComplete?.Invoke();
+            }));
+        }
+        else
+        {
+            // Noise: 0(黒) -> 1(透明)
+            fadePanel.material = noiseFadeMaterialInstance;
+            fadePanel.color = Color.black;
+
+            if (noiseFadeMaterialInstance != null)
+                noiseFadeMaterialInstance.SetFloat(cutoffPropertyId, 0.0f); // 黒から
+
+            // 0.0(黒) から 1.0(透明) へ増やす
+            StartCoroutine(PerformNoiseFade(0.0f, 1.0f, noiseFadeDuration, () => {
+                fadePanel.gameObject.SetActive(false);
+                onComplete?.Invoke();
+            }));
+        }
     }
 
-    /// <summary>
-    /// フェード処理の本体
-    /// </summary>
-    /// <param name="startAlpha">開始時の透明度 (0=透明, 1=不透明)</param>
-    /// <param name="endAlpha">終了時の透明度</param>
-    /// <param name="onComplete">フェード完了時に呼び出すコールバック</param>
-    private IEnumerator PerformFade(float startAlpha, float endAlpha, Action onComplete)
+    private IEnumerator PerformSimpleFade(float startAlpha, float endAlpha, float duration, Action onComplete)
     {
         float timer = 0f;
-        Color color = fadePanel.color;
-
-        while (timer < fadeDuration)
+        Color c = Color.black;
+        while (timer < duration)
         {
             timer += Time.deltaTime;
-            color.a = Mathf.Lerp(startAlpha, endAlpha, timer / fadeDuration);
-            fadePanel.color = color;
+            c.a = Mathf.Lerp(startAlpha, endAlpha, timer / duration);
+            fadePanel.color = c;
             yield return null;
         }
-
-        color.a = endAlpha; // 確実に最終値に設定
-        fadePanel.color = color;
-
+        c.a = endAlpha;
+        fadePanel.color = c;
         isFading = false;
+        onComplete?.Invoke();
+    }
 
-        // フェードイン完了時はパネルを非表示にする
-        if (endAlpha == 0f)
+    private IEnumerator PerformNoiseFade(float startVal, float endVal, float duration, Action onComplete)
+    {
+        float timer = 0f;
+        while (timer < duration)
         {
-            fadePanel.gameObject.SetActive(false);
+            timer += Time.deltaTime;
+            float val = Mathf.Lerp(startVal, endVal, timer / duration);
+            noiseFadeMaterialInstance.SetFloat(cutoffPropertyId, val);
+            yield return null;
         }
-
-        onComplete?.Invoke(); // 完了コールバックを呼び出す
+        // 最終値をセット（ここで0になれば、Shader側のif文で確実に黒になる）
+        noiseFadeMaterialInstance.SetFloat(cutoffPropertyId, endVal);
+        isFading = false;
+        onComplete?.Invoke();
     }
 }
