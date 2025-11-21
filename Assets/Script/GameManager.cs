@@ -100,7 +100,7 @@ public class GameManager : MonoBehaviour
         }
 
         // ロード画面１に移動する
-        UnityEngine.SceneManagement.SceneManager.LoadScene("RestScene1");
+        LoadSceneWithFade("RestScene1");
     }
 
     public void SetBaseHeartRate(float bpm)
@@ -112,27 +112,27 @@ public class GameManager : MonoBehaviour
     //stage1に移動
     public void LoadStage1()
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene("Stage1");
+        LoadSceneWithFade("Stage1");
     }
 
     //stage2に移動
     public void LoadStage2()
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene("Stage2");
+        LoadSceneWithFade("Stage2");
     }
 
     public void LoadSurveyScene()
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene("SurveyScene");
+        LoadSceneWithFade("SurveyScene");
     }
 
     public void LoadRestScene1()
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene("RestScene1");
+        LoadSceneWithFade("RestScene1");
     }
     
     public void LoadConfinementWalk()
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene("ConfinementWalk");
+        LoadSceneWithFade("ConfinementWalk");
     }
 }
