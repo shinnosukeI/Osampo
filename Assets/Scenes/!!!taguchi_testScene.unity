@@ -579,43 +579,43 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 47cd291f78cadd844afceba74791f90a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.24434
+      value: 3.2445304
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 47cd291f78cadd844afceba74791f90a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0
+      value: -0.0004966259
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 47cd291f78cadd844afceba74791f90a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.04556
+      value: 0.043803453
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 47cd291f78cadd844afceba74791f90a, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.9608623
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 47cd291f78cadd844afceba74791f90a, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0.27702662
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 47cd291f78cadd844afceba74791f90a, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: 0.000011749529
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 47cd291f78cadd844afceba74791f90a, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0.000040752988
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 47cd291f78cadd844afceba74791f90a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
+      value: -32.166
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 47cd291f78cadd844afceba74791f90a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 0.003
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 47cd291f78cadd844afceba74791f90a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
+      value: -0.006
       objectReference: {fileID: 0}
     - target: {fileID: -2144990787317247848, guid: 47cd291f78cadd844afceba74791f90a, type: 3}
       propertyPath: m_IsActive
@@ -776,6 +776,8 @@ MonoBehaviour:
   cockroachSwarmTarget: {fileID: 0}
   zombiePrefab: {fileID: 1948203423468440467, guid: c13cdf2e8c81b794e880d81a75c6ef5d, type: 3}
   zombieSpawnPoint: {fileID: 392810272}
+  bloodSplashObject: {fileID: 0}
+  bloodDripObject: {fileID: 0}
   normalWindowObject: {fileID: 0}
   brokenWindowObject: {fileID: 0}
   ballPrefab: {fileID: 0}
@@ -868,6 +870,7 @@ GameObject:
   - component: {fileID: 697433481}
   - component: {fileID: 697433480}
   - component: {fileID: 697433479}
+  - component: {fileID: 697433482}
   m_Layer: 0
   m_Name: 31
   m_TagString: Untagged
@@ -5687,12 +5690,35 @@ Transform:
   m_GameObject: {fileID: 697433478}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0.78071, y: 0, z: -11.96035}
+  m_LocalPosition: {x: 0.84, y: 1.33, z: -11.96035}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
+--- !u!114 &697433482
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 697433478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b0cd99ec2c206348900fb6790453a1b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HorrorEventManager
+  eventDatabase: {fileID: 11400000, guid: cd95c981533df444aaccb542fbea63e9, type: 2}
+  objectToFallTarget: {fileID: 0}
+  cockroachSwarmTarget: {fileID: 0}
+  zombiePrefab: {fileID: 0}
+  zombieSpawnPoint: {fileID: 0}
+  bloodSplashObject: {fileID: 0}
+  bloodDripObject: {fileID: 697433478}
+  normalWindowObject: {fileID: 0}
+  brokenWindowObject: {fileID: 0}
+  ballPrefab: {fileID: 0}
+  ballSpawnPoint: {fileID: 0}
 --- !u!114 &1226532778 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2068079098919071423, guid: 58322a5b79b22c7468310e10747069a7, type: 3}
@@ -5961,43 +5987,43 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 55ed062d449ad2f4593e5d7b271f34e2, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2.5995283
+      value: 2.5997949
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 55ed062d449ad2f4593e5d7b271f34e2, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.794
+      value: 0.8983226
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 55ed062d449ad2f4593e5d7b271f34e2, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.47126758
+      value: -0.01853156
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 55ed062d449ad2f4593e5d7b271f34e2, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.012248009
+      value: 0.011756899
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 55ed062d449ad2f4593e5d7b271f34e2, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: -0.0033522747
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 55ed062d449ad2f4593e5d7b271f34e2, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.9999251
+      value: 0.9607903
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 55ed062d449ad2f4593e5d7b271f34e2, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: -0.27700642
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 55ed062d449ad2f4593e5d7b271f34e2, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
+      value: 32.155
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 55ed062d449ad2f4593e5d7b271f34e2, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 178.596
+      value: 178.345
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 55ed062d449ad2f4593e5d7b271f34e2, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
+      value: -0.877
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 55ed062d449ad2f4593e5d7b271f34e2, type: 3}
       propertyPath: m_Name
@@ -6288,6 +6314,8 @@ MonoBehaviour:
   cockroachSwarmTarget: {fileID: 0}
   zombiePrefab: {fileID: 0}
   zombieSpawnPoint: {fileID: 0}
+  bloodSplashObject: {fileID: 0}
+  bloodDripObject: {fileID: 0}
   normalWindowObject: {fileID: 0}
   brokenWindowObject: {fileID: 0}
   ballPrefab: {fileID: 1560189571}

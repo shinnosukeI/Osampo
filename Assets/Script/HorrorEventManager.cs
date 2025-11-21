@@ -19,6 +19,12 @@ public class HorrorEventManager : MonoBehaviour
     [SerializeField]
     private Transform zombieSpawnPoint;
 
+    [SerializeField] private GameObject bloodSplashObject; // 32: 血痕
+
+    [Header("31: 血が滴るイベント")] // ★ 追加
+    [SerializeField]
+    private GameObject bloodDripObject;
+
     [Header("55: 窓ガラスが割れるイベント")]
     [SerializeField]
     private GameObject normalWindowObject; // 割れる前の窓（普段表示）
@@ -49,6 +55,7 @@ public class HorrorEventManager : MonoBehaviour
         //TriggerHorrorEvent(54);
         //TriggerHorrorEvent(11);
         TriggerHorrorEvent(14);
+        TriggerHorrorEvent(31);
 
     }
 
@@ -61,6 +68,7 @@ public class HorrorEventManager : MonoBehaviour
         eventActionMap[54] = TriggerFallEvent; // 54:物が落ちる
         eventActionMap[11] = TriggerCockroachSwarm;
         eventActionMap[14] = TriggerZombieFall;
+        eventActionMap[31] = TriggerBloodDrip;
         eventActionMap[56] = TriggerBallRoll;
         /////////////////ここに追加/////////////////
     }
@@ -122,6 +130,22 @@ public class HorrorEventManager : MonoBehaviour
 
         // 指定した出現位置(zombieSpawnPoint)に、プレハブ(zombiePrefab)を生成する
         Instantiate(zombiePrefab, zombieSpawnPoint.position, zombieSpawnPoint.rotation);
+    }
+
+    //31 血がしたたり落ちる
+    public void TriggerBloodDrip()
+    {
+        if (bloodDripObject != null)
+        {
+            Debug.Log("🩸 血が滴り始めました...");
+            // パーティクルオブジェクトを表示する
+            // (Play On Awakeがオンなら、表示と同時に再生されます)
+            bloodDripObject.SetActive(true);
+        }
+        else
+        {
+            Debug.LogError("31: 血のパーティクルが設定されていません。");
+        }
     }
 
     // 54:物が落ちる
