@@ -18,6 +18,9 @@ public class SurveyManager : MonoBehaviour
     private GameObject warningMessageObj;
     // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 
+    [SerializeField]
+    private AudioClip surveyBGM;
+
     private int selectedOptionId = -1;
 
     private void Start()
@@ -33,6 +36,11 @@ public class SurveyManager : MonoBehaviour
         {
             Debug.LogError("GameManager が見つかりません！");
             return;
+        }
+
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayBGM(surveyBGM);
         }
 
         if (submitButton != null)

@@ -55,7 +55,8 @@ public class GameManager : MonoBehaviour
 
         if (screenFader != null)
         {
-            screenFader.FadeOut(type, () => {
+            screenFader.FadeOut(type, () =>
+            {
                 SceneManager.LoadScene(sceneName);
             });
         }
@@ -127,9 +128,19 @@ public class GameManager : MonoBehaviour
     {
         LoadSceneWithFade("RestScene1", FadeType.Simple);
     }
-    
+
     public void LoadConfinementWalk()
     {
         LoadSceneWithFade("ConfinementWalk", FadeType.Noise);
+    }
+
+    public void LoadBPMtest1()
+    {
+        LoadSceneWithFade("99_BPMTestScene1", FadeType.Noise);
+    }
+    
+    public void LoadBPMtest2()
+    {
+        LoadSceneWithFade("99_BPMTestScene2", FadeType.Noise);
     }
 }

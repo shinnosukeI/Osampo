@@ -3196,6 +3196,10 @@ PrefabInstance:
       propertyPath: fadeDuration
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 6957114999365149334, guid: bdd5f1bfeca19e44cadfaa174cb06416, type: 3}
+      propertyPath: simpleFadeDuration
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3484,6 +3488,7 @@ MonoBehaviour:
   submitButton: {fileID: 1406595297}
   gameManager: {fileID: 17838713}
   warningMessageObj: {fileID: 2075953774}
+  surveyBGM: {fileID: 8300000, guid: b6d0780cf14f088499649b822c6db21e, type: 3}
 --- !u!4 &1816812254
 Transform:
   m_ObjectHideFlags: 0
