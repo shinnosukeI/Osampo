@@ -534,8 +534,6 @@ MonoBehaviour:
   reloadButtonObj: {fileID: 1160867263}
   exitButtonObj: {fileID: 674171844}
   statusText: {fileID: 8418356}
-  nextButton: {fileID: 2137930233}
-  exitButton: {fileID: 674171846}
 --- !u!4 &179703323
 Transform:
   m_ObjectHideFlags: 0
@@ -641,7 +639,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 491, y: 800}
+  m_AnchoredPosition: {x: 491, y: 84}
   m_SizeDelta: {x: 277.5862, y: 79.4397}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &361117609

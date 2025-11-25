@@ -13,15 +13,11 @@ public class RestSceneManager : MonoBehaviour
 
     [Header("UI Objects")]
     [SerializeField] private GameObject nextButtonObj; // NextボタンのGameObject
+    [SerializeField] private GameObject testButtonObj; // テスト用、Stage1影武者シーンへ遷移するボタン
     [SerializeField] private GameObject reloadButtonObj;
     [SerializeField] private GameObject exitButtonObj; // ExitボタンのGameObject
     [SerializeField] private TextMeshProUGUI statusText; // メッセージ表示用
-
-    [Header("UI Buttons")]
-    [SerializeField] private Button nextButton; // Nextボタンコンポーネント
-    [SerializeField] private Button exitButton; // Exitボタンコンポーネント
-
-    // 状態フラグ
+                                                         // 状態フラグ
     private bool isVideoFinished = false;
     private bool? isConnectionSuccess = null; // null=未定, true=成功, false=失敗
 
@@ -40,11 +36,11 @@ public class RestSceneManager : MonoBehaviour
         // ボタンの初期化（非表示）
         nextButtonObj.SetActive(false);
         exitButtonObj.SetActive(false);
-        statusText.text = "Loading...";
+        reloadButtonObj.SetActive(false);
 
-        // ボタンクリックイベント登録
-        nextButton.onClick.AddListener(() => gameManager.LoadStage1());
-        exitButton.onClick.AddListener(() => gameManager.LoadConfinementWalk());
+        testButtonObj.SetActive(false);
+
+        statusText.text = "Loading...";
 
         // HeartRateManagerのイベント監視を開始
         if (heartRateManager != null)
@@ -100,13 +96,17 @@ public class RestSceneManager : MonoBehaviour
             // 成功パターン
             statusText.text = ""; // 文字を消す（または "接続成功" と出してもOK）
             nextButtonObj.SetActive(true);
+            if (testButtonObj != null)
+            {
+                testButtonObj.SetActive(true);
+            }
         }
         else
         {
             // 失敗パターン
             statusText.text = "心拍計の接続を確認できませんでした。\n再接続してください。";
             exitButtonObj.SetActive(true);
-            
+
             if (reloadButtonObj != null)
             {
                 reloadButtonObj.SetActive(true);
