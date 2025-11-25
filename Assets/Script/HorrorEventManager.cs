@@ -69,12 +69,11 @@ public class HorrorEventManager : MonoBehaviour
     /// </summary>
     private void RegisterEventActions()
     {
-
-        eventActionMap[54] = TriggerFallEvent; // 54:物が落ちる
         eventActionMap[11] = TriggerCockroachSwarm;
         eventActionMap[14] = TriggerZombieFall;
         eventActionMap[31] = TriggerBloodDrip;
         eventActionMap[45] = TriggerRadio;
+        eventActionMap[54] = TriggerFallEvent;
         eventActionMap[56] = TriggerBallRoll;
         /////////////////ここに追加/////////////////
     }
