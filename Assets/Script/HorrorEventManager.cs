@@ -19,6 +19,28 @@ public class HorrorEventManager : MonoBehaviour
     [SerializeField]
     private Transform zombieSpawnPoint;
 
+    [SerializeField] private GameObject bloodSplashObject; // 32: 血痕
+
+    [Header("31: 血が滴るイベント")] // ★ 追加
+    [SerializeField]
+    private GameObject bloodDripObject;
+
+    [Header("45: ラジオイベント")] // ★ 追加
+    [SerializeField]
+    private RadioEventController radioController;
+
+    [Header("55: 窓ガラスが割れるイベント")]
+    [SerializeField]
+    private GameObject normalWindowObject; // 割れる前の窓（普段表示）
+    [SerializeField]
+    private GameObject brokenWindowObject;
+
+    [Header("56: ボールが転がるイベント")] // ★ 追加
+    [SerializeField]
+    private GameObject ballPrefab;     // ボールのプレハブ
+    [SerializeField]
+    private Transform ballSpawnPoint;  // 出現位置
+
     public List<(string Timestamp, int eventType)> eventLog = new List<(string, int)>();
 
     // イベントタイプ → 実行アクション のマップ
@@ -34,9 +56,12 @@ public class HorrorEventManager : MonoBehaviour
         RegisterEventActions();
 
         /////////// 🎬 起動時テスト（必要に応じてコメントアウト）//////////
-        //TriggerHorrorEvent(54);
+        TriggerHorrorEvent(54);
         //TriggerHorrorEvent(11);
         TriggerHorrorEvent(14);
+        TriggerHorrorEvent(31);
+        TriggerHorrorEvent(45);
+
     }
 
     /// <summary>
@@ -48,6 +73,9 @@ public class HorrorEventManager : MonoBehaviour
         eventActionMap[54] = TriggerFallEvent; // 54:物が落ちる
         eventActionMap[11] = TriggerCockroachSwarm;
         eventActionMap[14] = TriggerZombieFall;
+        eventActionMap[31] = TriggerBloodDrip;
+        eventActionMap[45] = TriggerRadio;
+        eventActionMap[56] = TriggerBallRoll;
         /////////////////ここに追加/////////////////
     }
 
@@ -81,7 +109,7 @@ public class HorrorEventManager : MonoBehaviour
     }
 
     // ======== 各イベント処理 ========
-    
+
     // 11: 大量のゴキブリが出現する
     public void TriggerCockroachSwarm()
     {
@@ -105,9 +133,39 @@ public class HorrorEventManager : MonoBehaviour
         }
 
         Debug.Log("😱 ゾンビが降ってきます！");
-        
+
         // 指定した出現位置(zombieSpawnPoint)に、プレハブ(zombiePrefab)を生成する
         Instantiate(zombiePrefab, zombieSpawnPoint.position, zombieSpawnPoint.rotation);
+    }
+
+    //31 血がしたたり落ちる
+    public void TriggerBloodDrip()
+    {
+        if (bloodDripObject != null)
+        {
+            Debug.Log("🩸 血が滴り始めました...");
+            // パーティクルオブジェクトを表示する
+            // (Play On Awakeがオンなら、表示と同時に再生されます)
+            bloodDripObject.SetActive(true);
+        }
+        else
+        {
+            Debug.LogError("31: 血のパーティクルが設定されていません。");
+        }
+    }
+
+    // 45: ラジオから音がする
+    public void TriggerRadio()
+    {
+        if (radioController != null)
+        {
+            // ラジオコントローラーのシーケンスを開始
+            radioController.PlayRadioSequence();
+        }
+        else
+        {
+            Debug.LogError("45: ラジオコントローラーが設定されていません。");
+        }
     }
 
     // 54:物が落ちる
@@ -125,6 +183,38 @@ public class HorrorEventManager : MonoBehaviour
         }
     }
 
-////////ここに関数を追加////////
+    public void TriggerWindowBreak()
+    {
+        if (normalWindowObject != null && brokenWindowObject != null)
+        {
+            Debug.Log("💥 窓ガラスが割れます！");
+            normalWindowObject.SetActive(false); // 通常の窓を非表示
+            brokenWindowObject.SetActive(true);  // 割れるアニメーション付きの窓を表示
+        }
+        else
+        {
+            Debug.LogError("55: 窓ガラスのGameObjectが設定されていません。");
+        }
+    }
+
+    // 56: ボールが転がってくる
+    public void TriggerBallRoll()
+    {
+        if (ballPrefab != null && ballSpawnPoint != null)
+        {
+            Debug.Log("⚽ ボールが転がってきます！");
+            
+            // スポーン位置に、スポーン位置の向き(Rotation)でボールを生成
+            Instantiate(ballPrefab, ballSpawnPoint.position, ballSpawnPoint.rotation);
+        }
+        else
+        {
+            Debug.LogError("56: ボールのプレハブまたは出現位置が設定されていません。");
+        }
+    }
+
+
+
+    ////////ここに関数を追加////////
 
 }

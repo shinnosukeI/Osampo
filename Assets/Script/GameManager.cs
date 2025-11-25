@@ -6,6 +6,65 @@ using System;
 
 public class GameManager : MonoBehaviour
 {
+    [Header("Fade System")]
+    [SerializeField]
+    private ScreenFader screenFader;
+
+    // 【修正5】staticに変更して、シーンが変わっても値を保持するようにする
+    // これにより、LoadStage1でNoiseを指定→次のシーンでNoiseでフェードインが可能になる
+    private static FadeType nextFadeType = FadeType.Simple;
+
+    void Awake()
+    {
+        if (screenFader == null)
+        {
+            screenFader = FindFirstObjectByType<ScreenFader>();
+        }
+    }
+
+    void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // ▼▼▼ 追加: シーンが切り替わったら、そのシーンにある新しいScreenFaderを探し直す ▼▼▼
+        screenFader = FindFirstObjectByType<ScreenFader>();
+        // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
+        if (screenFader != null)
+        {
+            // 記憶しておいたタイプでフェードイン開始
+            screenFader.FadeIn(nextFadeType);
+        }
+    }
+
+    /// <summary>
+    /// フェードタイプを指定してシーン遷移
+    /// </summary>
+    private void LoadSceneWithFade(string sceneName, FadeType type)
+    {
+        // 次のシーンのフェードインでも同じタイプを使うため記憶
+        nextFadeType = type;
+
+        if (screenFader != null)
+        {
+            screenFader.FadeOut(type, () => {
+                SceneManager.LoadScene(sceneName);
+            });
+        }
+        else
+        {
+            SceneManager.LoadScene(sceneName);
+        }
+    }
+
     // 平常時心拍数
     public float BaseHeartRate { get; private set; }
     /// SurveyManagerからアンケート結果 (1～5) を受け取る関数
@@ -38,7 +97,7 @@ public class GameManager : MonoBehaviour
         }
 
         // ロード画面１に移動する
-        UnityEngine.SceneManagement.SceneManager.LoadScene("RestScene1");
+        LoadSceneWithFade("RestScene1", FadeType.Simple);
     }
 
     public void SetBaseHeartRate(float bpm)
@@ -50,27 +109,27 @@ public class GameManager : MonoBehaviour
     //stage1に移動
     public void LoadStage1()
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene("Stage1");
+        LoadSceneWithFade("Stage1", FadeType.Noise);
     }
 
     //stage2に移動
     public void LoadStage2()
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene("Stage2");
+        LoadSceneWithFade("Stage2", FadeType.Noise);
     }
 
     public void LoadSurveyScene()
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene("SurveyScene");
+        LoadSceneWithFade("SurveyScene", FadeType.Noise);
     }
 
     public void LoadRestScene1()
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene("RestScene1");
+        LoadSceneWithFade("RestScene1", FadeType.Simple);
     }
     
     public void LoadConfinementWalk()
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene("ConfinementWalk");
+        LoadSceneWithFade("ConfinementWalk", FadeType.Noise);
     }
 }

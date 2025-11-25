@@ -31,11 +31,6 @@ public class SurveyManager : MonoBehaviour
 
         if (gameManager == null)
         {
-            gameManager = FindFirstObjectByType<GameManager>();
-        }
-
-        if (gameManager == null)
-        {
             Debug.LogError("GameManager が見つかりません！");
             return;
         }
@@ -85,10 +80,30 @@ public class SurveyManager : MonoBehaviour
             return;
         }
 
+        // 成功時のSE再生 (SoundManagerがあれば)
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayCommonButtonSE();
+        }
+
         if (gameManager != null)
         {
             gameManager.ReceiveSurveyResult(selectedOptionId);
             Debug.Log($"GameManager に {selectedOptionId} を送信しました。");
+        }
+        else
+        {
+            // Startで取得失敗した場合の保険
+            gameManager = FindFirstObjectByType<GameManager>();
+            if (gameManager != null)
+            {
+                gameManager.ReceiveSurveyResult(selectedOptionId);
+                Debug.Log($"再取得したGameManager に {selectedOptionId} を送信しました。");
+            }
+            else
+            {
+                Debug.LogError("GameManagerが存在しないため、遷移できません。");
+            }
         }
     }
 }
