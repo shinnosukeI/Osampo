@@ -32,6 +32,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Stage2.unity
     guid: 7fbfb07726355b1439ecab218ba3e83c
+  - enabled: 1
+    path: Assets/Scenes/99_BPMTestScene1.unity
+    guid: 5f540db977805ed428891017d4b82dd9
+  - enabled: 1
+    path: Assets/Scenes/99_BPMTestScene2.unity
+    guid: 70e4dbe6ca942d5448911db4e7fb993d
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
