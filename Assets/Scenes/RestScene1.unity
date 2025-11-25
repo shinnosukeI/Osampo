@@ -530,7 +530,7 @@ MonoBehaviour:
   heartRateManager: {fileID: 179703321}
   videoEndHandler: {fileID: 20554383}
   nextButtonObj: {fileID: 2137930231}
-  testButtonObj: {fileID: 0}
+  testButtonObj: {fileID: 361117607}
   reloadButtonObj: {fileID: 1160867263}
   exitButtonObj: {fileID: 674171844}
   statusText: {fileID: 8418356}
@@ -690,7 +690,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 808509532}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: LoadStage1
+        m_MethodName: LoadBPMtest1
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2044,9 +2044,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Next
-
-'
+  m_text: to:TestBPM1
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2218,7 +2216,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2137930232
 RectTransform:
   m_ObjectHideFlags: 0
