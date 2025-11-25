@@ -60,7 +60,7 @@ public class HorrorEventManager : MonoBehaviour
         //TriggerHorrorEvent(11);
         TriggerHorrorEvent(14);
         TriggerHorrorEvent(31);
-        TriggerHorrorEvent(45);
+        //TriggerHorrorEvent(45);
 
     }
 
