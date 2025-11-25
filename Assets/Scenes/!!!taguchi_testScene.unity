@@ -5829,7 +5829,7 @@ PrefabInstance:
     - target: {fileID: -2035112645727851620, guid: 1cf8d32a602f1fc4ea4be72923efd95c, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: -8274133419916619345, guid: 1cf8d32a602f1fc4ea4be72923efd95c, type: 3}
+      objectReference: {fileID: 2100000, guid: 83316334f22c86d45bbb39e74532a62d, type: 2}
     - target: {fileID: 919132149155446097, guid: 1cf8d32a602f1fc4ea4be72923efd95c, type: 3}
       propertyPath: m_Name
       value: uploads_files_6527136_mannequin
