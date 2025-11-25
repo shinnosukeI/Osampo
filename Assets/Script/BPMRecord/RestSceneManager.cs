@@ -26,6 +26,11 @@ public class RestSceneManager : MonoBehaviour
 
     void Start()
     {
+
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.StopBGM();
+        }
         // マネージャーの自動検索
         if (gameManager == null) gameManager = FindFirstObjectByType<GameManager>();
         if (heartRateManager == null) heartRateManager = FindFirstObjectByType<HeartRateManager>();

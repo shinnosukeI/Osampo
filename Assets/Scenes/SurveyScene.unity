@@ -3484,6 +3484,7 @@ MonoBehaviour:
   submitButton: {fileID: 1406595297}
   gameManager: {fileID: 17838713}
   warningMessageObj: {fileID: 2075953774}
+  surveyBGM: {fileID: 8300000, guid: b6d0780cf14f088499649b822c6db21e, type: 3}
 --- !u!4 &1816812254
 Transform:
   m_ObjectHideFlags: 0
