@@ -129,6 +129,11 @@ public class GameManager : MonoBehaviour
         LoadSceneWithFade("RestScene1", FadeType.Simple);
     }
 
+    public void LoadRestScene2()
+    {
+        LoadSceneWithFade("RestScene2", FadeType.Simple);
+    }
+
     public void LoadConfinementWalk()
     {
         LoadSceneWithFade("ConfinementWalk", FadeType.Noise);
