@@ -92,17 +92,19 @@ public class HeartRateManager : MonoBehaviour
         }
 
         List<int> bpmList = new List<int>();
-        float measureTime = 0f;
-
-        while (measureTime < 10.0f)
+        int durationSeconds = 10;
+        
+        for (int i = 0; i < durationSeconds; i++)
         {
             if (IsSensorActive)
             {
                 bpmList.Add(CurrentBPM);
                 dataRecorder?.RecordHeartRate(CurrentBPM);
+                Debug.Log($"計測: {CurrentBPM} BPM"); // 確認用ログ
             }
-            measureTime += Time.deltaTime;
-            yield return null;
+            
+            // 1秒待機 (これで重複を防ぐ)
+            yield return new WaitForSeconds(1.0f);
         }
 
         dataRecorder?.CloseLogFiles();
