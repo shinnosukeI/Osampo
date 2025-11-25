@@ -13,6 +13,7 @@ public class RestSceneManager : MonoBehaviour
 
     [Header("UI Objects")]
     [SerializeField] private GameObject nextButtonObj; // NextボタンのGameObject
+    [SerializeField] private GameObject reloadButtonObj;
     [SerializeField] private GameObject exitButtonObj; // ExitボタンのGameObject
     [SerializeField] private TextMeshProUGUI statusText; // メッセージ表示用
 
@@ -105,7 +106,13 @@ public class RestSceneManager : MonoBehaviour
             // 失敗パターン
             statusText.text = "心拍計の接続を確認できませんでした。\n再接続してください。";
             exitButtonObj.SetActive(true);
+            
+            if (reloadButtonObj != null)
+            {
+                reloadButtonObj.SetActive(true);
+            }
         }
+        
     }
 
     void OnDestroy()
