@@ -143,9 +143,24 @@ public class GameManager : MonoBehaviour
     {
         LoadSceneWithFade("99_BPMTestScene1", FadeType.Noise);
     }
-    
+
     public void LoadBPMtest2()
     {
         LoadSceneWithFade("99_BPMTestScene2", FadeType.Noise);
+    }
+    
+    // 文字列でシーン名を指定して遷移する汎用メソッド
+    public void LoadTargetScene(string sceneName)
+    {
+        // 基本的にNoiseフェード（恐怖へ向かうため）
+        LoadSceneWithFade(sceneName, FadeType.Noise);
+    }
+
+    // 現在のシーンをリロードするメソッド
+    public void ReloadCurrentScene()
+    {
+        string currentScene = SceneManager.GetActiveScene().name;
+        // 同じシーンへSimpleフェードで戻る
+        LoadSceneWithFade(currentScene, FadeType.Simple);
     }
 }
