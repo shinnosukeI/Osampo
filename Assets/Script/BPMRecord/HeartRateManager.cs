@@ -44,15 +44,14 @@ public class HeartRateManager : MonoBehaviour
         }
     }
 
-    // RestScene1開始時に呼ばれる
-    public void StartRestSceneSequence()
+    public void StartRestSceneSequence(bool needsMeasurement = true)
     {
-        StartCoroutine(ConnectionAndMeasureFlow());
+        StartCoroutine(ConnectionAndMeasureFlow(needsMeasurement));
     }
 
-    private IEnumerator ConnectionAndMeasureFlow()
+    private IEnumerator ConnectionAndMeasureFlow(bool needsMeasurement)
     {
-        // --- 1. 接続確認 (最大3秒) ---
+        // --- 1. 接続確認 (ここは共通) ---
         Debug.Log("【HeartRateManager】接続確認中...");
         float timer = 0f;
         bool connected = false;
@@ -70,17 +69,22 @@ public class HeartRateManager : MonoBehaviour
 
         if (!connected)
         {
-            // ▼▼▼ 修正箇所: LogError を LogWarning に変更 ▼▼▼
-            // LogErrorだとUnityの設定によっては実行が一時停止してしまうため、
-            // 「想定内の失敗」としてWarning（警告）にします。
-            Debug.LogWarning("【HeartRateManager】接続失敗 (タイムアウト)"); 
-            
-            OnConnectionCheckFinished?.Invoke(false); // 失敗を通知
-            yield break; // 計測処理には進まず、ここでコルーチンを抜ける
+            Debug.LogWarning("【HeartRateManager】接続失敗 (タイムアウト)");
+            OnConnectionCheckFinished?.Invoke(false);
+            yield break;
         }
 
-        // 成功を通知
+        // 接続成功通知
         OnConnectionCheckFinished?.Invoke(true);
+
+        // ▼▼▼ 追加: 計測不要ならここで終了 ▼▼▼
+        if (!needsMeasurement)
+        {
+            Debug.Log("【HeartRateManager】接続確認完了 (計測はスキップ)");
+            // 計測結果としての通知は行わず、処理を終える
+            // 必要ならダミーデータで通知しても良いが、RestSceneManager側で制御する
+            yield break; 
+        }
 
         // --- 2. 計測開始 (10秒間) ---
         Debug.Log("【HeartRateManager】平常時計測開始...");

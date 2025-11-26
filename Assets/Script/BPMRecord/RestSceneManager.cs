@@ -11,6 +11,13 @@ public class RestSceneManager : MonoBehaviour
     // VideoEndHandlerは既存のものを使用
     [SerializeField] private VideoEndHandler videoEndHandler;
 
+    [Header("Scene Settings")]
+    // ▼▼▼ 追加: このシーン独自の挙動設定 ▼▼▼
+    [SerializeField] private string nextSceneName = "Stage1"; // 次に遷移するシーン名
+    [SerializeField] private bool doMeasurement = true;       // 平均心拍計測を行うか？
+    [SerializeField] private FadeType transitionFadeType = FadeType.Noise; // 次へのフェード種類
+    // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
     [Header("UI Objects")]
     [SerializeField] private GameObject nextButtonObj; // NextボタンのGameObject
     [SerializeField] private GameObject testButtonObj; // テスト用、Stage1影武者シーンへ遷移するボタン
@@ -37,7 +44,6 @@ public class RestSceneManager : MonoBehaviour
         nextButtonObj.SetActive(false);
         exitButtonObj.SetActive(false);
         reloadButtonObj.SetActive(false);
-
         testButtonObj.SetActive(false);
 
         statusText.text = "Loading...";
@@ -47,10 +53,11 @@ public class RestSceneManager : MonoBehaviour
         {
             heartRateManager.OnConnectionCheckFinished += OnConnectionResult;
             heartRateManager.OnMeasurementFinished += OnMeasurementResult;
-            
-            // ★ シーン開始とともに処理スタート
-            heartRateManager.StartRestSceneSequence();
+
+            // ▼▼▼ 修正: 設定に基づいて計測するかどうかを伝える ▼▼▼
+            heartRateManager.StartRestSceneSequence(doMeasurement);
         }
+        if (SoundManager.Instance != null) SoundManager.Instance.StopBGM();
     }
 
     // VideoEndHandlerから呼び出してもらう関数
@@ -84,33 +91,41 @@ public class RestSceneManager : MonoBehaviour
         if (!isVideoFinished) return; // 動画が終わってないならまだ
         if (isConnectionSuccess == null) return; // 接続判定が出てないならまだ
 
-        // ▼▼▼ 追加: 判定が出たら、まずはテキストオブジェクト自体を表示状態にする ▼▼▼
-        if (statusText != null)
-        {
-            statusText.gameObject.SetActive(true);
-        }
-        // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+        // 計測モードの場合、計測完了(OnMeasurementFinished)を待つ必要があるが、
+        // 今回のHeartRateManagerのロジックでは「接続成功通知」のあとに「計測」が走る。
+        // UI表示タイミングを制御するため、
+        // 「計測あり」の場合はここではまだNextを出さない、という制御も可能だが、
+        // HeartRateManagerが接続成功を返した時点で「接続はOK」なので、
+        // RestScene2(計測なし)の場合は即座にNextを出す。
+
+        if (statusText != null) statusText.gameObject.SetActive(true);
 
         if (isConnectionSuccess == true)
         {
             // 成功パターン
-            statusText.text = ""; // 文字を消す（または "接続成功" と出してもOK）
-            nextButtonObj.SetActive(true);
-            if (testButtonObj != null)
+            if (doMeasurement)
             {
-                testButtonObj.SetActive(true);
+                // 計測あり(RestScene1): 計測完了コールバックでNextを出す方が自然だが、
+                // 既存ロジック(接続OKならNext)を踏襲するなら、ここでテキストだけ変える
+                statusText.text = "接続成功"; 
+                // ※計測完了イベントでボタンを出すようにしても良い
             }
+            else
+            {
+                // 計測なし(RestScene2): 即座に完了
+                statusText.text = "接続成功";
+            }
+
+            // ボタン表示
+            if (nextButtonObj != null) nextButtonObj.SetActive(true);
+            if (testButtonObj != null) testButtonObj.SetActive(true);
         }
         else
         {
-            // 失敗パターン
-            statusText.text = "心拍計の接続を確認できませんでした。\n再接続してください。";
-            exitButtonObj.SetActive(true);
-
-            if (reloadButtonObj != null)
-            {
-                reloadButtonObj.SetActive(true);
-            }
+            // 失敗パターン (共通)
+            statusText.text = "接続確認できませんでした。\n再接続してください。";
+            if (exitButtonObj != null) exitButtonObj.SetActive(true);
+            if (reloadButtonObj != null) reloadButtonObj.SetActive(true);
         }
         
     }
