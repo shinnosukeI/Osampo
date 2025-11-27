@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class StageHeartRateManager : MonoBehaviour
 {
@@ -61,8 +62,27 @@ public class StageHeartRateManager : MonoBehaviour
         isLogging = true;
 
         Debug.Log("ステージ心拍ログ記録開始");
-        // ファイル名: ステージごとの名前にする
-        dataRecorder.OpenLogFile("99_test_stage1_bpm_log");
+        
+        // ▼▼▼ 修正: シーン名に応じてファイル名を切り替える ▼▼▼
+        string sceneName = SceneManager.GetActiveScene().name;
+        string logFileName = "99_test_stage_unknown_log"; // デフォルト
+
+        if (sceneName == "99_BPMTestScene1")
+        {
+            logFileName = "99_test_stage1_bpm_log";
+        }
+        else if (sceneName == "99_BPMTestScene2")
+        {
+            logFileName = "99_test_stage2_bpm_log";
+        }
+        else
+        {
+            // その他のシーンで使われた場合、シーン名を含めるなどしても良い
+            logFileName = $"99_test_{sceneName}_bpm_log";
+        }
+
+        dataRecorder.OpenLogFile(logFileName);
+        // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
         
         // 1秒ごとに記録するコルーチン開始
         StartCoroutine(LoggingCoroutine());

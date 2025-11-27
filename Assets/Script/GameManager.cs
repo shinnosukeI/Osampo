@@ -139,12 +139,12 @@ public class GameManager : MonoBehaviour
         LoadSceneWithFade("ConfinementWalk", FadeType.Noise);
     }
 
-    public void LoadBPMtest1()
+    public void LoadBPMtest1() // Stage1の変わり身
     {
         LoadSceneWithFade("99_BPMTestScene1", FadeType.Noise);
     }
 
-    public void LoadBPMtest2()
+    public void LoadBPMtest2() // Stage2の変わり身
     {
         LoadSceneWithFade("99_BPMTestScene2", FadeType.Noise);
     }
