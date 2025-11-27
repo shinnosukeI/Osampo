@@ -10,9 +10,22 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private ScreenFader screenFader;
 
-    // 【修正5】staticに変更して、シーンが変わっても値を保持するようにする
-    // これにより、LoadStage1でNoiseを指定→次のシーンでNoiseでフェードインが可能になる
+    // シーン遷移時のフェードタイプを保持
     private static FadeType nextFadeType = FadeType.Simple;
+
+    // シーン名の定数定義
+    public static class SceneNames
+    {
+        public const string Title = "ConfinementWalk";
+        public const string Survey = "SurveyScene";
+        public const string Rest1 = "RestScene1";
+        public const string Rest2 = "RestScene2";
+        public const string Stage1 = "Stage1";
+        public const string Stage2 = "Stage2";
+        public const string BPMTest1 = "99_BPMTestScene1";
+        public const string BPMTest2 = "99_BPMTestScene2";
+        // ResultSceneなどが追加される場合はここに追記
+    }
 
     void Awake()
     {
@@ -34,9 +47,8 @@ public class GameManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        // ▼▼▼ 追加: シーンが切り替わったら、そのシーンにある新しいScreenFaderを探し直す ▼▼▼
+        // シーンが切り替わったら、そのシーンにある新しいScreenFaderを探し直す
         screenFader = FindFirstObjectByType<ScreenFader>();
-        // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 
         if (screenFader != null)
         {
@@ -46,7 +58,7 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// フェードタイプを指定してシーン遷移
+    /// フェードタイプを指定してシーン遷移 (Core Method)
     /// </summary>
     private void LoadSceneWithFade(string sceneName, FadeType type)
     {
@@ -68,38 +80,6 @@ public class GameManager : MonoBehaviour
 
     // 平常時心拍数
     public float BaseHeartRate { get; private set; }
-    /// SurveyManagerからアンケート結果 (1～5) を受け取る関数
-    /// </summary>
-    /// <param name="surveyResult">受け取った選択肢ID (1, 2, 3, 4, 5 のいずれか)</param>
-    public void ReceiveSurveyResult(int surveyResult)
-    {
-        Debug.Log($"アンケート結果 {surveyResult} を受け取りました。");
-
-        switch (surveyResult)
-        {
-            case 1:
-                // 異形・クリーチャー的恐怖
-                break;
-            case 2:
-                // 人体・人形的恐怖
-                break;
-            case 3:
-                // 生理的嫌悪・外傷的恐怖
-                break;
-            case 4:
-                // 心理的・行動的恐怖
-                break;
-            case 5:
-                // 超常的な恐怖
-                break;
-            default:
-                Debug.LogWarning("不明なIDが送信されました。");
-                break;
-        }
-
-        // ロード画面１に移動する
-        LoadSceneWithFade("RestScene1", FadeType.Simple);
-    }
 
     public void SetBaseHeartRate(float bpm)
     {
@@ -107,47 +87,31 @@ public class GameManager : MonoBehaviour
         Debug.Log($"GameManager: 平常時心拍数を {BaseHeartRate} に設定しました。");
     }
 
-    //stage1に移動
-    public void LoadStage1()
+    /// <summary>
+    /// SurveyManagerからアンケート結果を受け取る関数
+    /// </summary>
+    public void ReceiveSurveyResult(int surveyResult)
     {
-        LoadSceneWithFade("Stage1", FadeType.Noise);
+        Debug.Log($"アンケート結果 {surveyResult} を受け取りました。");
+        // ロード画面１に移動する
+        LoadRestScene1();
     }
 
-    //stage2に移動
-    public void LoadStage2()
-    {
-        LoadSceneWithFade("Stage2", FadeType.Noise);
-    }
+    // ========================================================================
+    // ▼▼▼ Scene Loading Wrappers (Inspector / Public API) ▼▼▼
+    // ========================================================================
 
-    public void LoadSurveyScene()
-    {
-        LoadSceneWithFade("SurveyScene", FadeType.Noise);
-    }
-
-    public void LoadRestScene1()
-    {
-        LoadSceneWithFade("RestScene1", FadeType.Simple);
-    }
-
-    public void LoadRestScene2()
-    {
-        LoadSceneWithFade("RestScene2", FadeType.Simple);
-    }
-
-    public void LoadConfinementWalk()
-    {
-        LoadSceneWithFade("ConfinementWalk", FadeType.Noise);
-    }
-
-    public void LoadBPMtest1()
-    {
-        LoadSceneWithFade("99_BPMTestScene1", FadeType.Noise);
-    }
-
-    public void LoadBPMtest2()
-    {
-        LoadSceneWithFade("99_BPMTestScene2", FadeType.Noise);
-    }
+    public void LoadStage1() => LoadSceneWithFade(SceneNames.Stage1, FadeType.Noise);
+    public void LoadStage2() => LoadSceneWithFade(SceneNames.Stage2, FadeType.Noise);
+    public void LoadSurveyScene() => LoadSceneWithFade(SceneNames.Survey, FadeType.Noise);
+    public void LoadRestScene1() => LoadSceneWithFade(SceneNames.Rest1, FadeType.Simple);
+    public void LoadRestScene2() => LoadSceneWithFade(SceneNames.Rest2, FadeType.Simple);
+    public void LoadConfinementWalk() => LoadSceneWithFade(SceneNames.Title, FadeType.Noise);
+    
+    // Stage1の変わり身
+    public void LoadBPMtest1() => LoadSceneWithFade(SceneNames.BPMTest1, FadeType.Noise);
+    // Stage2の変わり身
+    public void LoadBPMtest2() => LoadSceneWithFade(SceneNames.BPMTest2, FadeType.Noise);
     
     // 文字列でシーン名を指定して遷移する汎用メソッド
     public void LoadTargetScene(string sceneName)

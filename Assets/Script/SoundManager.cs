@@ -43,14 +43,22 @@ public class SoundManager : MonoBehaviour
     // ========================================================================
 
     /// <summary>
+    /// 汎用的なSE再生メソッド
+    /// </summary>
+    public void PlaySE(AudioClip clip)
+    {
+        if (clip != null)
+        {
+            seAudioSource.PlayOneShot(clip);
+        }
+    }
+
+    /// <summary>
     /// タイトル画面のStartボタン専用SEを再生
     /// </summary>
     public void PlayTitleStartSE()
     {
-        if (titleStartSE != null)
-        {
-            seAudioSource.PlayOneShot(titleStartSE);
-        }
+        PlaySE(titleStartSE);
     }
 
     /// <summary>
@@ -58,10 +66,7 @@ public class SoundManager : MonoBehaviour
     /// </summary>
     public void PlayCommonButtonSE()
     {
-        if (commonButtonSE != null)
-        {
-            seAudioSource.PlayOneShot(commonButtonSE);
-        }
+        PlaySE(commonButtonSE);
     }
 
     // ========================================================================

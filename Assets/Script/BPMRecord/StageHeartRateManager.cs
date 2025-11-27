@@ -1,11 +1,12 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
-public class StageHeartRateManager : MonoBehaviour
+public class StageHeartRateManager : BaseHeartRateManager
 {
     [Header("System")]
-    [SerializeField] private DataRecorder dataRecorder;
+    // dataRecorderはBaseHeartRateManagerで定義済み
     [SerializeField] private GameManager gameManager;
 
     [Header("Animation Settings")]
@@ -15,7 +16,7 @@ public class StageHeartRateManager : MonoBehaviour
     [SerializeField] private float decaySpeed = 5.0f;
 
     // 内部変数
-    private int currentBPM = 60;
+    // currentBPMはBaseHeartRateManagerで定義済み
     private bool isLogging = false;
     
     // アニメーション用
@@ -23,17 +24,19 @@ public class StageHeartRateManager : MonoBehaviour
     private float currentPulse = 0f;
     private float displayBpm = 60f;
 
-    void Start()
+    protected override void Start()
     {
-        if (dataRecorder == null) dataRecorder = GetComponent<DataRecorder>();
+        base.Start(); // dataRecorderの取得など
+
         if (gameManager == null) gameManager = FindFirstObjectByType<GameManager>();
 
         // ログ開始
         StartLogging();
     }
 
-    void Update()
+    protected override void Update()
     {
+        base.Update();
         // ハートのアニメーション処理
         UpdateHeartAnimation();
     }
@@ -44,14 +47,7 @@ public class StageHeartRateManager : MonoBehaviour
         StopLogging();
     }
 
-    // ▼▼▼ EventReceiverから呼ばれる関数 ▼▼▼
-    public void OnIntEvent(int value)
-    {
-        if (value >= 30)
-        {
-            currentBPM = value;
-        }
-    }
+    // OnIntEventはBaseHeartRateManagerで定義済み（BPM更新）
 
     // -------- ログ機能 --------
 
@@ -61,8 +57,26 @@ public class StageHeartRateManager : MonoBehaviour
         isLogging = true;
 
         Debug.Log("ステージ心拍ログ記録開始");
-        // ファイル名: ステージごとの名前にする
-        dataRecorder.OpenLogFile("99_test_stage1_bpm_log");
+        
+        // シーン名に応じてファイル名を切り替える
+        string sceneName = SceneManager.GetActiveScene().name;
+        string logFileName = "99_test_stage_unknown_log"; // デフォルト
+
+        if (sceneName == "99_BPMTestScene1")
+        {
+            logFileName = "99_test_stage1_bpm_log";
+        }
+        else if (sceneName == "99_BPMTestScene2")
+        {
+            logFileName = "99_test_stage2_bpm_log";
+        }
+        else
+        {
+            // その他のシーンで使われた場合、シーン名を含めるなどしても良い
+            logFileName = $"99_test_{sceneName}_bpm_log";
+        }
+
+        dataRecorder.OpenLogFile(logFileName);
         
         // 1秒ごとに記録するコルーチン開始
         StartCoroutine(LoggingCoroutine());

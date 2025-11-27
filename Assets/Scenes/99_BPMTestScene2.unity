@@ -923,7 +923,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 124935617}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: LoadRestScene2
+        m_MethodName: LoadConfinementWalk
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1311,10 +1311,10 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 139823490}
   - {fileID: 1973622999}
   - {fileID: 1771129555}
-  - {fileID: 124935621}
-  - {fileID: 384922744}
   - {fileID: 231936816}
+  - {fileID: 124935621}
   - {fileID: 1971261439}
+  - {fileID: 139823490}
+  - {fileID: 384922744}
