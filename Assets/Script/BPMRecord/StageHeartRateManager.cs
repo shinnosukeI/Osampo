@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Collections;
 using UnityEngine.SceneManagement;
 
-public class StageHeartRateManager : MonoBehaviour
+public class StageHeartRateManager : BaseHeartRateManager
 {
     [Header("System")]
-    [SerializeField] private DataRecorder dataRecorder;
+    // dataRecorderはBaseHeartRateManagerで定義済み
     [SerializeField] private GameManager gameManager;
 
     [Header("Animation Settings")]
@@ -16,7 +16,7 @@ public class StageHeartRateManager : MonoBehaviour
     [SerializeField] private float decaySpeed = 5.0f;
 
     // 内部変数
-    private int currentBPM = 60;
+    // currentBPMはBaseHeartRateManagerで定義済み
     private bool isLogging = false;
     
     // アニメーション用
@@ -24,17 +24,19 @@ public class StageHeartRateManager : MonoBehaviour
     private float currentPulse = 0f;
     private float displayBpm = 60f;
 
-    void Start()
+    protected override void Start()
     {
-        if (dataRecorder == null) dataRecorder = GetComponent<DataRecorder>();
+        base.Start(); // dataRecorderの取得など
+
         if (gameManager == null) gameManager = FindFirstObjectByType<GameManager>();
 
         // ログ開始
         StartLogging();
     }
 
-    void Update()
+    protected override void Update()
     {
+        base.Update();
         // ハートのアニメーション処理
         UpdateHeartAnimation();
     }
@@ -45,14 +47,7 @@ public class StageHeartRateManager : MonoBehaviour
         StopLogging();
     }
 
-    // ▼▼▼ EventReceiverから呼ばれる関数 ▼▼▼
-    public void OnIntEvent(int value)
-    {
-        if (value >= 30)
-        {
-            currentBPM = value;
-        }
-    }
+    // OnIntEventはBaseHeartRateManagerで定義済み（BPM更新）
 
     // -------- ログ機能 --------
 
@@ -63,7 +58,7 @@ public class StageHeartRateManager : MonoBehaviour
 
         Debug.Log("ステージ心拍ログ記録開始");
         
-        // ▼▼▼ 修正: シーン名に応じてファイル名を切り替える ▼▼▼
+        // シーン名に応じてファイル名を切り替える
         string sceneName = SceneManager.GetActiveScene().name;
         string logFileName = "99_test_stage_unknown_log"; // デフォルト
 
@@ -82,7 +77,6 @@ public class StageHeartRateManager : MonoBehaviour
         }
 
         dataRecorder.OpenLogFile(logFileName);
-        // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
         
         // 1秒ごとに記録するコルーチン開始
         StartCoroutine(LoggingCoroutine());
