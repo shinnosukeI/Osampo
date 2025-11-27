@@ -123,6 +123,10 @@ public class HeartRateManager : BaseHeartRateManager
         }
 
         Debug.Log($"【HeartRateManager】計測完了: 平均 {averageBpm}");
+        
+        // GameManagerに保存 (ResultScene用)
+        GameManager.SavedRestBPM = averageBpm;
+        
         OnMeasurementFinished?.Invoke(averageBpm); // 結果を通知
     }
 }

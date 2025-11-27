@@ -923,7 +923,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 124935617}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: LoadConfinementWalk
+        m_MethodName: LoadResultScene
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

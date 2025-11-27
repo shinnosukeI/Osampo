@@ -18,6 +18,7 @@ public class StageHeartRateManager : BaseHeartRateManager
     // 内部変数
     // currentBPMはBaseHeartRateManagerで定義済み
     private bool isLogging = false;
+    private List<int> currentStageBpmList = new List<int>(); // メモリ保存用リスト
     
     // アニメーション用
     private float beatTimer = 0f;
@@ -55,6 +56,7 @@ public class StageHeartRateManager : BaseHeartRateManager
     {
         if (isLogging) return;
         isLogging = true;
+        currentStageBpmList.Clear(); // リスト初期化
 
         Debug.Log("ステージ心拍ログ記録開始");
         
@@ -84,9 +86,24 @@ public class StageHeartRateManager : BaseHeartRateManager
 
     private void StopLogging()
     {
+        if (!isLogging) return; // 既に停止済みなら何もしない
+
         isLogging = false;
         dataRecorder.CloseLogFiles();
         Debug.Log("ステージ心拍ログ記録終了");
+
+        // ▼▼▼ GameManagerにリストを保存 ▼▼▼
+        string sceneName = SceneManager.GetActiveScene().name;
+        if (sceneName == "99_BPMTestScene1")
+        {
+            GameManager.SavedStage1BPMList = new List<int>(currentStageBpmList);
+            Debug.Log($"Stage1 BPM List Saved: Count={currentStageBpmList.Count}");
+        }
+        else if (sceneName == "99_BPMTestScene2")
+        {
+            GameManager.SavedStage2BPMList = new List<int>(currentStageBpmList);
+            Debug.Log($"Stage2 BPM List Saved: Count={currentStageBpmList.Count}");
+        }
     }
 
     private IEnumerator LoggingCoroutine()
@@ -95,6 +112,12 @@ public class StageHeartRateManager : BaseHeartRateManager
         {
             // 現在のBPMを記録
             dataRecorder.RecordHeartRate(currentBPM);
+            
+            // リストにも追加 (ResultScene用)
+            if (currentBPM > 0)
+            {
+                currentStageBpmList.Add(currentBPM);
+            }
             
             // 1秒待つ
             yield return new WaitForSeconds(1.0f);
@@ -133,10 +156,22 @@ public class StageHeartRateManager : BaseHeartRateManager
     {
         StopLogging(); // 明示的に停止
         
-        // RestScene2へ遷移
+        // RestScene2へ遷移 (シーン名で分岐しても良いが、現状はGameManagerに任せる)
+        // ※ 99_BPMTestScene2の場合は ResultScene に行く必要があるかもしれないが
+        //    ユーザー要望では「ResultSceneはStage2の次に遷移」とあるので、
+        //    BPMTestScene2のNextボタンがResultScene行きになるようにGameManager側かここで制御が必要。
+        
         if (gameManager != null)
         {
-            gameManager.LoadRestScene2();
+            string sceneName = SceneManager.GetActiveScene().name;
+            if (sceneName == "99_BPMTestScene2")
+            {
+                gameManager.LoadResultScene();
+            }
+            else
+            {
+                gameManager.LoadRestScene2();
+            }
         }
     }
 }

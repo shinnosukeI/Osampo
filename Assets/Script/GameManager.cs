@@ -24,7 +24,7 @@ public class GameManager : MonoBehaviour
         public const string Stage2 = "Stage2";
         public const string BPMTest1 = "99_BPMTestScene1";
         public const string BPMTest2 = "99_BPMTestScene2";
-        // ResultSceneなどが追加される場合はここに追記
+        public const string Result = "ResultScene"; // 追加
     }
 
     void Awake()
@@ -78,12 +78,27 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // 平常時心拍数
+    // ========================================================================
+    // ▼▼▼ Data Persistence (ResultScene用) ▼▼▼
+    // ========================================================================
+    // 平常時心拍数 (RestScene1で計測)
+    public static float SavedRestBPM = 0f;
+    
+    // Stage1 (99_BPMTestScene1) の心拍数リスト
+    public static List<int> SavedStage1BPMList = new List<int>();
+
+    // Stage2 (99_BPMTestScene2) の心拍数リスト
+    public static List<int> SavedStage2BPMList = new List<int>();
+
+    // ========================================================================
+
+    // 平常時心拍数 (Instance property - keep for compatibility if needed, or sync with static)
     public float BaseHeartRate { get; private set; }
 
     public void SetBaseHeartRate(float bpm)
     {
         BaseHeartRate = bpm;
+        SavedRestBPM = bpm; // Static変数にも保存
         Debug.Log($"GameManager: 平常時心拍数を {BaseHeartRate} に設定しました。");
     }
 
@@ -107,6 +122,7 @@ public class GameManager : MonoBehaviour
     public void LoadRestScene1() => LoadSceneWithFade(SceneNames.Rest1, FadeType.Simple);
     public void LoadRestScene2() => LoadSceneWithFade(SceneNames.Rest2, FadeType.Simple);
     public void LoadConfinementWalk() => LoadSceneWithFade(SceneNames.Title, FadeType.Noise);
+    public void LoadResultScene() => LoadSceneWithFade(SceneNames.Result, FadeType.Simple); // 追加
     
     // Stage1の変わり身
     public void LoadBPMtest1() => LoadSceneWithFade(SceneNames.BPMTest1, FadeType.Noise);
