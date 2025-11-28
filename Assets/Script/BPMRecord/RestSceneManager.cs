@@ -22,7 +22,7 @@ public class RestSceneManager : MonoBehaviour
     [SerializeField] private GameObject reloadButtonObj;
     [SerializeField] private GameObject exitButtonObj; // ExitボタンのGameObject
     [SerializeField] private TextMeshProUGUI statusText; // メッセージ表示用
-                                                         // 状態フラグ
+
     private bool isVideoFinished = false;
     private bool? isConnectionSuccess = null; // null=未定, true=成功, false=失敗
 

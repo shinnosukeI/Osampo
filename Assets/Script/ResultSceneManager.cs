@@ -2,6 +2,8 @@ using UnityEngine;
 using TMPro;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine.EventSystems; // EventSystem操作用
+using UnityEngine.SceneManagement; // Fallback用
 
 public class ResultSceneManager : MonoBehaviour
 {
@@ -19,7 +21,24 @@ public class ResultSceneManager : MonoBehaviour
 
     void Start()
     {
-        if (gameManager == null) gameManager = FindFirstObjectByType<GameManager>();
+        // 1. EventSystemの存在確認と自動生成 (UI操作不能を防ぐ)
+        if (FindFirstObjectByType<EventSystem>() == null)
+        {
+            Debug.LogWarning("ResultSceneManager: EventSystem not found. Creating one dynamically.");
+            GameObject eventSystemGO = new GameObject("EventSystem");
+            eventSystemGO.AddComponent<EventSystem>();
+            eventSystemGO.AddComponent<StandaloneInputModule>();
+        }
+
+        // 3. GameManagerの取得 (ロバスト性向上)
+        if (gameManager == null)
+        {
+            gameManager = FindFirstObjectByType<GameManager>();
+            if (gameManager == null)
+            {
+                Debug.LogError("ResultSceneManager: GameManager not found in scene!");
+            }
+        }
 
         DisplayResults();
     }
@@ -104,9 +123,29 @@ public class ResultSceneManager : MonoBehaviour
     // Exitボタンから呼ばれる
     public void OnExitButtonClicked()
     {
+        Debug.Log("ResultSceneManager: Exit button clicked.");
+
+        // GameManager経由で遷移を試みる
         if (gameManager != null)
         {
             gameManager.LoadConfinementWalk(); 
+        }
+        else
+        {
+            // Fallback: GameManagerが見つからない場合、直接再取得を試みる
+            Debug.LogWarning("ResultSceneManager: GameManager ref is null. Trying to find it...");
+            gameManager = FindFirstObjectByType<GameManager>();
+
+            if (gameManager != null)
+            {
+                gameManager.LoadConfinementWalk();
+            }
+            else
+            {
+                // Fallback: それでもダメなら直接シーン遷移
+                Debug.LogError("ResultSceneManager: GameManager not found! Loading Title scene directly.");
+                SceneManager.LoadScene("ConfinementWalk");
+            }
         }
     }
 }
