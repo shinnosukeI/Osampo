@@ -139,6 +139,12 @@ public class ResultSceneManager : MonoBehaviour
 
         Debug.Log("ResultSceneManager: Exit button clicked.");
 
+        // SE再生
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayCommonButtonSE();
+        }
+
         // GameManager経由で遷移を試みる
         if (gameManager != null)
         {
