@@ -103,6 +103,17 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
+    /// データをリセットする (ゲーム開始時に呼ぶ)
+    /// </summary>
+    public void ResetData()
+    {
+        SavedRestBPM = 0f;
+        SavedStage1BPMList.Clear();
+        SavedStage2BPMList.Clear();
+        Debug.Log("GameManager: Data reset for new game.");
+    }
+
+    /// <summary>
     /// SurveyManagerからアンケート結果を受け取る関数
     /// </summary>
     public void ReceiveSurveyResult(int surveyResult)

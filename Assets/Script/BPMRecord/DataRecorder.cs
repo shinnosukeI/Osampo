@@ -10,7 +10,9 @@ public class DataRecorder : MonoBehaviour
     // ログを保存するフォルダを開く・作る
     public void OpenLogFile(string fileName)
     {
-        string directoryPath = Path.Combine(Application.dataPath, "CSV");
+        // Application.dataPath (Assetsフォルダ) はEditorのインポートを走らせてしまうため
+        // persistentDataPath (ユーザーデータフォルダ) に変更
+        string directoryPath = Path.Combine(Application.persistentDataPath, "CSV");
         if (!Directory.Exists(directoryPath))
         {
             Directory.CreateDirectory(directoryPath);

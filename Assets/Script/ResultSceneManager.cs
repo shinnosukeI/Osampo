@@ -123,6 +123,13 @@ public class ResultSceneManager : MonoBehaviour
     // Exitボタンから呼ばれる
     public void OnExitButtonClicked()
     {
+        // 誤爆防止: ResultScene以外では実行しない
+        if (SceneManager.GetActiveScene().name != "ResultScene")
+        {
+            Debug.LogWarning($"ResultSceneManager: Ignoring Exit button click in {SceneManager.GetActiveScene().name}");
+            return;
+        }
+
         Debug.Log("ResultSceneManager: Exit button clicked.");
 
         // GameManager経由で遷移を試みる
@@ -132,12 +139,12 @@ public class ResultSceneManager : MonoBehaviour
         }
         else
         {
-            // Fallback: GameManagerが見つからない場合、直接再取得を試みる
-            Debug.LogWarning("ResultSceneManager: GameManager ref is null. Trying to find it...");
+            // Fallback: GameManagerが見つからない場合、静かに再取得を試みる
             gameManager = FindFirstObjectByType<GameManager>();
 
             if (gameManager != null)
             {
+                Debug.Log("ResultSceneManager: Found GameManager via fallback.");
                 gameManager.LoadConfinementWalk();
             }
             else

@@ -78,11 +78,22 @@ public class ScreenFader : MonoBehaviour
         else
         {
             // Noise: 1(透明) -> 0(黒)
+            // マテリアルがない場合はSimpleFadeにフォールバック
+            if (noiseFadeMaterialInstance == null)
+            {
+                Debug.LogWarning("ScreenFader: Noise material missing, falling back to Simple fade.");
+                fadePanel.material = null;
+                Color c = Color.black;
+                c.a = 0f;
+                fadePanel.color = c;
+                StartCoroutine(PerformSimpleFade(0f, 1f, simpleFadeDuration, onComplete));
+                return;
+            }
+
             fadePanel.material = noiseFadeMaterialInstance;
             fadePanel.color = Color.black;
             
-            if (noiseFadeMaterialInstance != null)
-                noiseFadeMaterialInstance.SetFloat(cutoffPropertyId, 1.0f); // 透明から
+            noiseFadeMaterialInstance.SetFloat(cutoffPropertyId, 1.0f); // 透明から
 
             // 1.0(透明) から 0.0(黒) へ減らす
             StartCoroutine(PerformNoiseFade(1.0f, 0.0f, noiseFadeDuration, onComplete));
@@ -109,11 +120,25 @@ public class ScreenFader : MonoBehaviour
         else
         {
             // Noise: 0(黒) -> 1(透明)
+            // マテリアルがない場合はSimpleFadeにフォールバック
+            if (noiseFadeMaterialInstance == null)
+            {
+                Debug.LogWarning("ScreenFader: Noise material missing, falling back to Simple fade.");
+                fadePanel.material = null;
+                Color c = Color.black;
+                c.a = 1f;
+                fadePanel.color = c;
+                StartCoroutine(PerformSimpleFade(1f, 0f, simpleFadeDuration, () => {
+                    fadePanel.gameObject.SetActive(false);
+                    onComplete?.Invoke();
+                }));
+                return;
+            }
+
             fadePanel.material = noiseFadeMaterialInstance;
             fadePanel.color = Color.black;
 
-            if (noiseFadeMaterialInstance != null)
-                noiseFadeMaterialInstance.SetFloat(cutoffPropertyId, 0.0f); // 黒から
+            noiseFadeMaterialInstance.SetFloat(cutoffPropertyId, 0.0f); // 黒から
 
             // 0.0(黒) から 1.0(透明) へ増やす
             StartCoroutine(PerformNoiseFade(0.0f, 1.0f, noiseFadeDuration, () => {
@@ -147,11 +172,24 @@ public class ScreenFader : MonoBehaviour
         {
             timer += Time.deltaTime;
             float val = Mathf.Lerp(startVal, endVal, timer / duration);
-            noiseFadeMaterialInstance.SetFloat(cutoffPropertyId, val);
+            
+            // 安全策: マテリアルが途中で消えた場合
+            if (noiseFadeMaterialInstance != null)
+            {
+                noiseFadeMaterialInstance.SetFloat(cutoffPropertyId, val);
+            }
+            else
+            {
+                break; // ループを抜けて終了処理へ
+            }
             yield return null;
         }
-        // 最終値をセット（ここで0になれば、Shader側のif文で確実に黒になる）
-        noiseFadeMaterialInstance.SetFloat(cutoffPropertyId, endVal);
+        
+        if (noiseFadeMaterialInstance != null)
+        {
+            noiseFadeMaterialInstance.SetFloat(cutoffPropertyId, endVal);
+        }
+
         isFading = false;
         onComplete?.Invoke();
     }

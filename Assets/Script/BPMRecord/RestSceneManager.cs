@@ -12,9 +12,7 @@ public class RestSceneManager : MonoBehaviour
     [SerializeField] private VideoEndHandler videoEndHandler;
 
     [Header("Scene Settings")]
-    [SerializeField] private string nextSceneName = "Stage1"; // 次に遷移するシーン名
     [SerializeField] private bool doMeasurement = true;       // 平均心拍計測を行うか？
-    [SerializeField] private FadeType transitionFadeType = FadeType.Noise; // 次へのフェード種類
 
     [Header("UI Objects")]
     [SerializeField] private GameObject nextButtonObj; // NextボタンのGameObject
@@ -39,12 +37,12 @@ public class RestSceneManager : MonoBehaviour
         if (videoEndHandler == null) videoEndHandler = FindFirstObjectByType<VideoEndHandler>();
 
         // ボタンの初期化（非表示）
-        nextButtonObj.SetActive(false);
-        exitButtonObj.SetActive(false);
-        reloadButtonObj.SetActive(false);
-        testButtonObj.SetActive(false);
+        if (nextButtonObj != null) nextButtonObj.SetActive(false);
+        if (exitButtonObj != null) exitButtonObj.SetActive(false);
+        if (reloadButtonObj != null) reloadButtonObj.SetActive(false);
+        if (testButtonObj != null) testButtonObj.SetActive(false);
 
-        statusText.text = "Loading...";
+        if (statusText != null) statusText.text = "Loading...";
 
         // HeartRateManagerのイベント監視を開始
         if (heartRateManager != null)
@@ -105,13 +103,13 @@ public class RestSceneManager : MonoBehaviour
             {
                 // 計測あり(RestScene1): 計測完了コールバックでNextを出す方が自然だが、
                 // 既存ロジック(接続OKならNext)を踏襲するなら、ここでテキストだけ変える
-                statusText.text = "接続成功"; 
+                if (statusText != null) statusText.text = "接続成功"; 
                 // ※計測完了イベントでボタンを出すようにしても良い
             }
             else
             {
                 // 計測なし(RestScene2): 即座に完了
-                statusText.text = "接続成功";
+                if (statusText != null) statusText.text = "接続成功";
             }
 
             // ボタン表示
@@ -121,7 +119,7 @@ public class RestSceneManager : MonoBehaviour
         else
         {
             // 失敗パターン (共通)
-            statusText.text = "接続確認できませんでした。\n再接続してください。";
+            if (statusText != null) statusText.text = "接続確認できませんでした。\n再接続してください。";
             if (exitButtonObj != null) exitButtonObj.SetActive(true);
             if (reloadButtonObj != null) reloadButtonObj.SetActive(true);
         }
