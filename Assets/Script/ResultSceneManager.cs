@@ -10,9 +10,9 @@ public class ResultSceneManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI stage1Rank1Text;
     [SerializeField] private TextMeshProUGUI stage1Rank2Text;
     [SerializeField] private TextMeshProUGUI stage1Rank3Text;
-    [SerializeField] private TextMeshProUGUI stage1AverageText; // 追加
+    [SerializeField] private TextMeshProUGUI stage1AverageText; 
     [SerializeField] private TextMeshProUGUI stage2Rank1Text;
-    [SerializeField] private TextMeshProUGUI stage2AverageText; // 追加
+    [SerializeField] private TextMeshProUGUI stage2AverageText; 
 
     [Header("System")]
     [SerializeField] private GameManager gameManager;
@@ -106,7 +106,7 @@ public class ResultSceneManager : MonoBehaviour
     {
         if (gameManager != null)
         {
-            gameManager.LoadConfinementWalk(); // タイトルへ
+            gameManager.LoadConfinementWalk(); 
         }
     }
 }

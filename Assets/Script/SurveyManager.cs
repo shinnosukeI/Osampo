@@ -4,33 +4,20 @@ using UnityEngine.SceneManagement;
 
 public class SurveyManager : MonoBehaviour
 {
-    [SerializeField]
-    private ToggleGroup optionsToggleGroup;
-
-    [SerializeField]
-    private Button submitButton;
-
-    [SerializeField]
-    private GameManager gameManager;
-
-    // ▼▼▼ 追加1: 警告メッセージのオブジェクトを割り当てる変数 ▼▼▼
-    [SerializeField]
-    private GameObject warningMessageObj;
-    // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
-
-    [SerializeField]
-    private AudioClip surveyBGM;
+    [SerializeField] private ToggleGroup optionsToggleGroup;
+    [SerializeField] private Button submitButton;
+    [SerializeField] private GameManager gameManager;
+    [SerializeField] private GameObject warningMessageObj;
+    [SerializeField] private AudioClip surveyBGM;
 
     private int selectedOptionId = -1;
 
     private void Start()
     {
-        // ▼▼▼ 追加2: ゲーム開始時に警告メッセージを隠す ▼▼▼
         if (warningMessageObj != null)
         {
             warningMessageObj.SetActive(false);
         }
-        // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 
         if (gameManager == null)
         {
@@ -64,12 +51,11 @@ public class SurveyManager : MonoBehaviour
             optionsToggleGroup.allowSwitchOff = false;
         }
 
-        // ▼▼▼ 追加3: 選択肢を選んだら、警告メッセージが出ていれば消す ▼▼▼
+        // 選択肢を選んだら、警告メッセージが出ていれば消す 
         if (warningMessageObj != null)
         {
             warningMessageObj.SetActive(false);
         }
-        // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
     }
 
     public void SubmitSurvey()
@@ -79,12 +65,11 @@ public class SurveyManager : MonoBehaviour
         {
             Debug.LogWarning("まだ選択肢が選ばれていません。");
 
-            // ▼▼▼ 追加4: 警告メッセージを表示する ▼▼▼
+            // 警告メッセージを表示
             if (warningMessageObj != null)
             {
                 warningMessageObj.SetActive(true);
             }
-            // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
             return;
         }
 

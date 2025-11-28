@@ -24,7 +24,7 @@ public class GameManager : MonoBehaviour
         public const string Stage2 = "Stage2";
         public const string BPMTest1 = "99_BPMTestScene1";
         public const string BPMTest2 = "99_BPMTestScene2";
-        public const string Result = "ResultScene"; // 追加
+        public const string Result = "ResultScene"; 
     }
 
     void Awake()
@@ -108,7 +108,6 @@ public class GameManager : MonoBehaviour
     public void ReceiveSurveyResult(int surveyResult)
     {
         Debug.Log($"アンケート結果 {surveyResult} を受け取りました。");
-        // ロード画面１に移動する
         LoadRestScene1();
     }
 
@@ -132,7 +131,6 @@ public class GameManager : MonoBehaviour
     // 文字列でシーン名を指定して遷移する汎用メソッド
     public void LoadTargetScene(string sceneName)
     {
-        // 基本的にNoiseフェード（恐怖へ向かうため）
         LoadSceneWithFade(sceneName, FadeType.Noise);
     }
 
@@ -140,7 +138,6 @@ public class GameManager : MonoBehaviour
     public void ReloadCurrentScene()
     {
         string currentScene = SceneManager.GetActiveScene().name;
-        // 同じシーンへSimpleフェードで戻る
         LoadSceneWithFade(currentScene, FadeType.Simple);
     }
 }

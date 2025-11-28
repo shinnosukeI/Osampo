@@ -12,11 +12,9 @@ public class RestSceneManager : MonoBehaviour
     [SerializeField] private VideoEndHandler videoEndHandler;
 
     [Header("Scene Settings")]
-    // ▼▼▼ 追加: このシーン独自の挙動設定 ▼▼▼
     [SerializeField] private string nextSceneName = "Stage1"; // 次に遷移するシーン名
     [SerializeField] private bool doMeasurement = true;       // 平均心拍計測を行うか？
     [SerializeField] private FadeType transitionFadeType = FadeType.Noise; // 次へのフェード種類
-    // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 
     [Header("UI Objects")]
     [SerializeField] private GameObject nextButtonObj; // NextボタンのGameObject

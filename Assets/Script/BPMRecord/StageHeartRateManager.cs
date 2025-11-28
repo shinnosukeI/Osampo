@@ -10,7 +10,7 @@ public class StageHeartRateManager : BaseHeartRateManager
     [SerializeField] private GameManager gameManager;
 
     [Header("Animation Settings")]
-    [SerializeField] private RectTransform heartIcon; // 拍動させるハートの画像
+    [SerializeField] private RectTransform heartIcon; 
     [SerializeField] private float minScale = 1.0f;
     [SerializeField] private float maxScale = 1.2f;
     [SerializeField] private float decaySpeed = 5.0f;
@@ -18,9 +18,7 @@ public class StageHeartRateManager : BaseHeartRateManager
     // 内部変数
     // currentBPMはBaseHeartRateManagerで定義済み
     private bool isLogging = false;
-    private List<int> currentStageBpmList = new List<int>(); // メモリ保存用リスト
-    
-    // アニメーション用
+    private List<int> currentStageBpmList = new List<int>(); 
     private float beatTimer = 0f;
     private float currentPulse = 0f;
     private float displayBpm = 60f;
@@ -38,7 +36,6 @@ public class StageHeartRateManager : BaseHeartRateManager
     protected override void Update()
     {
         base.Update();
-        // ハートのアニメーション処理
         UpdateHeartAnimation();
     }
 
@@ -47,8 +44,6 @@ public class StageHeartRateManager : BaseHeartRateManager
         // シーン移動時などに確実にログを閉じる
         StopLogging();
     }
-
-    // OnIntEventはBaseHeartRateManagerで定義済み（BPM更新）
 
     // -------- ログ機能 --------
 
@@ -62,7 +57,7 @@ public class StageHeartRateManager : BaseHeartRateManager
         
         // シーン名に応じてファイル名を切り替える
         string sceneName = SceneManager.GetActiveScene().name;
-        string logFileName = "99_test_stage_unknown_log"; // デフォルト
+        string logFileName = "99_test_stage_unknown_log"; 
 
         if (sceneName == "99_BPMTestScene1")
         {
@@ -92,7 +87,6 @@ public class StageHeartRateManager : BaseHeartRateManager
         dataRecorder.CloseLogFiles();
         Debug.Log("ステージ心拍ログ記録終了");
 
-        // ▼▼▼ GameManagerにリストを保存 ▼▼▼
         string sceneName = SceneManager.GetActiveScene().name;
         if (sceneName == "99_BPMTestScene1")
         {
@@ -110,16 +104,13 @@ public class StageHeartRateManager : BaseHeartRateManager
     {
         while (isLogging)
         {
-            // 現在のBPMを記録
             dataRecorder.RecordHeartRate(currentBPM);
-            
-            // リストにも追加 (ResultScene用)
+
             if (currentBPM > 0)
             {
                 currentStageBpmList.Add(currentBPM);
             }
             
-            // 1秒待つ
             yield return new WaitForSeconds(1.0f);
         }
     }
@@ -130,23 +121,18 @@ public class StageHeartRateManager : BaseHeartRateManager
     {
         if (heartIcon == null) return;
 
-        // BPMに合わせてスケールを計算
         displayBpm = Mathf.Lerp(displayBpm, (float)currentBPM, Time.deltaTime * 5.0f);
-        
-        // 拍動間隔 (60秒 / BPM)
         float beatInterval = 60.0f / Mathf.Max(displayBpm, 1.0f);
-        
+
         beatTimer += Time.deltaTime;
         if (beatTimer >= beatInterval)
         {
             beatTimer -= beatInterval;
-            currentPulse = 1.0f; // ドクン！
+            currentPulse = 1.0f; 
         }
 
-        // 減衰
         currentPulse = Mathf.Lerp(currentPulse, 0f, Time.deltaTime * decaySpeed);
-        
-        // スケール適用
+
         float currentScale = Mathf.Lerp(minScale, maxScale, currentPulse);
         heartIcon.localScale = new Vector3(currentScale, currentScale, 1f);
     }
