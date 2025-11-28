@@ -1534,6 +1534,7 @@ MonoBehaviour:
   stage2Rank1Text: {fileID: 2102492333}
   stage2AverageText: {fileID: 679760535}
   gameManager: {fileID: 1915785326}
+  resultBGM: {fileID: 8300000, guid: b6d0780cf14f088499649b822c6db21e, type: 3}
 --- !u!1 &1556256860
 GameObject:
   m_ObjectHideFlags: 0

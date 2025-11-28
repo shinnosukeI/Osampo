@@ -18,6 +18,7 @@ public class ResultSceneManager : MonoBehaviour
 
     [Header("System")]
     [SerializeField] private GameManager gameManager;
+    [SerializeField] private AudioClip resultBGM; // 追加: ResultSceneで流すBGM
 
     void Start()
     {
@@ -28,6 +29,12 @@ public class ResultSceneManager : MonoBehaviour
             GameObject eventSystemGO = new GameObject("EventSystem");
             eventSystemGO.AddComponent<EventSystem>();
             eventSystemGO.AddComponent<StandaloneInputModule>();
+        }
+
+        // 2. BGM再生 (SoundManager経由)
+        if (SoundManager.Instance != null && resultBGM != null)
+        {
+            SoundManager.Instance.PlayBGM(resultBGM);
         }
 
         // 3. GameManagerの取得 (ロバスト性向上)
