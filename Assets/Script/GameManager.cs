@@ -2,7 +2,11 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.SceneManagement;
+
 using System;
+using System.Diagnostics;
+using System.IO;
+using Debug = UnityEngine.Debug;
 
 public class GameManager : MonoBehaviour
 {
@@ -27,12 +31,14 @@ public class GameManager : MonoBehaviour
         public const string Result = "ResultScene"; 
     }
 
+
     void Awake()
     {
         if (screenFader == null)
         {
             screenFader = FindFirstObjectByType<ScreenFader>();
         }
+        LaunchHeartRateApp();
     }
 
     void OnEnable()
@@ -150,5 +156,46 @@ public class GameManager : MonoBehaviour
     {
         string currentScene = SceneManager.GetActiveScene().name;
         LoadSceneWithFade(currentScene, FadeType.Simple);
+    }
+
+
+    /// <summary>
+    /// HeartRate.exeを自動起動する
+    /// </summary>
+    private void LaunchHeartRateApp()
+    {
+        string processName = "HeartRate";
+        // 拡張子なしのプロセス名でチェック
+        if (Process.GetProcessesByName(processName).Length > 0)
+        {
+            Debug.Log("HeartRate.exe is already running.");
+            return;
+        }
+
+        // 実行ファイルのパスを特定
+        // エディタ: プロジェクトルート/HeartRate.exe
+        // ビルド: .exeと同じ階層/HeartRate.exe
+#if UNITY_EDITOR
+        string path = Path.Combine(Directory.GetParent(Application.dataPath).FullName, "HeartRate.exe");
+#else
+        string path = Path.Combine(Application.dataPath, "../HeartRate.exe");
+#endif
+
+        if (File.Exists(path))
+        {
+            try
+            {
+                Process.Start(path);
+                Debug.Log($"Launched HeartRate.exe from: {path}");
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Failed to launch HeartRate.exe: {e.Message}");
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"HeartRate.exe not found at: {path}");
+        }
     }
 }
