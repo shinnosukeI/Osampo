@@ -10,6 +10,8 @@ public class TitleManager : MonoBehaviour
 
     [Header("UI References")]
     [SerializeField] private Button startButton; // Startボタンの参照
+    [SerializeField] private Button settingsButton; // Settingsボタンの参照
+    [SerializeField] private GameObject settingsPanel; // Settingsパネルの参照
     [SerializeField] private GameManager gameManager;
 
     void Start()
@@ -71,6 +73,19 @@ public class TitleManager : MonoBehaviour
             Debug.LogError("TitleManager: Start button not found!");
         }
 
+        // 5. Settingsボタンのセットアップ
+        if (settingsButton != null)
+        {
+            settingsButton.onClick.RemoveAllListeners();
+            settingsButton.onClick.AddListener(OnSettingsButtonClicked);
+        }
+        
+        // パネルは最初は非表示
+        if (settingsPanel != null)
+        {
+            settingsPanel.SetActive(false);
+        }
+
         // SoundManager経由でBGMを再生
         if (SoundManager.Instance != null)
         {
@@ -96,6 +111,25 @@ public class TitleManager : MonoBehaviour
         else
         {
             Debug.LogError("TitleManager: GameManager is null, cannot load SurveyScene.");
+        }
+    }
+
+    private void OnSettingsButtonClicked()
+    {
+        Debug.Log("TitleManager: Settings button clicked!");
+
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayCommonButtonSE();
+        }
+
+        if (settingsPanel != null)
+        {
+            settingsPanel.SetActive(true);
+        }
+        else
+        {
+            Debug.LogWarning("TitleManager: SettingsPanel is not assigned!");
         }
     }
 }
