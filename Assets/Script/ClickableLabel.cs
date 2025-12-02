@@ -44,7 +44,7 @@ public class ClickableLabel : MonoBehaviour, IPointerClickHandler, IPointerEnter
         if (isSetup && targetToggle != null && targetToggle.interactable)
         {
             if (scaleCoroutine != null) StopCoroutine(scaleCoroutine);
-            scaleCoroutine = StartCoroutine(ScaleTo(originalScale * 1.02f));
+            scaleCoroutine = StartCoroutine(ScaleTo(originalScale * 1.018f));
         }
     }
 
