@@ -18,11 +18,12 @@ public class RadioEventController : MonoBehaviour
 
     [Header("字幕設定")]
     [SerializeField] private TextMeshProUGUI subtitleText;
-    [TextArea(3, 10)] 
-    [SerializeField] private string subtitleContent;
+    [TextArea(2, 5)] 
+    [SerializeField] private string[] subtitleContent;
 
     private AudioSource talkSource;  // 会話用
     private AudioSource noiseSource; // ノイズ用
+
 
     void Awake()
     {
@@ -48,6 +49,8 @@ public class RadioEventController : MonoBehaviour
         {
             PlayNoiseLoop();
         }
+
+         PlayRadioSequence();
     }
 
     // ノイズ再生専用の関数（ずっとループ再生）
@@ -67,45 +70,71 @@ public class RadioEventController : MonoBehaviour
 
     // イベント：会話を再生（ノイズがまだなら、ついでにノイズも開始）
     public void PlayRadioSequence()
-    {
-        // もしノイズがまだ鳴っていなければ、ここで開始（以降ずっと鳴りっぱなし）
-        PlayNoiseLoop();
+{
+    // もしノイズがまだ鳴っていなければ、ここで開始（以降ずっと鳴りっぱなし）
+    PlayNoiseLoop();
 
-        // 会話のコルーチンを開始
-        StartCoroutine(TalkSequenceCoroutine());
+    // ★ 強制テスト：配列の先頭を一回だけ表示してみる
+    if (subtitleText != null && subtitleContent != null && subtitleContent.Length > 0)
+    {
+        subtitleText.gameObject.SetActive(true);
+        subtitleText.text = subtitleContent[0];
+        Debug.Log("🎬 テスト表示: " + subtitleContent[0]);
     }
+    else
+    {
+        Debug.Log("⚠ 字幕テスト失敗: subtitleText か subtitleContent が設定されていない");
+    }
+
+    // 会話のコルーチンを開始
+    StartCoroutine(TalkSequenceCoroutine());
+}
 
     private IEnumerator TalkSequenceCoroutine()
+{
+    Debug.Log("📻 会話イベント開始");
+
+    if (radioStoryClip != null)
     {
-        Debug.Log("📻 会話イベント開始");
+        // 会話再生開始
+        talkSource.clip = radioStoryClip;
+        talkSource.loop = false;
+        talkSource.volume = talkVolume; 
+        talkSource.Play();
+        Debug.Log("▶ ラジオ音声再生開始。長さ: " + radioStoryClip.length);
 
-        if (radioStoryClip != null)
+        // ★ 字幕が設定されている場合は、クリップの長さを行数で割って表示時間を決める
+        if (subtitleText != null && subtitleContent != null && subtitleContent.Length > 0)
         {
-            // 字幕表示
-            if (subtitleText != null)
+            Debug.Log("📝 字幕行数: " + subtitleContent.Length);
+
+            float totalDuration = radioStoryClip.length;
+            float perLineDuration = totalDuration / subtitleContent.Length;
+
+            subtitleText.gameObject.SetActive(true);
+
+            for (int i = 0; i < subtitleContent.Length; i++)
             {
-                subtitleText.text = subtitleContent;
-                subtitleText.gameObject.SetActive(true);
+                Debug.Log($"➡ {i} 行目表示: {subtitleContent[i]} / 表示時間: {perLineDuration}");
+                subtitleText.text = subtitleContent[i]; // この行の字幕を表示
+                yield return new WaitForSeconds(perLineDuration);
             }
-
-            // 会話再生
-            talkSource.clip = radioStoryClip;
-            talkSource.loop = false;        // 会話は1回だけ
-            talkSource.volume = talkVolume; 
-            talkSource.Play();
-
-            // 会話が終わるまで待つ
+        }
+        else
+        {
+            Debug.Log("⚠ 字幕なし分岐に入りました");
+            // 字幕がない場合は、音声の長さだけ待機
             yield return new WaitForSeconds(radioStoryClip.length);
         }
-
-        // --- 会話終了後の処理 ---
-        
-        // 字幕だけ消す（ノイズは止めない！）
-        if (subtitleText != null)
-        {
-            subtitleText.gameObject.SetActive(false);
-        }
-        
-        Debug.Log("📻 会話終了（ノイズはそのまま継続）");
     }
+
+    // --- 会話終了後の処理 ---
+    if (subtitleText != null)
+    {
+        subtitleText.gameObject.SetActive(false);
+        subtitleText.text = ""; // 念のため消しておく
+    }
+
+    Debug.Log("📻 会話終了（ノイズはそのまま継続）");
+}
 }
