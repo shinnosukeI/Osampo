@@ -82,3 +82,5 @@ crashlytics-build.properties
 
 /Assets/Materials/
 /Assets/恐怖要素用アセット/
+
+/Assets/HeartRate/logs.txt
