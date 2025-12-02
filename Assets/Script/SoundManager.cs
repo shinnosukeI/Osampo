@@ -6,35 +6,28 @@ public class SoundManager : MonoBehaviour
     public static SoundManager Instance { get; private set; }
 
     [Header("Audio Sources")]
-    [SerializeField]
-    private AudioSource seAudioSource;  // SE用スピーカー
-    [SerializeField]
-    private AudioSource bgmAudioSource; // BGM用スピーカー
+    [SerializeField] private AudioSource seAudioSource;  // SE用スピーカー
+    [SerializeField] private AudioSource bgmAudioSource; // BGM用スピーカー
 
     [Header("SE Clips")]
-    [SerializeField]
-    private AudioClip titleStartSE;    // タイトル画面のStartボタン専用
-    [SerializeField]
-    private AudioClip commonButtonSE;  // その他のボタン共通
+    [SerializeField] private AudioClip titleStartSE;    // タイトル画面のStartボタン専用
+    [SerializeField] private AudioClip commonButtonSE;  // その他のボタン共通
 
     private void Awake()
     {
-        // シングルトンの初期化
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); // シーン遷移しても破壊しない
+            DontDestroyOnLoad(gameObject); 
         }
         else
         {
             Destroy(gameObject); // 重複して存在しないようにする
         }
 
-        // AudioSourceの自動設定（もし設定し忘れていても動くように）
         if (seAudioSource == null) seAudioSource = gameObject.AddComponent<AudioSource>();
         if (bgmAudioSource == null) bgmAudioSource = gameObject.AddComponent<AudioSource>();
 
-        // BGM用はループ設定にしておく
         bgmAudioSource.loop = true;
     }
 
@@ -43,14 +36,22 @@ public class SoundManager : MonoBehaviour
     // ========================================================================
 
     /// <summary>
+    /// 汎用的なSE再生メソッド
+    /// </summary>
+    public void PlaySE(AudioClip clip)
+    {
+        if (clip != null)
+        {
+            seAudioSource.PlayOneShot(clip);
+        }
+    }
+
+    /// <summary>
     /// タイトル画面のStartボタン専用SEを再生
     /// </summary>
     public void PlayTitleStartSE()
     {
-        if (titleStartSE != null)
-        {
-            seAudioSource.PlayOneShot(titleStartSE);
-        }
+        PlaySE(titleStartSE);
     }
 
     /// <summary>
@@ -58,10 +59,7 @@ public class SoundManager : MonoBehaviour
     /// </summary>
     public void PlayCommonButtonSE()
     {
-        if (commonButtonSE != null)
-        {
-            seAudioSource.PlayOneShot(commonButtonSE);
-        }
+        PlaySE(commonButtonSE);
     }
 
     // ========================================================================

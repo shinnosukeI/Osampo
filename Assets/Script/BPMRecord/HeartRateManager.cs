@@ -3,42 +3,43 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine.SceneManagement;
 
-public class HeartRateManager : MonoBehaviour
+public class HeartRateManager : BaseHeartRateManager
 {
-    [SerializeField] private DataRecorder dataRecorder;
-
-    // 受信データ
-    public int CurrentBPM { get; private set; } = 0;
-    public bool IsSensorActive { get; private set; } = false;
+    // BaseHeartRateManagerで dataRecorder, currentBPM, isSensorActive を保持
 
     // RestSceneManagerに結果を知らせるためのイベント
     public event Action<bool> OnConnectionCheckFinished; // true=成功
     public event Action<float> OnMeasurementFinished;    // 計測された平均BPM
 
-    void Start()
+    // 公開プロパティとしてアクセスさせる（読み取り専用）
+    public int CurrentBPM => currentBPM;
+    public bool IsSensorActive => isSensorActive;
+
+    protected override void Start()
     {
-        // アタッチし忘れ防止
-        if (dataRecorder == null) dataRecorder = GetComponent<DataRecorder>();
+        base.Start();
+        // 追加の初期化があればここに記述
     }
 
     // ★★★ EventReceiverから呼ばれる関数（デバッグログ追加版） ★★★
-    public void OnIntEvent(int value)
+    public override void OnIntEvent(int value)
     {
         // ▼ この行を追加：どんな値でも受信したらコンソールに表示する
         Debug.Log($"【受信テスト】生の受信データ: {value}"); 
 
-        // 30未満はノイズまたは未装着とみなすフィルタ
-        if (value >= 30)
+        // 基底クラスの処理（値の更新）
+        base.OnIntEvent(value);
+
+        // ログ出力
+        if (isSensorActive)
         {
-            CurrentBPM = value;
-            IsSensorActive = true;
             // ▼ 成功時もログを出す
             Debug.Log($"【受信成功】有効なBPMとして認識: {value}");
         }
         else
         {
-            IsSensorActive = false;
             // ▼ 無視した場合もログを出す
             Debug.Log($"【受信無視】値が低すぎます: {value}");
         }
@@ -122,6 +123,10 @@ public class HeartRateManager : MonoBehaviour
         }
 
         Debug.Log($"【HeartRateManager】計測完了: 平均 {averageBpm}");
+        
+        // GameManagerに保存 (ResultScene用)
+        GameManager.SavedRestBPM = averageBpm;
+        
         OnMeasurementFinished?.Invoke(averageBpm); // 結果を通知
     }
 }

@@ -1,21 +1,19 @@
 using UnityEngine;
 using UnityEngine.Video;
-using UnityEngine.Events; // ★追加: UnityEventを使うために必要
+using UnityEngine.Events; 
 
 public class VideoEndHandler : MonoBehaviour
 {
-    // インスペクタから設定する
     [Header("UI Settings")]
     [SerializeField]
-    private GameObject imageToShow; // 動画終了後に表示する画像 (RestSceneでは使わないなら空欄でOK)
+    private GameObject imageToShow; // 動画終了後に表示する画像
 
     [SerializeField]
-    private GameObject buttonToShow; // 動画終了後に表示するボタン (RestSceneでは使わないなら空欄でOK)
+    private GameObject buttonToShow; // 動画終了後に表示するボタン
 
-    // ▼▼▼【追加】他のスクリプトに動画終了を知らせるイベント ▼▼▼
+    // 他のスクリプトに動画終了を知らせるイベント
     [Header("Events")]
-    public UnityEvent onVideoEnd; 
-    // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+    public UnityEvent onVideoEnd;
 
     private VideoPlayer videoPlayer;
 
@@ -39,12 +37,12 @@ public class VideoEndHandler : MonoBehaviour
         }
     }
 
-    // ▼ 動画の再生が終了したときに呼び出される関数 ▼
+    // 動画の再生が終了したときに呼び出される関数
     void OnVideoFinished(VideoPlayer vp)
     {
         Debug.Log("Video finished.");
 
-        // 1. 既存の機能（画像やボタンを表示）
+        // 既存の機能（画像やボタンを表示）
         if (imageToShow != null)
         {
             imageToShow.SetActive(true);
@@ -55,8 +53,6 @@ public class VideoEndHandler : MonoBehaviour
             buttonToShow.SetActive(true);
         }
 
-        // ▼▼▼【追加】登録されたイベントを実行（RestSceneManagerへ通知）▼▼▼
         onVideoEnd?.Invoke();
-        // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
     }
 }

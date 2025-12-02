@@ -130,6 +130,7 @@ GameObject:
   - component: {fileID: 4841489}
   - component: {fileID: 4841491}
   - component: {fileID: 4841490}
+  - component: {fileID: 4841492}
   m_Layer: 5
   m_Name: Label
   m_TagString: Untagged
@@ -153,8 +154,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 50, y: -23}
-  m_SizeDelta: {x: 450, y: 50}
+  m_AnchoredPosition: {x: 50, y: -8.8968}
+  m_SizeDelta: {x: 450, y: 21.7937}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &4841490
 MonoBehaviour:
@@ -255,6 +256,28 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4841488}
   m_CullTransparentMesh: 1
+--- !u!95 &4841492
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4841488}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 5022ae277c3e53a408034d1faba981ba, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1001 &17838712
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -361,8 +384,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 50, y: -23}
-  m_SizeDelta: {x: 450, y: 50}
+  m_AnchoredPosition: {x: 50, y: -9.878}
+  m_SizeDelta: {x: 450, y: 23.756}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &36409380
 MonoBehaviour:
@@ -1011,7 +1034,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 380, y: -70}
-  m_SizeDelta: {x: 694, y: 359}
+  m_SizeDelta: {x: 694, y: 22.7837}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &391244550
 MonoBehaviour:
@@ -1635,8 +1658,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 50, y: -23}
-  m_SizeDelta: {x: 450, y: 50}
+  m_AnchoredPosition: {x: 50, y: -9.7604}
+  m_SizeDelta: {x: 450, y: 23.5208}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1076484034
 MonoBehaviour:
@@ -2493,8 +2516,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 50, y: -23}
-  m_SizeDelta: {x: 450, y: 50}
+  m_AnchoredPosition: {x: 50, y: -9.224594}
+  m_SizeDelta: {x: 450, y: 22.4492}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1294860560
 MonoBehaviour:
@@ -2752,7 +2775,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1406595298}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 17838713}
+        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+        m_MethodName: ReceiveSurveyResult
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1406595298
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2982,8 +3017,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 50, y: -23}
-  m_SizeDelta: {x: 450, y: 50}
+  m_AnchoredPosition: {x: 50, y: -8.7883}
+  m_SizeDelta: {x: 450, y: 21.5765}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1541616740
 MonoBehaviour:
