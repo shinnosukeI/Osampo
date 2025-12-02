@@ -12,6 +12,9 @@ public class DoorTeleporter : MonoBehaviour
     public float openAngle = 90f;      // 開く角度
     public float doorOpenSpeed = 3f;   // 開閉の速さ
 
+    [Header("ホラーイベント連携")]
+    [SerializeField] private HorrorEventManager horrorEventManager; // ★ 追加
+
     public static int teleportCount = 0;
 
     [HideInInspector] public bool isDoorOpen = false;
@@ -28,6 +31,16 @@ public class DoorTeleporter : MonoBehaviour
         // シーンにある DoorTeleporter をリストに登録
         if (!allDoors.Contains(this))
             allDoors.Add(this);
+
+        // ★ もし Inspector で設定されていなければ自動で探す
+        if (horrorEventManager == null)
+        {
+            horrorEventManager = FindObjectOfType<HorrorEventManager>();
+            if (horrorEventManager == null)
+            {
+                Debug.LogWarning("HorrorEventManager がシーンに見つかりませんでした。");
+            }
+        }
     }
 
     private void OnDestroy()
@@ -60,9 +73,19 @@ public class DoorTeleporter : MonoBehaviour
 
         if (cc != null) cc.enabled = true;
 
-        // ★ カウンタを +1
+        // ★ ワープ回数カウント
         teleportCount++;
         Debug.Log("ワープ回数: " + teleportCount);
+
+        // ★ 周期カウント（HorrorEventManager 側）
+        if (horrorEventManager != null)
+        {
+            horrorEventManager.OnDoorClicked();
+        }
+        else
+        {
+            Debug.LogWarning("HorrorEventManager が設定されていないため、周期カウントできません。");
+        }
 
         // ★ カウンタが増えたタイミングで全ドア閉じる
         CloseAllDoors();
