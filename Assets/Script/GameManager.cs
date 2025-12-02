@@ -176,9 +176,9 @@ public class GameManager : MonoBehaviour
         // エディタ: プロジェクトルート/HeartRate.exe
         // ビルド: .exeと同じ階層/HeartRate.exe
 #if UNITY_EDITOR
-        string path = Path.Combine(Directory.GetParent(Application.dataPath).FullName, "HeartRate.exe");
+        string path = Path.Combine(Directory.GetParent(Application.dataPath).FullName, "HeartRate", "HeartRate.exe");
 #else
-        string path = Path.Combine(Application.dataPath, "../HeartRate.exe");
+        string path = Path.Combine(Application.dataPath, "../HeartRate", "HeartRate.exe");
 #endif
 
         if (File.Exists(path))
