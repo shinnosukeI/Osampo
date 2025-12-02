@@ -41,6 +41,15 @@ public class HorrorEventManager : MonoBehaviour
     [SerializeField]
     private Transform ballSpawnPoint;  // 出現位置
 
+    [Header("24: 窓に手形イベント")] // ★ 追加
+    [SerializeField]
+    private HandprintEvent handprintEventTarget;
+
+    [Header("25: 壁に目イベント")] // ★ 追加
+    [SerializeField]
+    private WallEyesEvent wallEyesEventTarget;
+
+
     public List<(string Timestamp, int eventType)> eventLog = new List<(string, int)>();
 
     // イベントタイプ → 実行アクション のマップ
@@ -76,6 +85,8 @@ public class HorrorEventManager : MonoBehaviour
         eventActionMap[54] = TriggerFallEvent;
         eventActionMap[56] = TriggerBallRoll;
         /////////////////ここに追加/////////////////
+        eventActionMap[24] = TriggerHandprint;
+        eventActionMap[25] = TriggerWallEyes;
     }
 
     /// <summary>
@@ -215,5 +226,31 @@ public class HorrorEventManager : MonoBehaviour
 
 
     ////////ここに関数を追加////////
+
+    // 24: 窓に手形
+    public void TriggerHandprint()
+    {
+        if (handprintEventTarget != null)
+        {
+            handprintEventTarget.ActivateEvent();
+        }
+        else
+        {
+            Debug.LogError("24: HandprintEventが設定されていません。");
+        }
+    }
+
+    // 25: 壁に目
+    public void TriggerWallEyes()
+    {
+        if (wallEyesEventTarget != null)
+        {
+            wallEyesEventTarget.ActivateEvent();
+        }
+        else
+        {
+            Debug.LogError("25: WallEyesEventが設定されていません。");
+        }
+    }
 
 }
