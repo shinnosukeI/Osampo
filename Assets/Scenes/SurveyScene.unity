@@ -153,8 +153,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 50, y: -23}
-  m_SizeDelta: {x: 450, y: 50}
+  m_AnchoredPosition: {x: 50, y: -8.8968}
+  m_SizeDelta: {x: 450, y: 21.7937}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &4841490
 MonoBehaviour:
@@ -361,8 +361,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 50, y: -23}
-  m_SizeDelta: {x: 450, y: 50}
+  m_AnchoredPosition: {x: 50, y: -9.878}
+  m_SizeDelta: {x: 450, y: 23.756}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &36409380
 MonoBehaviour:
@@ -1011,7 +1011,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 380, y: -70}
-  m_SizeDelta: {x: 694, y: 359}
+  m_SizeDelta: {x: 694, y: 22.7837}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &391244550
 MonoBehaviour:
@@ -1635,8 +1635,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 50, y: -23}
-  m_SizeDelta: {x: 450, y: 50}
+  m_AnchoredPosition: {x: 50, y: -9.7604}
+  m_SizeDelta: {x: 450, y: 23.5208}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1076484034
 MonoBehaviour:
@@ -2493,8 +2493,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 50, y: -23}
-  m_SizeDelta: {x: 450, y: 50}
+  m_AnchoredPosition: {x: 50, y: -9.224594}
+  m_SizeDelta: {x: 450, y: 22.4492}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1294860560
 MonoBehaviour:
@@ -2994,8 +2994,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 50, y: -23}
-  m_SizeDelta: {x: 450, y: 50}
+  m_AnchoredPosition: {x: 50, y: -8.7883}
+  m_SizeDelta: {x: 450, y: 21.5765}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1541616740
 MonoBehaviour:
