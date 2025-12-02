@@ -1,42 +1,36 @@
 using UnityEngine;
 
-public class SimpleMirror : MonoBehaviour
+public class MirrorCameraController : MonoBehaviour
 {
-    // プレイヤーのカメラ（Main Camera）
-    public Transform playerCamera;
+    [Header("参照するカメラ（プレイヤー側）")]
+    public Transform playerCamera;   // メインカメラ（プレイヤーの視点）
 
-    // 鏡用カメラ
-    public Camera mirrorCamera;
+    [Header("鏡オブジェクト（Quad）")]
+    public Transform mirror;        // 鏡のQuad
 
-    // 鏡の平面 (MirrorPlane：ガラスの Quad)
-    public Transform mirrorPlane;
+    [Header("鏡用カメラ")]
+    public Camera mirrorCamera;     // MirrorCamera
 
     void LateUpdate()
     {
-        if (!playerCamera || !mirrorCamera || !mirrorPlane) return;
+        if (playerCamera == null || mirror == null || mirrorCamera == null)
+            return;
 
-        // --- 位置を鏡に対して対称にする --- //
+        // 鏡の「表向き」法線（Quad が向いている方向）
+        Vector3 mirrorNormal = mirror.forward; 
+        Vector3 mirrorPos = mirror.position;
 
-        // プレイヤーの位置を鏡ローカルに変換
-        Vector3 localPos = mirrorPlane.InverseTransformPoint(playerCamera.position);
-        // Z を反転（鏡の向こう側へ）
-        localPos.z *= -1f;
-        // ワールド座標に戻してカメラに適用
-        mirrorCamera.transform.position = mirrorPlane.TransformPoint(localPos);
+        // プレイヤーカメラから見た、鏡の中心へのベクトル
+        Vector3 toCam = playerCamera.position - mirrorPos;
 
-        // --- 向きも反転 --- //
+        // その位置を鏡平面で反転させて、鏡の向こう側に置く
+        Vector3 reflectedPos = Vector3.Reflect(toCam, mirrorNormal);
 
-        // 向きをローカルに変換
-        Vector3 localForward = mirrorPlane.InverseTransformDirection(playerCamera.forward);
-        Vector3 localUp      = mirrorPlane.InverseTransformDirection(playerCamera.up);
+        mirrorCamera.transform.position = mirrorPos + reflectedPos;
 
-        // Z を反転
-        localForward.z *= -1f;
-        localUp.z      *= -1f;
+        // カメラの向きも鏡で反射させる
+        Vector3 reflectedForward = Vector3.Reflect(playerCamera.forward, mirrorNormal);
 
-        // ワールド向きに戻して反映
-        Vector3 worldForward = mirrorPlane.TransformDirection(localForward);
-        Vector3 worldUp      = mirrorPlane.TransformDirection(localUp);
-        mirrorCamera.transform.rotation = Quaternion.LookRotation(worldForward, worldUp);
+        mirrorCamera.transform.rotation = Quaternion.LookRotation(reflectedForward, Vector3.up);
     }
 }
