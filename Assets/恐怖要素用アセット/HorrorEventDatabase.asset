@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HorrorEventDatabase
   horrorEvents:
   - {fileID: 11400000, guid: 18e26f95b9e59c14c85c6d02fa39b96d, type: 2}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 31a9366c57458ec40a07fbdcd05c833a, type: 2}
+  - {fileID: 11400000, guid: 26d067f35cbf41b438bb0b3658cebc57, type: 2}
   - {fileID: 11400000, guid: da0ddbe869a74e448bbb60e01275b3c6, type: 2}
   - {fileID: 0}
   - {fileID: 11400000, guid: 76c7ad8c78dba294c94a8c132f74c7c3, type: 2}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 6067e7f59a4a7c0429aef21aa48f89ca, type: 2}
+  - {fileID: 11400000, guid: dc5660b2097551e4880a5e392f942b56, type: 2}
   - {fileID: 11400000, guid: 1684141d6bdebc949bd8b00c13c44b83, type: 2}
   - {fileID: 11400000, guid: 47f3e37c8b1598942bd122571b6bb495, type: 2}
   - {fileID: 0}
@@ -29,14 +29,14 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 11400000, guid: 6dbf051bf99207946805ea63438e58f8, type: 2}
   - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 0b798e88ecf17664caae9b6a543a429b, type: 2}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 11400000, guid: 1c4bc42ae15eed44a92ab5fad46260f9, type: 2}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  - {fileID: 0}
   - {fileID: 11400000, guid: f4b9a4f4aadf9b444bfdd0d236da7522, type: 2}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 11d29088a9bdf4442914b372dc6c612c, type: 2}
   - {fileID: 11400000, guid: 56970a61e7f2b9748be2220c78d8158e, type: 2}

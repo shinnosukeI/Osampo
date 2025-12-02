@@ -13,6 +13,32 @@ public class SoundManager : MonoBehaviour
     [SerializeField] private AudioClip titleStartSE;    // タイトル画面のStartボタン専用
     [SerializeField] private AudioClip commonButtonSE;  // その他のボタン共通
 
+    // Volume Properties
+    private float bgmVolume = 1.0f;
+    public float BGMVolume
+    {
+        get { return bgmVolume; }
+        set
+        {
+            bgmVolume = Mathf.Clamp01(value);
+            if (bgmAudioSource != null) bgmAudioSource.volume = bgmVolume;
+        }
+    }
+
+    private float seVolume = 1.0f;
+    public float SEVolume
+    {
+        get { return seVolume; }
+        set
+        {
+            seVolume = Mathf.Clamp01(value);
+            if (seAudioSource != null) seAudioSource.volume = seVolume;
+        }
+    }
+
+    private const string BGM_VOLUME_KEY = "BGM_Volume";
+    private const string SE_VOLUME_KEY = "SE_Volume";
+
     private void Awake()
     {
         if (Instance == null)
@@ -23,12 +49,29 @@ public class SoundManager : MonoBehaviour
         else
         {
             Destroy(gameObject); // 重複して存在しないようにする
+            return;
         }
 
         if (seAudioSource == null) seAudioSource = gameObject.AddComponent<AudioSource>();
         if (bgmAudioSource == null) bgmAudioSource = gameObject.AddComponent<AudioSource>();
 
         bgmAudioSource.loop = true;
+
+        // Load saved volumes
+        LoadVolume();
+    }
+
+    private void LoadVolume()
+    {
+        BGMVolume = PlayerPrefs.GetFloat(BGM_VOLUME_KEY, 1.0f);
+        SEVolume = PlayerPrefs.GetFloat(SE_VOLUME_KEY, 1.0f);
+    }
+
+    public void SaveVolume()
+    {
+        PlayerPrefs.SetFloat(BGM_VOLUME_KEY, BGMVolume);
+        PlayerPrefs.SetFloat(SE_VOLUME_KEY, SEVolume);
+        PlayerPrefs.Save();
     }
 
     // ========================================================================
@@ -42,7 +85,7 @@ public class SoundManager : MonoBehaviour
     {
         if (clip != null)
         {
-            seAudioSource.PlayOneShot(clip);
+            seAudioSource.PlayOneShot(clip, SEVolume);
         }
     }
 
@@ -81,6 +124,7 @@ public class SoundManager : MonoBehaviour
         }
 
         bgmAudioSource.clip = clip;
+        bgmAudioSource.volume = BGMVolume;
         bgmAudioSource.Play();
     }
 
