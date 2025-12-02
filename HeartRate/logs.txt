@@ -2465,3 +2465,62 @@
 2025/12/02 11:46:53: Read 00000000 NotSupported 72
 2025/12/02 11:46:54: Read 00000000 NotSupported 72
 2025/12/02 11:46:56: Read 00000000 NotSupported 73
+2025/12/02 11:47:07: Restarting services...
+2025/12/02 11:47:07: HeartRateService: Found device: [Name: HW706-0004547, Id: Name: \\?\BTHLEDevice#{0000180d-0000-1000-8000-00805f9b34fb}_f3625205b2f4#8&29b4c56&0&0016#{6e3bb679-4372-40c8-9eaa-4509df260cd8}]
+2025/12/02 11:47:08: HeartRateService: Service [CharacteristicProperties: Notify, UserDescription: ]
+2025/12/02 11:47:08: Started Success
+2025/12/02 11:47:08: Read 00000000 NotSupported 65
+2025/12/02 11:47:10: Read 00000000 NotSupported 65
+2025/12/02 11:47:10: Read 00000000 NotSupported 65
+2025/12/02 11:47:11: Read 00000000 NotSupported 65
+2025/12/02 11:47:12: Read 00000000 NotSupported 65
+2025/12/02 11:47:13: Read 00000000 NotSupported 67
+2025/12/02 11:47:14: Read 00000000 NotSupported 67
+2025/12/02 11:47:15: Read 00000000 NotSupported 68
+2025/12/02 11:47:16: Read 00000000 NotSupported 68
+2025/12/02 11:47:17: Read 00000000 NotSupported 68
+2025/12/02 11:47:18: Read 00000000 NotSupported 68
+2025/12/02 11:47:19: Read 00000000 NotSupported 68
+2025/12/02 11:47:20: Read 00000000 NotSupported 68
+2025/12/02 11:47:21: Read 00000000 NotSupported 68
+2025/12/02 11:47:22: Read 00000000 NotSupported 68
+2025/12/02 11:47:24: Read 00000000 NotSupported 68
+2025/12/02 11:47:24: Read 00000000 NotSupported 68
+2025/12/02 11:47:25: Read 00000000 NotSupported 68
+2025/12/02 11:47:26: Read 00000000 NotSupported 69
+2025/12/02 11:47:27: Read 00000000 NotSupported 68
+2025/12/02 11:47:29: Read 00000000 NotSupported 68
+2025/12/02 11:47:29: Read 00000000 NotSupported 68
+2025/12/02 11:47:31: Read 00000000 NotSupported 67
+2025/12/02 11:47:32: Read 00000000 NotSupported 67
+2025/12/02 11:47:33: Read 00000000 NotSupported 67
+2025/12/02 11:47:34: Read 00000000 NotSupported 67
+2025/12/02 11:47:35: Read 00000000 NotSupported 67
+2025/12/02 11:47:36: Read 00000000 NotSupported 65
+2025/12/02 11:47:37: Read 00000000 NotSupported 65
+2025/12/02 11:47:38: Read 00000000 NotSupported 65
+2025/12/02 11:47:48: Restarting services...
+2025/12/02 11:47:48: HeartRateService: Found device: [Name: HW706-0004547, Id: Name: \\?\BTHLEDevice#{0000180d-0000-1000-8000-00805f9b34fb}_f3625205b2f4#8&29b4c56&0&0016#{6e3bb679-4372-40c8-9eaa-4509df260cd8}]
+2025/12/02 11:47:48: HeartRateService: Service [CharacteristicProperties: Notify, UserDescription: ]
+2025/12/02 11:47:49: Started Success
+2025/12/02 11:47:50: Read 00000000 NotSupported 65
+2025/12/02 11:47:51: Read 00000000 NotSupported 65
+2025/12/02 11:47:52: Read 00000000 NotSupported 65
+2025/12/02 11:47:53: Read 00000000 NotSupported 65
+2025/12/02 11:47:54: Read 00000000 NotSupported 65
+2025/12/02 11:47:55: Read 00000000 NotSupported 65
+2025/12/02 11:47:56: Read 00000000 NotSupported 65
+2025/12/02 11:47:57: Read 00000000 NotSupported 65
+2025/12/02 11:47:58: Read 00000000 NotSupported 65
+2025/12/02 11:47:59: Read 00000000 NotSupported 65
+2025/12/02 11:48:00: Read 00000000 NotSupported 66
+2025/12/02 11:48:01: Read 00000000 NotSupported 65
+2025/12/02 11:48:02: Read 00000000 NotSupported 65
+2025/12/02 11:48:03: Read 00000000 NotSupported 65
+2025/12/02 11:48:04: Read 00000000 NotSupported 65
+2025/12/02 11:48:05: Read 00000000 NotSupported 65
+2025/12/02 11:48:06: Read 00000000 NotSupported 65
+2025/12/02 11:48:07: Read 00000000 NotSupported 65
+2025/12/02 11:48:08: Read 00000000 NotSupported 65
+2025/12/02 11:48:09: Read 00000000 NotSupported 65
+2025/12/02 11:48:10: Read 00000000 NotSupported 65
