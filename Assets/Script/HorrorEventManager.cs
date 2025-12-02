@@ -49,6 +49,10 @@ public class HorrorEventManager : MonoBehaviour
     [SerializeField]
     private WallEyesEvent wallEyesEventTarget;
 
+    [Header("21: 人形移動イベント")] // ★ 追加
+    [SerializeField]
+    private BearMoveEvent bearMoveEventTarget;
+
 
     public List<(string Timestamp, int eventType)> eventLog = new List<(string, int)>();
 
@@ -87,6 +91,7 @@ public class HorrorEventManager : MonoBehaviour
         /////////////////ここに追加/////////////////
         eventActionMap[24] = TriggerHandprint;
         eventActionMap[25] = TriggerWallEyes;
+        eventActionMap[21] = TriggerBearMove;
     }
 
     /// <summary>
@@ -236,7 +241,7 @@ public class HorrorEventManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError("24: HandprintEventが設定されていません。");
+            Debug.LogError($"24: HandprintEventが設定されていません。(Object: {gameObject.name})");
         }
     }
 
@@ -250,6 +255,19 @@ public class HorrorEventManager : MonoBehaviour
         else
         {
             Debug.LogError("25: WallEyesEventが設定されていません。");
+        }
+    }
+
+    // 21: 人形移動
+    public void TriggerBearMove()
+    {
+        if (bearMoveEventTarget != null)
+        {
+            bearMoveEventTarget.MoveToNextPosition();
+        }
+        else
+        {
+            Debug.LogError("21: BearMoveEventが設定されていません。");
         }
     }
 
