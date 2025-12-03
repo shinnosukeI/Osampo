@@ -15,7 +15,7 @@ public class HorrorEventManager : MonoBehaviour
 
     [Header("14: ゾンビ落下イベント")]
     [SerializeField]
-    private GameObject zombiePrefab; // 物理演算ゾンビのプレハブ
+    private GameObject zombiePrefab; // FallingCorpseスクリプト付きのプレハブ
     [SerializeField]
     private Transform zombieSpawnPoint;
 
