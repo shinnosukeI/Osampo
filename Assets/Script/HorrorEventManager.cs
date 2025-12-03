@@ -53,14 +53,7 @@ public class HorrorEventManager : MonoBehaviour
     [SerializeField]
     private BearMoveEvent bearMoveEventTarget;
 
-<<<<<<< HEAD
-    [Header("53: 消える女イベント")] // ★ 追加
-    [SerializeField]
-    private VanishingWomanEvent vanishingWomanEventTarget;
 
-
-=======
->>>>>>> 4152ecfe2267b7c4f8fffb848768f0dcc2c0eadc
     public List<(string Timestamp, int eventType)> eventLog = new List<(string, int)>();
 
     // ★ 周期カウント（ドア/ワープした回数）
@@ -274,53 +267,5 @@ public class HorrorEventManager : MonoBehaviour
         }
     }
 
-<<<<<<< HEAD
-    // 53: 消える女
-    public void TriggerVanishingWoman()
-    {
-        if (vanishingWomanEventTarget != null)
-        {
-            vanishingWomanEventTarget.ActivateEvent();
-        }
-        else
-        {
-            Debug.LogError("53: VanishingWomanEventが設定されていません。");
-        }
-    }
 
-=======
-    // ============================
-    // ★ ドア（ワープ含む）で呼び出す周期カウント
-    // ============================
-    public void OnDoorClicked()
-    {
-        // 周回カウントを増やす
-        cycleCount++;
-        Debug.Log($"🚪 ドア/ワープで周期カウント: {cycleCount}");
-
-        if (cycleEventTypes == null || cycleEventTypes.Count == 0)
-        {
-            Debug.LogWarning("周回ごとのイベントが設定されていません。");
-            return;
-        }
-
-        // --- パターンA: 最後の要素を以降も使い続ける ---
-        int index = cycleCount - 1;
-        if (index >= cycleEventTypes.Count)
-        {
-            index = cycleEventTypes.Count - 1; // 最後の要素
-        }
-
-        int eventType = cycleEventTypes[index];
-        Debug.Log($"🎃 周回 {cycleCount} でイベント {eventType} を実行");
-        TriggerHorrorEvent(eventType);
-
-        /* --- パターンB: リストをループさせたい場合 ---
-        // 例: [54,14,31] → 1周目=54, 2=14, 3=31, 4=54...
-        int index = (cycleCount - 1) % cycleEventTypes.Count;
-        int eventType = cycleEventTypes[index];
-        TriggerHorrorEvent(eventType);
-        ------------------------------------------------- */
-    }
->>>>>>> 4152ecfe2267b7c4f8fffb848768f0dcc2c0eadc
 }
