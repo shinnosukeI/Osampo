@@ -59,7 +59,8 @@ public class ResultSceneManager : MonoBehaviour
         }
 
         // 2. Stage1 (99_BPMTestScene1) のランキング
-        List<int> stage1Ranks = CalculateTopRanks(GameManager.SavedStage1BPMList, 3);
+        // 変更: 単純な上位ではなく、ピーク（山）のトップ3を取得する
+        List<int> stage1Ranks = CalculateTopPeaks(GameManager.SavedStage1BPMList, 3);
         
         if (stage1Rank1Text != null) stage1Rank1Text.text = stage1Ranks.Count > 0 ? $"{stage1Ranks[0]}" : "-";
         if (stage1Rank2Text != null) stage1Rank2Text.text = stage1Ranks.Count > 1 ? $"{stage1Ranks[1]}" : "-";
@@ -73,6 +74,7 @@ public class ResultSceneManager : MonoBehaviour
         }
 
         // 3. Stage2 (99_BPMTestScene2) のランキング (1位のみ)
+        // Stage2は現状維持（単純な最大値で良いか確認が必要だが、指示はStage1のみだったので既存ロジック）
         List<int> stage2Ranks = CalculateTopRanks(GameManager.SavedStage2BPMList, 1);
 
         if (stage2Rank1Text != null) stage2Rank1Text.text = stage2Ranks.Count > 0 ? $"{stage2Ranks[0]}" : "-";
@@ -94,6 +96,70 @@ public class ResultSceneManager : MonoBehaviour
         
         double avg = bpmList.Average();
         return (float)System.Math.Round(avg, 1, System.MidpointRounding.AwayFromZero);
+    }
+
+    /// <summary>
+    /// 心拍数の「ピーク（極大値）」を探し、その上位を取得する
+    /// ピークが足りない場合は、残りを単純な上位値で埋める
+    /// </summary>
+    private List<int> CalculateTopPeaks(List<int> rawBpmList, int count)
+    {
+        if (rawBpmList == null || rawBpmList.Count == 0) return new List<int>();
+
+        // 1. まず連続重複を除去
+        List<int> compressed = new List<int>();
+        compressed.Add(rawBpmList[0]);
+        for (int i = 1; i < rawBpmList.Count; i++)
+        {
+            if (rawBpmList[i] != rawBpmList[i - 1])
+            {
+                compressed.Add(rawBpmList[i]);
+            }
+        }
+
+        // データが少なすぎる場合は単純な上位を返す
+        if (compressed.Count < 3)
+        {
+            return compressed.Distinct().OrderByDescending(x => x).Take(count).ToList();
+        }
+
+        // 2. 極大値（ピーク）を探す
+        HashSet<int> peaks = new HashSet<int>();
+        for (int i = 1; i < compressed.Count - 1; i++)
+        {
+            int prev = compressed[i - 1];
+            int current = compressed[i];
+            int next = compressed[i + 1];
+
+            // 山の頂点
+            if (current > prev && current > next)
+            {
+                peaks.Add(current);
+            }
+        }
+
+        // 3. 結果リストを作成
+        // まずはピークを採用
+        List<int> result = peaks.ToList();
+
+        // 足りない分を非ピーク（全体）から補充
+        if (result.Count < count)
+        {
+            // ピーク以外の値を降順ソートして取得
+            var others = compressed.Where(x => !peaks.Contains(x))
+                                   .Distinct()
+                                   .OrderByDescending(x => x);
+            
+            foreach (var val in others)
+            {
+                if (result.Count >= count) break;
+                result.Add(val);
+            }
+        }
+
+        // 4. 最終的に降順ソートして上位count個を返す
+        // (ピークと補充した値を混ぜてランキングにする)
+        return result.OrderByDescending(x => x).Take(count).ToList();
     }
 
     /// <summary>
