@@ -2099,7 +2099,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.05368797, y: 0.1, z: 0.1}
+  m_Size: {x: 0.1, y: 0.1, z: 0.1}
   m_Center: {x: 0.023156088, y: -1.4827256e-11, z: -8.670166e-11}
 --- !u!4 &401587345
 Transform:
@@ -10046,6 +10046,13 @@ MonoBehaviour:
   vanishSound: {fileID: 0}
   noiseEffectUI: {fileID: 0}
   noiseDuration: 0.5
+  targetLights:
+  - {fileID: 1474540398}
+  - {fileID: 1374540540}
+  - {fileID: 845097194}
+  - {fileID: 362575685}
+  darknessDuration: 4
+  brightnessMultiplier: 2
 --- !u!4 &1599477156
 Transform:
   m_ObjectHideFlags: 0
@@ -10808,6 +10815,8 @@ MonoBehaviour:
   wallEyesEventTarget: {fileID: 1335099682}
   bearMoveEventTarget: {fileID: 1360142122}
   vanishingWomanEventTarget: {fileID: 1599477155}
+  cycleCount: 0
+  cycleEventTypes: 
 --- !u!4 &1697327540
 Transform:
   m_ObjectHideFlags: 0
