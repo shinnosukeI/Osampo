@@ -15,6 +15,7 @@ public class ResultSceneManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI stage1AverageText; 
     [SerializeField] private TextMeshProUGUI stage2Rank1Text;
     [SerializeField] private TextMeshProUGUI stage2AverageText; 
+    [SerializeField] private TextMeshProUGUI fearEvaluationText; // 追加: 判定結果表示用
 
     [Header("System")]
     [SerializeField] private GameManager gameManager;
@@ -84,6 +85,61 @@ public class ResultSceneManager : MonoBehaviour
         {
             float avg2 = CalculateAverage(GameManager.SavedStage2BPMList);
             stage2AverageText.text = $"{avg2}";
+        }
+
+        // 4. 自己申告恐怖と生理的恐怖反応の判定
+        if (fearEvaluationText != null)
+        {
+            // Stage2のトップ値 (なければ0)
+            int stage2Top = stage2Ranks.Count > 0 ? stage2Ranks[0] : 0;
+
+            // Stage1のトップ3 (不足分は0埋めして比較用にリスト化)
+            List<int> comparisonList = new List<int>(stage1Ranks);
+            while (comparisonList.Count < 3) comparisonList.Add(0);
+
+            // 比較対象の4つの値: Stage2Top, Stage1Rank1, Stage1Rank2, Stage1Rank3
+            // これらを降順ソートして、Stage2Topが何番目に来るかを見る
+            // ただし、Stage2TopがStage1の値と同じ場合は「より上位」とみなす（＝一致寄り）
+            
+            // 判定ロジック:
+            // Stage2Top >= Stage1Rank1 -> 1位 (一致)
+            // Stage2Top >= Stage1Rank2 -> 2位 (やや一致)
+            // Stage2Top >= Stage1Rank3 -> 3位 (やや不一致)
+            // Stage2Top < Stage1Rank3  -> 4位 (不一致)
+
+            string evaluation = "判定不能";
+            
+            // データが無い場合は判定不能のままにするか、あるいは "-" にするか
+            if (stage2Ranks.Count == 0 && stage1Ranks.Count == 0)
+            {
+                evaluation = "-";
+            }
+            else
+            {
+                int s1_1 = comparisonList[0];
+                int s1_2 = comparisonList[1];
+                int s1_3 = comparisonList[2];
+
+                if (stage2Top >= s1_1)
+                {
+                    evaluation = "一致";
+                }
+                else if (stage2Top >= s1_2)
+                {
+                    evaluation = "やや一致";
+                }
+                else if (stage2Top >= s1_3)
+                {
+                    evaluation = "やや不一致";
+                }
+                else
+                {
+                    evaluation = "不一致";
+                }
+            }
+
+            fearEvaluationText.text = evaluation;
+            Debug.Log($"【ResultScene】判定結果: {evaluation} (Stage2Top: {stage2Top}, S1: {string.Join(",", comparisonList)})");
         }
     }
 
