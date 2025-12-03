@@ -2031,8 +2031,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.1, y: 0.5, z: 0.1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 0.050216835, y: 0.1, z: 0.1}
+  m_Center: {x: 0.029403122, y: 7.929851e-12, z: -0.050000228}
 --- !u!114 &401198962
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2056,12 +2056,80 @@ Transform:
   m_GameObject: {fileID: 401198960}
   serializedVersion: 2
   m_LocalRotation: {x: 0.0008489321, y: 0.6861752, z: -0.010827093, w: -0.72735524}
-  m_LocalPosition: {x: 15.344, y: 0.5794244, z: 18.081}
+  m_LocalPosition: {x: 12.71, y: 0.5794244, z: 23.23}
   m_LocalScale: {x: 182.52048, y: 74.89724, z: 93.543526}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &401587343
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 401587345}
+  - component: {fileID: 401587344}
+  - component: {fileID: 401587346}
+  m_Layer: 0
+  m_Name: 53.trigger
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!65 &401587344
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 401587343}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.05368797, y: 0.1, z: 0.1}
+  m_Center: {x: 0.023156088, y: -1.4827256e-11, z: -8.670166e-11}
+--- !u!4 &401587345
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 401587343}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.0008489321, y: 0.6861752, z: -0.010827093, w: -0.72735524}
+  m_LocalPosition: {x: 16.195, y: 0.57942444, z: 28.97}
+  m_LocalScale: {x: 182.52051, y: 182.52039, z: 182.52039}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &401587346
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 401587343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d06a5cdb9056c64a80338e42484bbf4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HorrorEventTrigger
+  eventType: 53
+  triggerOnce: 1
 --- !u!1 &416510906
 GameObject:
   m_ObjectHideFlags: 0
@@ -7125,8 +7193,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.1, y: 0.5, z: 0.5}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 0.049582023, y: 0.1, z: 0.1}
+  m_Center: {x: 0.025209744, y: -2.948186e-11, z: 2.617986e-11}
 --- !u!114 &1197187986
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9942,6 +10010,57 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3e642b42413bd304aa43689bbe0db507, type: 3}
+--- !u!1 &1599477154
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1599477156}
+  - component: {fileID: 1599477155}
+  m_Layer: 0
+  m_Name: 53
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1599477155
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1599477154}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50d50ace235ac8c46b4a7365e8e61c3c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VanishingWomanEvent
+  womanObject: {fileID: 2014870449}
+  vanishDelay: 2
+  audioSource: {fileID: 0}
+  appearSound: {fileID: 0}
+  vanishSound: {fileID: 0}
+  noiseEffectUI: {fileID: 0}
+  noiseDuration: 0.5
+--- !u!4 &1599477156
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1599477154}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.056, y: 0.28, z: 16.014}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1614474514
 GameObject:
   m_ObjectHideFlags: 0
@@ -10688,6 +10807,7 @@ MonoBehaviour:
   handprintEventTarget: {fileID: 1391901595}
   wallEyesEventTarget: {fileID: 1335099682}
   bearMoveEventTarget: {fileID: 1360142122}
+  vanishingWomanEventTarget: {fileID: 1599477155}
 --- !u!4 &1697327540
 Transform:
   m_ObjectHideFlags: 0
@@ -13445,4 +13565,6 @@ SceneRoots:
   - {fileID: 2103579292}
   - {fileID: 72546081}
   - {fileID: 2014870448}
+  - {fileID: 401587345}
+  - {fileID: 1599477156}
   - {fileID: 1700569800}

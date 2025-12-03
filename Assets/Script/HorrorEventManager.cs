@@ -53,6 +53,10 @@ public class HorrorEventManager : MonoBehaviour
     [SerializeField]
     private BearMoveEvent bearMoveEventTarget;
 
+    [Header("53: 消える女イベント")] // ★ 追加
+    [SerializeField]
+    private VanishingWomanEvent vanishingWomanEventTarget;
+
 
     public List<(string Timestamp, int eventType)> eventLog = new List<(string, int)>();
 
@@ -92,6 +96,7 @@ public class HorrorEventManager : MonoBehaviour
         eventActionMap[24] = TriggerHandprint;
         eventActionMap[25] = TriggerWallEyes;
         eventActionMap[21] = TriggerBearMove;
+        eventActionMap[53] = TriggerVanishingWoman;
     }
 
     /// <summary>
@@ -268,6 +273,19 @@ public class HorrorEventManager : MonoBehaviour
         else
         {
             Debug.LogError("21: BearMoveEventが設定されていません。");
+        }
+    }
+
+    // 53: 消える女
+    public void TriggerVanishingWoman()
+    {
+        if (vanishingWomanEventTarget != null)
+        {
+            vanishingWomanEventTarget.ActivateEvent();
+        }
+        else
+        {
+            Debug.LogError("53: VanishingWomanEventが設定されていません。");
         }
     }
 
