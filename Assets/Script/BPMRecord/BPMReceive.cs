@@ -340,10 +340,14 @@ public sealed class BPMReceive : MonoBehaviour
     {
         try
         {
-            string logDirectoryPath = Path.Combine(Application.dataPath, "CSV");
-            logFilePath = Path.Combine(logDirectoryPath, "heart_rate_log.csv");
+            string logDirectoryPath = Path.Combine(Application.persistentDataPath, "CSV");
+            
             if (!Directory.Exists(logDirectoryPath))
             { Directory.CreateDirectory(logDirectoryPath); }
+
+            string subjectId = GetNextSubjectId(logDirectoryPath);
+            logFilePath = Path.Combine(logDirectoryPath, $"{subjectId}_heart_rate_log.csv");
+            Debug.Log($"ログファイルパスを設定: {logFilePath}");
         }
         catch (Exception e) { Debug.LogError($"ディレクトリ準備エラー: {e.Message}"); }
     }
@@ -395,5 +399,31 @@ public sealed class BPMReceive : MonoBehaviour
         }
         catch (Exception e)
         { Debug.LogError($"ログファイルのリセットに失敗: {e.Message}"); }
+    }
+
+    private string GetNextSubjectId(string directoryPath)
+    {
+        int maxId = 0;
+        try
+        {
+            string[] files = Directory.GetFiles(directoryPath, "P*_heart_rate_log.csv");
+            foreach (string file in files)
+            {
+                string fileName = Path.GetFileName(file);
+                string[] parts = fileName.Split('_');
+                if (parts.Length > 0 && parts[0].StartsWith("P") && parts[0].Length == 4)
+                {
+                    if (int.TryParse(parts[0].Substring(1), out int id))
+                    {
+                        if (id > maxId) maxId = id;
+                    }
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"ID検索エラー: {e.Message}");
+        }
+        return $"P{(maxId + 1):D3}";
     }
 }

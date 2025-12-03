@@ -92,7 +92,12 @@ public class HeartRateManager : BaseHeartRateManager
         
         if (dataRecorder != null)
         {
-            dataRecorder.OpenLogFile("01_default_bpm_log");
+            string fileName = "01_default_bpm_log";
+            if (!string.IsNullOrEmpty(GameManager.SubjectID))
+            {
+                fileName = $"{GameManager.SubjectID}_{fileName}";
+            }
+            dataRecorder.OpenLogFile(fileName);
             dataRecorder.RecordMemo("RestScene1 Default Measurement");
         }
 

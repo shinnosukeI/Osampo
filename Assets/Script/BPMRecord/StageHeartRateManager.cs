@@ -73,6 +73,11 @@ public class StageHeartRateManager : BaseHeartRateManager
             logFileName = $"99_test_{sceneName}_bpm_log";
         }
 
+        if (!string.IsNullOrEmpty(GameManager.SubjectID))
+        {
+            logFileName = $"{GameManager.SubjectID}_{logFileName}";
+        }
+
         dataRecorder.OpenLogFile(logFileName);
         
         // 1秒ごとに記録するコルーチン開始

@@ -38,6 +38,7 @@ public class GameManager : MonoBehaviour
         {
             screenFader = FindFirstObjectByType<ScreenFader>();
         }
+        InitializeSubjectID();
         LaunchHeartRateApp();
     }
 
@@ -96,6 +97,9 @@ public class GameManager : MonoBehaviour
     // Stage2 (99_BPMTestScene2) の心拍数リスト
     public static List<int> SavedStage2BPMList = new List<int>();
 
+    // 被験者ID (P001, P002...)
+    public static string SubjectID = "";
+
     // ========================================================================
 
     // 平常時心拍数 (Instance property - keep for compatibility if needed, or sync with static)
@@ -106,6 +110,47 @@ public class GameManager : MonoBehaviour
         BaseHeartRate = bpm;
         SavedRestBPM = bpm; // Static変数にも保存
         Debug.Log($"GameManager: 平常時心拍数を {BaseHeartRate} に設定しました。");
+    }
+
+    private void InitializeSubjectID()
+    {
+        if (!string.IsNullOrEmpty(SubjectID)) return;
+
+        string directoryPath = Path.Combine(Application.persistentDataPath, "CSV");
+        if (!Directory.Exists(directoryPath))
+        {
+            Directory.CreateDirectory(directoryPath);
+        }
+
+        SubjectID = GetNextSubjectId(directoryPath);
+        Debug.Log($"GameManager: SubjectID initialized to {SubjectID}");
+    }
+
+    private string GetNextSubjectId(string directoryPath)
+    {
+        int maxId = 0;
+        try
+        {
+            // 全てのログファイルから最大IDを探す
+            string[] files = Directory.GetFiles(directoryPath, "P*_*.csv");
+            foreach (string file in files)
+            {
+                string fileName = Path.GetFileName(file);
+                string[] parts = fileName.Split('_');
+                if (parts.Length > 0 && parts[0].StartsWith("P") && parts[0].Length == 4)
+                {
+                    if (int.TryParse(parts[0].Substring(1), out int id))
+                    {
+                        if (id > maxId) maxId = id;
+                    }
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"ID検索エラー: {e.Message}");
+        }
+        return $"P{(maxId + 1):D3}";
     }
 
     /// <summary>

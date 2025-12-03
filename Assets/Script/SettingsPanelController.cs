@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class SettingsPanelController : MonoBehaviour
 {
@@ -7,6 +8,7 @@ public class SettingsPanelController : MonoBehaviour
     [SerializeField] private Slider bgmSlider;
     [SerializeField] private Slider seSlider;
     [SerializeField] private Button closeButton;
+    [SerializeField] private Button deleteDataButton; // 追加
 
     [Header("Appearance")]
     [SerializeField] private Color activeColor = new Color(1f, 0.7f, 0.7f); // 薄い赤
@@ -35,6 +37,11 @@ public class SettingsPanelController : MonoBehaviour
         if (closeButton != null)
         {
             closeButton.onClick.AddListener(OnCloseButtonClicked);
+        }
+
+        if (deleteDataButton != null)
+        {
+            deleteDataButton.onClick.AddListener(OnDeleteDataButtonClicked);
         }
     }
 
@@ -87,5 +94,39 @@ public class SettingsPanelController : MonoBehaviour
 
         // Hide the panel
         gameObject.SetActive(false);
+    }
+
+    private void OnDeleteDataButtonClicked()
+    {
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayCommonButtonSE();
+        }
+
+        string directoryPath = System.IO.Path.Combine(Application.persistentDataPath, "CSV");
+        if (System.IO.Directory.Exists(directoryPath))
+        {
+            try
+            {
+                string[] files = System.IO.Directory.GetFiles(directoryPath);
+                foreach (string file in files)
+                {
+                    System.IO.File.Delete(file);
+                }
+                Debug.Log($"全てのCSVデータを削除しました: {directoryPath}");
+                
+                // ボタンのテキストを変更してフィードバック（もしあれば）
+                TextMeshProUGUI btnText = deleteDataButton.GetComponentInChildren<TextMeshProUGUI>();
+                if (btnText != null) btnText.text = "削除完了";
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"削除エラー: {e.Message}");
+            }
+        }
+        else
+        {
+            Debug.Log("削除対象のディレクトリが見つかりません。");
+        }
     }
 }
