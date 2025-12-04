@@ -224,7 +224,14 @@ public class HorrorEventManager : MonoBehaviour
         if (ballPrefab != null && ballSpawnPoint != null)
         {
             Debug.Log("⚽ ボールが転がってきます！");
-            Instantiate(ballPrefab, ballSpawnPoint.position, ballSpawnPoint.rotation);
+            GameObject ball = Instantiate(ballPrefab, ballSpawnPoint.position, ballSpawnPoint.rotation);
+            
+            // RollingBallコンポーネントを取得して転がす
+            RollingBall rbScript = ball.GetComponent<RollingBall>();
+            if (rbScript != null)
+            {
+                rbScript.StartRoll();
+            }
         }
         else
         {
