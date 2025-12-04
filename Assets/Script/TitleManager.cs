@@ -49,6 +49,10 @@ public class TitleManager : MonoBehaviour
         if (gameManager == null)
         {
             gameManager = FindFirstObjectByType<GameManager>();
+            if (gameManager == null)
+            {
+                Debug.LogWarning("TitleManager: GameManager not found in Start!");
+            }
         }
 
         // 4. Startボタンのセットアップ
@@ -100,6 +104,13 @@ public class TitleManager : MonoBehaviour
         if (SoundManager.Instance != null)
         {
             SoundManager.Instance.PlayTitleStartSE();
+        }
+
+        // Fallback: GameManagerがnullなら再取得を試みる
+        if (gameManager == null)
+        {
+            Debug.Log("TitleManager: GameManager is null. Attempting to find it...");
+            gameManager = FindFirstObjectByType<GameManager>();
         }
 
         if (gameManager != null)
