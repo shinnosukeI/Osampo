@@ -1341,6 +1341,7 @@ GameObject:
   - component: {fileID: 286273553}
   - component: {fileID: 286273552}
   - component: {fileID: 286273551}
+  - component: {fileID: 286273555}
   m_Layer: 0
   m_Name: Wall
   m_TagString: Untagged
@@ -1465,6 +1466,38 @@ Transform:
   - {fileID: 1843663244}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &286273555
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 286273550}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshSurface
+  m_SerializedVersion: 0
+  m_AgentTypeID: 0
+  m_CollectObjects: 0
+  m_Size: {x: 10, y: 10, z: 10}
+  m_Center: {x: 0, y: 2, z: 0}
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_UseGeometry: 0
+  m_DefaultArea: 0
+  m_GenerateLinks: 0
+  m_IgnoreNavMeshAgent: 1
+  m_IgnoreNavMeshObstacle: 1
+  m_OverrideTileSize: 0
+  m_TileSize: 256
+  m_OverrideVoxelSize: 0
+  m_VoxelSize: 0.16666667
+  m_MinRegionArea: 2
+  m_NavMeshData: {fileID: 23800000, guid: 94c25bbbda790df4883a62d344e33e10, type: 2}
+  m_BuildHeightMesh: 0
 --- !u!4 &289988614 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: f65c7849b930e9b418836905e666466a, type: 3}
@@ -1766,6 +1799,155 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
+--- !u!1001 &400829274
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 7d2bef75eb15f9241a477f7810c94995, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 6.23
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 7d2bef75eb15f9241a477f7810c94995, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 7d2bef75eb15f9241a477f7810c94995, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 17.90436
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 7d2bef75eb15f9241a477f7810c94995, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7992598
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 7d2bef75eb15f9241a477f7810c94995, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.004871177
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 7d2bef75eb15f9241a477f7810c94995, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.6009211
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 7d2bef75eb15f9241a477f7810c94995, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.007347267
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 7d2bef75eb15f9241a477f7810c94995, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0.06
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 7d2bef75eb15f9241a477f7810c94995, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 73.875
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 7d2bef75eb15f9241a477f7810c94995, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: -1.008
+      objectReference: {fileID: 0}
+    - target: {fileID: 65702495048144492, guid: 7d2bef75eb15f9241a477f7810c94995, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 731256284166303632, guid: 7d2bef75eb15f9241a477f7810c94995, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: f5099d782c23bea4d9bb59c4b8f36323, type: 2}
+    - target: {fileID: 731256284166303632, guid: 7d2bef75eb15f9241a477f7810c94995, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: f5099d782c23bea4d9bb59c4b8f36323, type: 2}
+    - target: {fileID: 919132149155446097, guid: 7d2bef75eb15f9241a477f7810c94995, type: 3}
+      propertyPath: m_Name
+      value: "15.\u30BE\u30F3\u30D3\u306B\u8FFD\u308F\u308C\u308B"
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7d2bef75eb15f9241a477f7810c94995, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 400829278}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7d2bef75eb15f9241a477f7810c94995, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 400829277}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7d2bef75eb15f9241a477f7810c94995, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 400829276}
+  m_SourcePrefab: {fileID: 100100000, guid: 7d2bef75eb15f9241a477f7810c94995, type: 3}
+--- !u!1 &400829275 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 7d2bef75eb15f9241a477f7810c94995, type: 3}
+  m_PrefabInstance: {fileID: 400829274}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &400829276
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 400829275}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65c66a0cd3cf12244a23f83773ed7863, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ZombieChaseEvent
+  player: {fileID: 643491820}
+  animator: {fileID: 400829277}
+  runAnimationName: Run
+  chaseSpeed: 1
+  minDistance: 3
+  warpDistance: 4
+  appearDistance: 8
+  audioSource: {fileID: 0}
+  screamSound: {fileID: 0}
+  recordInterval: 1
+--- !u!95 &400829277
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 400829275}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 094a9290a4bb3714e844072d99b1c5ab, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!195 &400829278
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 400829275}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.8
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!1 &401198960
 GameObject:
   m_ObjectHideFlags: 0
@@ -1914,6 +2096,7 @@ GameObject:
   - component: {fileID: 416510910}
   - component: {fileID: 416510909}
   - component: {fileID: 416510908}
+  - component: {fileID: 416510911}
   m_Layer: 0
   m_Name: floor
   m_TagString: Untagged
@@ -2013,6 +2196,38 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 416510906}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &416510911
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 416510906}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshSurface
+  m_SerializedVersion: 0
+  m_AgentTypeID: 0
+  m_CollectObjects: 0
+  m_Size: {x: 10, y: 10, z: 10}
+  m_Center: {x: 0, y: 2, z: 0}
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_UseGeometry: 0
+  m_DefaultArea: 0
+  m_GenerateLinks: 0
+  m_IgnoreNavMeshAgent: 1
+  m_IgnoreNavMeshObstacle: 1
+  m_OverrideTileSize: 0
+  m_TileSize: 256
+  m_OverrideVoxelSize: 0
+  m_VoxelSize: 0.16666667
+  m_MinRegionArea: 2
+  m_NavMeshData: {fileID: 23800000, guid: 375d2e6c271e21c44a7040996e32f8f6, type: 2}
+  m_BuildHeightMesh: 0
 --- !u!1001 &419240419
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5843,7 +6058,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1466680416331344248, guid: f8734d8af4462e847ade2ae6a4795a2a, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2238679056969364418, guid: f8734d8af4462e847ade2ae6a4795a2a, type: 3}
       propertyPath: m_LocalPosition.x
@@ -6886,6 +7101,7 @@ GameObject:
   - component: {fileID: 1160005041}
   - component: {fileID: 1160005040}
   - component: {fileID: 1160005039}
+  - component: {fileID: 1160005043}
   m_Layer: 0
   m_Name: Load
   m_TagString: Untagged
@@ -6987,6 +7203,38 @@ Transform:
   - {fileID: 1181933936}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1160005043
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1160005038}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshSurface
+  m_SerializedVersion: 0
+  m_AgentTypeID: 0
+  m_CollectObjects: 0
+  m_Size: {x: 10, y: 10, z: 10}
+  m_Center: {x: 0, y: 2, z: 0}
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_UseGeometry: 0
+  m_DefaultArea: 0
+  m_GenerateLinks: 0
+  m_IgnoreNavMeshAgent: 1
+  m_IgnoreNavMeshObstacle: 1
+  m_OverrideTileSize: 0
+  m_TileSize: 256
+  m_OverrideVoxelSize: 0
+  m_VoxelSize: 0.16666667
+  m_MinRegionArea: 2
+  m_NavMeshData: {fileID: 23800000, guid: 310f2c166f8065d418d75e982df41d46, type: 2}
+  m_BuildHeightMesh: 0
 --- !u!1 &1181933935
 GameObject:
   m_ObjectHideFlags: 0
@@ -11086,6 +11334,7 @@ MonoBehaviour:
   wallEyesEventTarget: {fileID: 1335099682}
   bearMoveEventTarget: {fileID: 1360142122}
   vanishingWomanEventTarget: {fileID: 1599477155}
+  zombieChaseEventTarget: {fileID: 400829276}
   cycleCount: 0
   cycleEventTypes: 
 --- !u!4 &1697327540
@@ -12039,6 +12288,74 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 72571486}
   m_SourcePrefab: {fileID: 100100000, guid: a25107b7efe4e0941bed4252077d72c1, type: 3}
+--- !u!1 &1889333196
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1889333199}
+  - component: {fileID: 1889333198}
+  - component: {fileID: 1889333197}
+  m_Layer: 0
+  m_Name: 15.trigger
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!65 &1889333197
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1889333196}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.04177179, y: 0.1, z: 0.06029488}
+  m_Center: {x: 0.034435324, y: -7.336838e-11, z: -0.0698529}
+--- !u!114 &1889333198
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1889333196}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d06a5cdb9056c64a80338e42484bbf4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HorrorEventTrigger
+  eventType: 15
+  triggerOnce: 0
+--- !u!4 &1889333199
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1889333196}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.0008489321, y: 0.6861752, z: -0.010827093, w: -0.72735524}
+  m_LocalPosition: {x: 11.6, y: 0.5794244, z: 12.59}
+  m_LocalScale: {x: 182.52048, y: 74.89724, z: 93.543526}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1911808728
 GameObject:
   m_ObjectHideFlags: 0
@@ -13536,6 +13853,83 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 103393ffc7820b44a96b1d4f9cc4ad44, type: 3}
   m_PrefabInstance: {fileID: 531491195}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2142157780
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2142157783}
+  - component: {fileID: 2142157782}
+  - component: {fileID: 2142157781}
+  m_Layer: 0
+  m_Name: ZombieChaseManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2142157781
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2142157780}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65c66a0cd3cf12244a23f83773ed7863, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ZombieChaseEvent
+  player: {fileID: 643491820}
+  animator: {fileID: 0}
+  runAnimationName: Run
+  chaseSpeed: 2
+  minDistance: 3
+  warpDistance: 8
+  appearDistance: 4
+  audioSource: {fileID: 0}
+  screamSound: {fileID: 0}
+  recordInterval: 1
+--- !u!195 &2142157782
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2142157780}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.8
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
+--- !u!4 &2142157783
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2142157780}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.0008489321, y: 0.6861752, z: -0.010827093, w: -0.72735524}
+  m_LocalPosition: {x: -5.034, y: 0.5794244, z: -7.834}
+  m_LocalScale: {x: 182.52051, y: 74.89724, z: 93.543526}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -13590,3 +13984,6 @@ SceneRoots:
   - {fileID: 1941558052}
   - {fileID: 555940695}
   - {fileID: 1002856472}
+  - {fileID: 2142157783}
+  - {fileID: 1889333199}
+  - {fileID: 400829274}

@@ -58,6 +58,10 @@ public class HorrorEventManager : MonoBehaviour
     [SerializeField]
     private VanishingWomanEvent vanishingWomanEventTarget;
 
+    [Header("15: ゾンビ追跡イベント")] // ★ 追加
+    [SerializeField]
+    private ZombieChaseEvent zombieChaseEventTarget;
+
     public List<(string Timestamp, int eventType)> eventLog = new List<(string, int)>();
 
     // ★ 周期カウント（ドア/ワープした回数）
@@ -103,7 +107,9 @@ public class HorrorEventManager : MonoBehaviour
         eventActionMap[24] = TriggerHandprint;
         eventActionMap[25] = TriggerWallEyes;
         eventActionMap[21] = TriggerBearMove;
+        eventActionMap[21] = TriggerBearMove;
         eventActionMap[53] = TriggerVanishingWoman;
+        eventActionMap[15] = TriggerZombieChase;
     }
 
     /// <summary>
@@ -288,6 +294,19 @@ public class HorrorEventManager : MonoBehaviour
         else
         {
             Debug.LogError("53: VanishingWomanEventが設定されていません。");
+        }
+    }
+
+    // 15: ゾンビ追跡
+    public void TriggerZombieChase()
+    {
+        if (zombieChaseEventTarget != null)
+        {
+            zombieChaseEventTarget.ActivateEvent();
+        }
+        else
+        {
+            Debug.LogError("15: ZombieChaseEventが設定されていません。");
         }
     }
 
