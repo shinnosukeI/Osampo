@@ -100,6 +100,9 @@ public class GameManager : MonoBehaviour
     // 被験者ID (P001, P002...)
     public static string SubjectID = "";
 
+    // アンケート結果 (選択された恐怖ID)
+    public static int SavedSurveyResult = -1;
+
     // ========================================================================
 
     // 平常時心拍数 (Instance property - keep for compatibility if needed, or sync with static)
@@ -161,6 +164,7 @@ public class GameManager : MonoBehaviour
         SavedRestBPM = 0f;
         SavedStage1BPMList.Clear();
         SavedStage2BPMList.Clear();
+        SavedSurveyResult = -1;
         Debug.Log("GameManager: Data reset for new game.");
     }
 
@@ -169,6 +173,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void ReceiveSurveyResult(int surveyResult)
     {
+        SavedSurveyResult = surveyResult;
         Debug.Log($"アンケート結果 {surveyResult} を受け取りました。");
         LoadRestScene1();
     }
