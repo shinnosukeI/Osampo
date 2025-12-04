@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.EventSystems; // EventSystem操作用
 using UnityEngine.SceneManagement; // Fallback用
+using System.IO; // スクリーンショット保存用
+using System.Collections; // コルーチン用
 
 public class ResultSceneManager : MonoBehaviour
 {
@@ -49,6 +51,9 @@ public class ResultSceneManager : MonoBehaviour
         }
 
         DisplayResults();
+
+        // 4. スクリーンショット保存 (自動)
+        StartCoroutine(SaveResultScreenshotSequence());
     }
 
     private void DisplayResults()
@@ -289,5 +294,34 @@ public class ResultSceneManager : MonoBehaviour
                 SceneManager.LoadScene("ConfinementWalk");
             }
         }
+    }
+
+    /// <summary>
+    /// 結果画面のスクリーンショットを保存するコルーチン
+    /// </summary>
+    private IEnumerator SaveResultScreenshotSequence()
+    {
+        // フェードイン完了を待つために0.8秒待機
+        yield return new WaitForSeconds(0.8f);
+        // UI描画完了を待つ
+        yield return new WaitForEndOfFrame();
+
+        // 保存先ディレクトリ: Application.persistentDataPath/ScreenShots
+        string directoryPath = Path.Combine(Application.persistentDataPath, "ScreenShots");
+        if (!Directory.Exists(directoryPath))
+        {
+            Directory.CreateDirectory(directoryPath);
+        }
+
+        // ファイル名: [SubjectID]_Result_[Timestamp].png
+        string subjectID = string.IsNullOrEmpty(GameManager.SubjectID) ? "NoID" : GameManager.SubjectID;
+        string timestamp = System.DateTime.Now.ToString("yyyyMMdd_HHmmss");
+        string fileName = $"{subjectID}_Result_{timestamp}.png";
+        string fullPath = Path.Combine(directoryPath, fileName);
+
+        // スクリーンショット撮影
+        ScreenCapture.CaptureScreenshot(fullPath);
+
+        Debug.Log($"【ResultScene】スクリーンショット保存完了: {fullPath}");
     }
 }
