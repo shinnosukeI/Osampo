@@ -15,6 +15,12 @@ public class st1_HorrorEventManager : MonoBehaviour
     [Header("54: 落下イベント")]
     [SerializeField] private FallingCorpse fallingCorpse; 
 
+    [Header("55: 窓ガラスが割れるイベント")]
+    [SerializeField]
+    private GameObject normalWindowObject; // 割れる前の窓
+    [SerializeField]
+    private GameObject brokenWindowObject;
+
     // ★ 周回カウント（ドア/ワープを通った回数）
     [Header("周回カウント")]
     [SerializeField] private int cycleCount = 1;
@@ -49,6 +55,7 @@ public class st1_HorrorEventManager : MonoBehaviour
     {
         eventActionMap[45] = TriggerRadioEvent;
         eventActionMap[54] = TriggerCorpseFall;    // ラジオイベント
+        eventActionMap[55] = TriggerWindowBreak; //55.ガラスが割れる
         // eventActionMap[14] = TriggerZombieFall; など追加していく
     }
 
@@ -66,16 +73,32 @@ public class st1_HorrorEventManager : MonoBehaviour
     }
 
     private void TriggerCorpseFall()
-{
-    if (fallingCorpse == null)
     {
-        Debug.LogError("54: FallingCorpse が設定されていません。");
-        return;
+        if (fallingCorpse == null)
+        {
+            Debug.LogError("54: FallingCorpse が設定されていません。");
+            return;
+        }
+
+        Debug.Log("💀 54: 落下イベント発動");
+        fallingCorpse.StartFalling();   // FallingCorpse 側にこのメソッドが必要
     }
 
-    Debug.Log("💀 54: 落下イベント発動");
-    fallingCorpse.StartFalling();   // FallingCorpse 側にこのメソッドが必要
-}
+    // 55: 窓ガラスが割れる
+    public void TriggerWindowBreak()
+    {
+        if (normalWindowObject != null && brokenWindowObject != null)
+        {
+            Debug.Log("💥 窓ガラスが割れます！");
+            normalWindowObject.SetActive(false);
+            brokenWindowObject.SetActive(true);
+        }
+        else
+        {
+            Debug.LogError("55: 窓ガラスのGameObjectが設定されていません。");
+        }
+    }
+
     // ★ 指定イベントを発動
     private void TriggerHorrorEvent(int eventType)
     {
