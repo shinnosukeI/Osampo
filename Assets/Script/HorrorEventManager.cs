@@ -62,6 +62,18 @@ public class HorrorEventManager : MonoBehaviour
     [SerializeField]
     private ZombieChaseEvent zombieChaseEventTarget;
 
+    [Header("46: 雷イベント")] // ★ 追加
+    [SerializeField]
+    private AudioSource thunderAudioSource;
+    [SerializeField]
+    private AudioClip thunderSound;
+
+    [Header("42: 笑い声イベント")] // ★ 追加
+    [SerializeField]
+    private AudioSource laughAudioSource;
+    [SerializeField]
+    private AudioClip laughSound;
+
     public List<(string Timestamp, int eventType)> eventLog = new List<(string, int)>();
 
     // ★ 周期カウント（ドア/ワープした回数）
@@ -110,6 +122,8 @@ public class HorrorEventManager : MonoBehaviour
         eventActionMap[21] = TriggerBearMove;
         eventActionMap[53] = TriggerVanishingWoman;
         eventActionMap[15] = TriggerZombieChase;
+        eventActionMap[46] = TriggerThunder; // ★ 追加
+        eventActionMap[42] = TriggerLaugh;   // ★ 追加
     }
 
     /// <summary>
@@ -307,6 +321,34 @@ public class HorrorEventManager : MonoBehaviour
         else
         {
             Debug.LogError("15: ZombieChaseEventが設定されていません。");
+        }
+    }
+
+    // 46: 雷
+    public void TriggerThunder()
+    {
+        if (thunderAudioSource != null && thunderSound != null)
+        {
+            Debug.Log("⚡ 雷が鳴りました！");
+            thunderAudioSource.PlayOneShot(thunderSound);
+        }
+        else
+        {
+            Debug.LogError("46: 雷のAudioSourceまたはAudioClipが設定されていません。");
+        }
+    }
+
+    // 42: 笑い声
+    public void TriggerLaugh()
+    {
+        if (laughAudioSource != null && laughSound != null)
+        {
+            Debug.Log("😈 笑い声が聞こえます...");
+            laughAudioSource.PlayOneShot(laughSound);
+        }
+        else
+        {
+            Debug.LogError("42: 笑い声のAudioSourceまたはAudioClipが設定されていません。");
         }
     }
 

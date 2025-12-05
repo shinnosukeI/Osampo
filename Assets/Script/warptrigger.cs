@@ -3,6 +3,14 @@ using UnityEngine;
 
 public class DoorTeleporter : MonoBehaviour
 {
+
+    private void OnMouseDown()
+    {
+        Debug.Log("ドアをクリックした！");
+        TeleportAndOpenDoor();
+    }
+
+    
     [Header("ワープ設定")]
     public Transform player;           // プレイヤー
     public Vector3 teleportPosition;   // ワープ先（XYZ）
@@ -69,6 +77,7 @@ public class DoorTeleporter : MonoBehaviour
     public void TeleportAndOpenDoor()
     {
         if (player == null) return;
+        Debug.Log("ドアクリックされた");
 
         var cc = player.GetComponent<CharacterController>();
         if (cc != null) cc.enabled = false;
