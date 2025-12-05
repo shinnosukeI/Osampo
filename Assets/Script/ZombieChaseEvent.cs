@@ -4,130 +4,146 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class ZombieChaseEvent : MonoBehaviour
 {
-    [Header("ターゲット（プレイヤー）")]
-    [SerializeField] private Transform player;
+    [Header("目的地（廊下の突き当たりなど）")]
+    [SerializeField] private Transform targetDestination;
 
     [Header("アニメーション設定")]
     [SerializeField] private Animator animator;
-    [SerializeField] private string runAnimationName = "Run"; // AnimatorのState名またはパラメータ名
+    [SerializeField] private string runAnimationName = "Run";
+    [SerializeField] private string idleAnimationName = "Idle"; // ★ 追加
 
     [Header("移動設定")]
-    [SerializeField] private float chaseSpeed = 2.0f; // 少しゆっくりに
-    [SerializeField] private float minDistance = 3.0f; // プレイヤーとの最小距離（これ以上近づかない）
+    [SerializeField] private float moveSpeed = 3.5f; // 走るスピード
+    [SerializeField] private float walkSpeed = 1.0f; // ★ 追加: 歩くスピード（振り返った時）
 
     [Header("音響設定")]
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private AudioClip screamSound;
 
     private NavMeshAgent agent;
-    private bool isChasing = false;
+    private bool isActive = false;
+    private Renderer[] renderers; // 視界判定用
+    private bool wasVisible = false; // 前フレームの状態
 
     void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
-        // 最初は止めておく
         agent.enabled = false;
-        if (animator != null) animator.enabled = false;
+        if (animator != null) 
+        {
+            animator.enabled = false;
+        }
+        
+        // 子要素含む全てのRendererを取得（視界判定のため）
+        renderers = GetComponentsInChildren<Renderer>();
     }
 
-    private System.Collections.Generic.Queue<Vector3> pathHistory = new System.Collections.Generic.Queue<Vector3>();
-    private Vector3 lastRecordedPosition;
-    [SerializeField] private float recordInterval = 1.0f; // 1メートルごとに記録
-
-    void Update()
+    private void Update()
     {
-        if (isChasing && player != null && agent.enabled)
+        if (isActive && targetDestination != null && agent.enabled)
         {
-            // 1. プレイヤーの軌跡を記録（ブレッドクラム）
-            float distFromLast = Vector3.Distance(player.position, lastRecordedPosition);
-            if (distFromLast > recordInterval)
-            {
-                pathHistory.Enqueue(player.position);
-                lastRecordedPosition = player.position;
-            }
+            // 1. カメラに映っているか判定
+            bool isVisible = IsVisibleByCamera();
 
-            // 2. 移動目標の決定
-            // 履歴がある場合は、一番古い履歴（プレイヤーが以前いた場所）を目指す
-            if (pathHistory.Count > 0)
+            if (isVisible)
             {
-                Vector3 target = pathHistory.Peek();
-                agent.SetDestination(target);
-
-                // その履歴地点に到達したら、リストから削除して次の地点へ
-                if (Vector3.Distance(transform.position, target) < 1.5f) // 到達判定距離
+                // 見られている -> 歩く
+                // Agentの自動移動は止める
+                agent.isStopped = true;
+                agent.velocity = Vector3.zero;
+                
+                if (animator != null)
                 {
-                    pathHistory.Dequeue();
+                    if (!wasVisible)
+                    {
+                        animator.Play(idleAnimationName); // 歩きアニメーション再生
+                        animator.applyRootMotion = true;  // Root Motion有効化（動きを吸い出すため）
+                    }
+
+                    // ★ スクリプトで手動で前進させる
+                    // Root MotionをOnAnimatorMoveで無効化しているため、ここで動かさないと進まない
+                    agent.Move(transform.forward * walkSpeed * Time.deltaTime);
                 }
             }
             else
             {
-                // 履歴をすべて消化したら、現在のプレイヤー位置を目指す
-                agent.SetDestination(player.position);
-            }
-
-            // 3. プレイヤーとの距離チェック（追い越し防止）
-            float distanceToPlayer = Vector3.Distance(transform.position, player.position);
-            
-            // 指定距離より近づいたら止まる
-            if (distanceToPlayer <= minDistance)
-            {
-                agent.isStopped = true;
-                agent.velocity = Vector3.zero; // 慣性を消す
-                if (animator != null) animator.speed = 0; // アニメーションも止める（滑り防止）
-            }
-            else
-            {
+                // 見られていない -> 走る（Agentで進む）
                 agent.isStopped = false;
-                if (animator != null) animator.speed = 1; // アニメーション再開
+                agent.SetDestination(targetDestination.position);
+                
+                if (animator != null && wasVisible)
+                {
+                    animator.Play(runAnimationName); // 走り再生
+                    animator.applyRootMotion = false; // Root Motion無効化
+                }
+            }
+            
+            wasVisible = isVisible; // 状態更新
+        }
+    }
+
+    // Root Motionを「吸い出して捨てる」ための処理
+    private void OnAnimatorMove()
+    {
+        // applyRootMotionが有効な時、ここが呼ばれる。
+        // ここで何もしなければ、アニメーションの移動（Root Motion）は無視される（＝Bake Into Poseと同じ状態になる）。
+        // これにより、アニメーションによる「カクつき（戻り）」を防ぎつつ、
+        // Update内で agent.Move を使ってスムーズに移動させることができる。
+        
+        // 必要であれば回転だけ適用するなど調整可能だが、今回は何もしない。
+    }
+
+    // カメラの視錐台（Frustum）に入っているかチェック
+    private bool IsVisibleByCamera()
+    {
+        if (Camera.main == null) return false;
+
+        Plane[] planes = GeometryUtility.CalculateFrustumPlanes(Camera.main);
+
+        foreach (var r in renderers)
+        {
+            if (r != null && GeometryUtility.TestPlanesAABB(planes, r.bounds))
+            {
+                return true; // どれか一つのパーツでも映っていれば「見えている」とみなす
             }
         }
+        return false;
     }
 
     public void ActivateEvent()
     {
-        Debug.Log("🧟 ゾンビ追跡イベント発生！");
+        Debug.Log("🧟 ゾンビイベント開始（だるまさんが転んだモード）");
 
-        // プレイヤーを自動検索（もし設定されていなければ）
-        if (player == null)
+        if (targetDestination == null)
         {
-            GameObject p = GameObject.FindGameObjectWithTag("Player");
-            if (p != null) player = p.transform;
+            Debug.LogError("ZombieChaseEvent: Target Destination が設定されていません！");
+            return;
         }
 
-        // 初期位置を記録
-        if (player != null)
-        {
-            lastRecordedPosition = player.position;
-            pathHistory.Clear();
-            pathHistory.Enqueue(player.position);
-        }
-
-        // NavMeshAgentを有効化
+        // NavMeshAgent設定
         if (agent != null)
         {
             agent.enabled = true;
-            agent.speed = chaseSpeed;
-            agent.angularSpeed = 360.0f; // 回転速度を上げる（素早く向くように）
-            agent.updateRotation = true; // 回転はAgentに任せる
+            agent.speed = moveSpeed;
+            agent.angularSpeed = 360.0f;
+            agent.acceleration = 20.0f;
+            agent.updateRotation = true;
         }
 
         // アニメーション開始
         if (animator != null)
         {
             animator.enabled = true;
-            animator.applyRootMotion = false; // RootMotionを切る（NavMeshと喧嘩しないように）
-            // TriggerまたはBoolで遷移させるのが一般的だが、
-            // シンプルにStateを再生、または "IsRunning" boolをオンにするなど
-            // ここでは汎用的に Play を使用（AnimatorのState名と一致させる必要あり）
+            animator.applyRootMotion = false;
             animator.Play(runAnimationName);
         }
 
-        // 叫び声
+        // 音再生
         if (audioSource != null && screamSound != null)
         {
             audioSource.PlayOneShot(screamSound);
         }
 
-        isChasing = true;
+        isActive = true;
     }
 }
