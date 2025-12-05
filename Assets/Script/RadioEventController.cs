@@ -50,7 +50,7 @@ public class RadioEventController : MonoBehaviour
             PlayNoiseLoop();
         }
 
-         PlayRadioSequence();
+
     }
 
     // ノイズ再生専用の関数（ずっとループ再生）

@@ -1,7 +1,4 @@
 using UnityEngine;
-using UnityEngine;
-using UnityEngine;
-using UnityEngine;
 
 public class LookAtPlayer : MonoBehaviour
 {

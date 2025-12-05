@@ -9,27 +9,28 @@ public class st1_HorrorEventManager : MonoBehaviour
 
     public List<(string Timestamp, int eventType)> eventLog = new List<(string, int)>();
 
-    //========参考=========
-    //[Header("14: ゾンビ落下イベント")]
-    //[SerializeField]
-    //private GameObject zombiePrefab; // FallingCorpseスクリプト付きのプレハブ
-    //[SerializeField]
-    //private Transform zombieSpawnPoint;
-    //=====================
+    [Header("45: ラジオイベント")]
+    [SerializeField] private RadioEventController radioController;
 
+    [Header("54: 落下イベント")]
+    [SerializeField] private FallingCorpse fallingCorpse; 
 
-    // ★ 周期カウント（ドア/ワープした回数）
+    // ★ 周回カウント（ドア/ワープを通った回数）
     [Header("周回カウント")]
-    [SerializeField] private int cycleCount = 0;
+    [SerializeField] private int cycleCount = 1;
     public int CycleCount => cycleCount;
 
-    // ★ 周回ごとに発生させるイベントタイプの一覧
-    // 例: [54, 14, 31] → 1周目=54, 2周目=14, 3周目=31
+    // ★ 周回ごとのイベント設定
+    // 例: [0, 45, 14] → 1周目=0(なし) / 2周目=45 / 3周目=14
     [Header("周回ごとのイベント設定")]
     [SerializeField] private List<int> cycleEventTypes = new List<int>();
 
-    // イベントタイプ → 実行アクション のマップ
+    // イベントタイプ → アクション
     private Dictionary<int, Action> eventActionMap = new Dictionary<int, Action>();
+
+    // この周回ではもうイベントを発動したか？
+    private int lastTriggeredCycle = 0;
+
 
     void Start()
     {
@@ -38,35 +39,51 @@ public class st1_HorrorEventManager : MonoBehaviour
             eventDatabase.Initialize();
         }
 
+        Debug.Log("cycleEventTypes の要素数 = " + cycleEventTypes.Count);
+        Debug.Log($"ゲーム開始時の周回 = {cycleCount}");
         RegisterEventActions();
-
-        // 起動時テスト。必要なら使う
-        //TriggerHorrorEvent(54);
-        //TriggerHorrorEvent(14);
-        //TriggerHorrorEvent(31);
     }
 
-    /// <summary>
-    /// 各イベントの実行アクションを登録
-    /// </summary>
+    // ★ 各イベントアクション登録
     private void RegisterEventActions()
     {
-        //========参考=========
-        //eventActionMap[14] = TriggerZombieFall;
-        //=====================
-
+        eventActionMap[45] = TriggerRadioEvent;
+        eventActionMap[54] = TriggerCorpseFall;    // ラジオイベント
+        // eventActionMap[14] = TriggerZombieFall; など追加していく
     }
 
-    /// <summary>
-    /// イベントを発動
-    /// </summary>
-    public void TriggerHorrorEvent(int eventType)
+    // ★ ラジオイベント実行
+    private void TriggerRadioEvent()
+    {
+        if (radioController == null)
+        {
+            Debug.LogError("45: RadioEventController が設定されていません。");
+            return;
+        }
+
+        Debug.Log("📻 ラジオイベント発動");
+        radioController.PlayRadioSequence();
+    }
+
+    private void TriggerCorpseFall()
+{
+    if (fallingCorpse == null)
+    {
+        Debug.LogError("54: FallingCorpse が設定されていません。");
+        return;
+    }
+
+    Debug.Log("💀 54: 落下イベント発動");
+    fallingCorpse.StartFalling();   // FallingCorpse 側にこのメソッドが必要
+}
+    // ★ 指定イベントを発動
+    private void TriggerHorrorEvent(int eventType)
     {
         HorrorEventData data = eventDatabase?.GetEventData(eventType);
 
         if (data == null)
         {
-            Debug.LogWarning($"イベントタイプ {eventType} がデータベースに存在しません。");
+            Debug.LogWarning($"イベントタイプ {eventType} のデータがありません。");
             return;
         }
 
@@ -75,64 +92,67 @@ public class st1_HorrorEventManager : MonoBehaviour
         string currentTimestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
         eventLog.Add((currentTimestamp, eventType));
 
-        // イベント固有のアクションが登録されていれば実行
         if (eventActionMap.TryGetValue(eventType, out Action action))
         {
             action.Invoke();
         }
         else
         {
-            Debug.Log($"⚠ イベントタイプ {eventType} に対応するアクションが登録されていません。");
+            Debug.LogWarning($"⚠ イベントタイプ {eventType} に対応するアクションがありません。");
         }
     }
 
-    // ======== 各イベント処理 ========
-
-    // 参考===14: ゾンビが降ってくる
-    //public void TriggerZombieFall()
-    //{
-        //if (zombiePrefab == null || zombieSpawnPoint == null)
-        //{
-           // Debug.LogError("14: ゾンビのプレハブまたは出現位置が設定されていません。");
-           //return;
-        //}
-
-       // Debug.Log("😱 ゾンビが降ってきます！");
-       //Instantiate(zombiePrefab, zombieSpawnPoint.position, zombieSpawnPoint.rotation);
-    //}
-
-
-    // ============================
-    // ★ ドア（ワープ含む）で呼び出す周期カウント
-    // ============================
+    // ★ ドア（ワープ含む）で呼び出す：周回数を増やすだけ
     public void OnDoorClicked()
     {
-        // 周回カウントを増やす
         cycleCount++;
         Debug.Log($"🚪 ドア/ワープで周期カウント: {cycleCount}");
+        // ここではイベントを発動しない
+    }
+
+    // ★ トリガーから呼ぶ：今の周回のイベントを発動していいなら発動
+    public bool TryTriggerCurrentCycleEvent()
+    {
+        // まだ1周目に入っていない
+        if (cycleCount <= 0)
+        {
+            Debug.Log("[EventManager] まだ周回が始まっていないのでイベントなし");
+            return false;
+        }
 
         if (cycleEventTypes == null || cycleEventTypes.Count == 0)
         {
-            Debug.LogWarning("周回ごとのイベントが設定されていません。");
-            return;
+            Debug.LogWarning("[EventManager] 周回ごとのイベントが設定されていません。");
+            return false;
         }
 
-        // --- パターンA: 最後の要素を以降も使い続ける ---
+        // この周回では既に発動済み
+        if (lastTriggeredCycle == cycleCount)
+        {
+            Debug.Log($"[EventManager] 周回 {cycleCount} は既にイベント発動済み");
+            return false;
+        }
+
+        // 周回 → cycleEventTypes の index（最後を繰り返す）
         int index = cycleCount - 1;
         if (index >= cycleEventTypes.Count)
         {
-            index = cycleEventTypes.Count - 1; // 最後の要素
+            index = cycleEventTypes.Count - 1;
         }
 
         int eventType = cycleEventTypes[index];
-        Debug.Log($"🎃 周回 {cycleCount} でイベント {eventType} を実行");
-        TriggerHorrorEvent(eventType);
 
-        /* --- パターンB: リストをループさせたい場合 ---
-        // 例: [54,14,31] → 1周目=54, 2=14, 3=31, 4=54...
-        int index = (cycleCount - 1) % cycleEventTypes.Count;
-        int eventType = cycleEventTypes[index];
+        // 0 を「何も起こさない」予約値にする
+        if (eventType == 0)
+        {
+            Debug.Log($"[EventManager] 周回 {cycleCount} はイベントなし（eventType=0）");
+            lastTriggeredCycle = cycleCount;  // 二重発火防止
+            return false;
+        }
+
+        lastTriggeredCycle = cycleCount;
+        Debug.Log($"[EventManager] 周回 {cycleCount} のトリガーからイベント {eventType} を発動");
         TriggerHorrorEvent(eventType);
-        ------------------------------------------------- */
+        return true;
     }
 }

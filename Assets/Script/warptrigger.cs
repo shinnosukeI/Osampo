@@ -13,7 +13,7 @@ public class DoorTeleporter : MonoBehaviour
     public float doorOpenSpeed = 3f;   // 開閉の速さ
 
     [Header("ホラーイベント連携")]
-    [SerializeField] private HorrorEventManager horrorEventManager; // ★ 追加
+    [SerializeField] private st1_HorrorEventManager eventManager; // ★ クラス名＆変数名を統一
 
     public static int teleportCount = 0;
 
@@ -33,12 +33,16 @@ public class DoorTeleporter : MonoBehaviour
             allDoors.Add(this);
 
         // ★ もし Inspector で設定されていなければ自動で探す
-        if (horrorEventManager == null)
+        if (eventManager == null)
         {
-            horrorEventManager = FindObjectOfType<HorrorEventManager>();
-            if (horrorEventManager == null)
+            eventManager = FindObjectOfType<st1_HorrorEventManager>();
+            if (eventManager == null)
             {
-                Debug.LogWarning("HorrorEventManager がシーンに見つかりませんでした。");
+                Debug.LogWarning("st1_HorrorEventManager がシーンに見つかりませんでした。");
+            }
+            else
+            {
+                Debug.Log($"DoorTeleporter が EventManager を補完: {eventManager.gameObject.name}");
             }
         }
     }
@@ -77,14 +81,14 @@ public class DoorTeleporter : MonoBehaviour
         teleportCount++;
         Debug.Log("ワープ回数: " + teleportCount);
 
-        // ★ 周期カウント（HorrorEventManager 側）
-        if (horrorEventManager != null)
+        // ★ 周期カウント（EventManager 側）
+        if (eventManager != null)
         {
-            horrorEventManager.OnDoorClicked();
+            eventManager.OnDoorClicked();   // ← ここで cycleCount++
         }
         else
         {
-            Debug.LogWarning("HorrorEventManager が設定されていないため、周期カウントできません。");
+            Debug.LogWarning("EventManager が設定されていないため、周期カウントできません。");
         }
 
         // ★ カウンタが増えたタイミングで全ドア閉じる
