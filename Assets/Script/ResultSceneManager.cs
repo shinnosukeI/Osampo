@@ -18,10 +18,17 @@ public class ResultSceneManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI stage2Rank1Text;
     [SerializeField] private TextMeshProUGUI stage2AverageText; 
     [SerializeField] private TextMeshProUGUI fearEvaluationText; // 追加: 判定結果表示用
+    [SerializeField] private TextMeshProUGUI surveyResultText; // 追加: 選択された恐怖ID表示用
 
     [Header("System")]
     [SerializeField] private GameManager gameManager;
     [SerializeField] private AudioClip resultBGM; // 追加: ResultSceneで流すBGM
+
+    [Header("Graph Visualization")]
+    [SerializeField] private GraphRenderer stage1GraphRenderer;
+    [SerializeField] private GraphRenderer stage2GraphRenderer;
+    [SerializeField] private GameObject stage1GraphPanel; // グラフ表示用パネル (Optional)
+    [SerializeField] private GameObject stage2GraphPanel; // グラフ表示用パネル (Optional)
 
     void Start()
     {
@@ -145,6 +152,35 @@ public class ResultSceneManager : MonoBehaviour
 
             fearEvaluationText.text = evaluation;
             Debug.Log($"【ResultScene】判定結果: {evaluation} (Stage2Top: {stage2Top}, S1: {string.Join(",", comparisonList)})");
+        }
+
+        // 5. 選択された恐怖IDの表示
+        if (surveyResultText != null)
+        {
+            int resultId = GameManager.SavedSurveyResult;
+            string resultText = "-";
+
+            switch (resultId)
+            {
+                case 1: resultText = "異形・クリーチャー的恐怖"; break;
+                case 2: resultText = "人体・人形的恐怖"; break;
+                case 3: resultText = "生理的嫌悪・外相的恐怖"; break;
+                case 4: resultText = "心理的・行動的恐怖"; break;
+                case 5: resultText = "超常的な恐怖"; break;
+                default: resultText = resultId != -1 ? $"不明な恐怖(ID:{resultId})" : "-"; break;
+            }
+
+            surveyResultText.text = resultText;
+        }
+
+        // 5. グラフ描画 (Phase 1)
+        if (stage1GraphRenderer != null)
+        {
+            stage1GraphRenderer.ShowGraph(GameManager.SavedStage1BPMList);
+        }
+        if (stage2GraphRenderer != null)
+        {
+            stage2GraphRenderer.ShowGraph(GameManager.SavedStage2BPMList);
         }
     }
 
