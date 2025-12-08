@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using TMPro;
 
 public class SettingsPanelController : MonoBehaviour
@@ -13,6 +14,35 @@ public class SettingsPanelController : MonoBehaviour
     [Header("Appearance")]
     [SerializeField] private Color activeColor = new Color(1f, 0.7f, 0.7f); // 薄い赤
     [SerializeField] private Color inactiveColor = Color.white;
+
+    private void OnEnable()
+    {
+        // パネルが開かれたときに、Backボタンのアニメーション状態を強制的にリセットする
+        ResetBackButtonAnimation();
+    }
+
+    /// <summary>
+    /// BackボタンのアニメーションをNormal状態に強制リセットする
+    /// </summary>
+    public void ResetBackButtonAnimation()
+    {
+        if (closeButton != null)
+        {
+            Animator animator = closeButton.GetComponent<Animator>();
+            if (animator != null)
+            {
+                // Animatorを初期状態（Entry）に強制リセット
+                animator.Rebind();
+                
+                // Animatorの反映待ちによるちらつきを防ぐため、強制的にスケールも戻す
+                closeButton.transform.localScale = Vector3.one;
+                
+                // UpdateはRebindでリセットされるため不要だが、即時反映のため残すことも可能。
+                // Rebind直後は不要な場合が多いが、念のため。
+                animator.Update(0f);
+            }
+        }
+    }
 
     void Start()
     {
@@ -90,6 +120,12 @@ public class SettingsPanelController : MonoBehaviour
         {
             SoundManager.Instance.SaveVolume();
             SoundManager.Instance.PlayCommonButtonSE(); // Feedback
+        }
+
+        // 選択状態を解除 (再表示時にBackボタンがSelected状態で大きくならないようにする)
+        if (UnityEngine.EventSystems.EventSystem.current != null)
+        {
+            UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(null);
         }
 
         // Hide the panel
