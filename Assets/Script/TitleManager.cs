@@ -137,6 +137,13 @@ public class TitleManager : MonoBehaviour
         if (settingsPanel != null)
         {
             settingsPanel.SetActive(true);
+
+            // パネルを開く際に、Backボタンのアニメーションをリセットする
+            SettingsPanelController controller = settingsPanel.GetComponent<SettingsPanelController>();
+            if (controller != null)
+            {
+                controller.ResetBackButtonAnimation();
+            }
         }
         else
         {
