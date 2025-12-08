@@ -24,6 +24,15 @@ public class HorrorEventManager : MonoBehaviour
     [Header("31: 血が滴るイベント")]
     [SerializeField]
     private GameObject bloodDripObject;
+    [SerializeField]
+    private AudioClip bloodDripSound; // ★ 追加
+    [SerializeField]
+    [Tooltip("滴る音の間隔（秒）")]
+    private float bloodDripInterval = 1.5f; // ★ 追加: 間隔調整用
+
+    [Header("34: 特定の場所から鳴る音")] // ★ 追加
+    [SerializeField]
+    private AudioSource soundFromLocationSource;
 
     [Header("45: ラジオイベント")]
     [SerializeField]
@@ -74,6 +83,10 @@ public class HorrorEventManager : MonoBehaviour
     [SerializeField]
     private AudioClip laughSound;
 
+    [Header("41: 背後の足音イベント")] // ★ 追加
+    [SerializeField]
+    private AudioClip footstepsSound;
+
     public List<(string Timestamp, int eventType)> eventLog = new List<(string, int)>();
 
     // ★ 周期カウント（ドア/ワープした回数）
@@ -102,6 +115,9 @@ public class HorrorEventManager : MonoBehaviour
         //TriggerHorrorEvent(54);
         //TriggerHorrorEvent(14);
         //TriggerHorrorEvent(31);
+
+        // 34: 特定の場所から鳴る音を開始
+        StartSoundFromLocation();
     }
 
     /// <summary>
@@ -124,6 +140,9 @@ public class HorrorEventManager : MonoBehaviour
         eventActionMap[15] = TriggerZombieChase;
         eventActionMap[46] = TriggerThunder; // ★ 追加
         eventActionMap[42] = TriggerLaugh;   // ★ 追加
+        eventActionMap[41] = TriggerFootstepsBehind; // ★ 追加
+        eventActionMap[34] = StartSoundFromLocation; // ★ 追加
+        eventActionMap[32] = TriggerBloodstain;      // ★ 追加
     }
 
     /// <summary>
@@ -190,10 +209,52 @@ public class HorrorEventManager : MonoBehaviour
         {
             Debug.Log("🩸 血が滴り始めました...");
             bloodDripObject.SetActive(true);
+
+            // コルーチンで間隔をあけて再生
+            StartCoroutine(PlayBloodDripLoop());
         }
         else
         {
             Debug.LogError("31: 血のパーティクルが設定されていません。");
+        }
+    }
+
+    private System.Collections.IEnumerator PlayBloodDripLoop()
+    {
+        AudioSource source = bloodDripObject.GetComponent<AudioSource>();
+        
+        // AudioSourceがない場合は追加する
+        if (source == null)
+        {
+            source = bloodDripObject.AddComponent<AudioSource>();
+            source.spatialBlend = 1.0f; // 3Dサウンドにする
+        }
+
+        // Clipがない場合は何もしない
+        if (bloodDripSound == null) yield break;
+
+        source.clip = bloodDripSound;
+        source.loop = false; // 標準ループはオフにする（コルーチンで制御するため）
+
+        while (true)
+        {
+            source.Play();
+            // 指定した間隔だけ待つ
+            yield return new WaitForSeconds(bloodDripInterval);
+        }
+    }
+
+    // 32: 血痕
+    public void TriggerBloodstain()
+    {
+        if (bloodSplashObject != null)
+        {
+            Debug.Log("🩸 血痕が現れました！");
+            bloodSplashObject.SetActive(true);
+        }
+        else
+        {
+            Debug.LogError("32: 血痕オブジェクト(bloodSplashObject)が設定されていません。");
         }
     }
 
@@ -350,6 +411,40 @@ public class HorrorEventManager : MonoBehaviour
         {
             Debug.LogError("42: 笑い声のAudioSourceまたはAudioClipが設定されていません。");
         }
+    }
+
+    // 41: 背後の足音
+    public void TriggerFootstepsBehind()
+    {
+        if (footstepsSound != null && Camera.main != null)
+        {
+            Debug.Log("👣 背後から足音が聞こえます...");
+            // プレイヤーの2メートル後ろ
+            Vector3 spawnPos = Camera.main.transform.position - Camera.main.transform.forward * 2.0f;
+            AudioSource.PlayClipAtPoint(footstepsSound, spawnPos);
+        }
+        else
+        {
+            Debug.LogError("41: 足音のAudioClipまたはMainCameraが設定されていません。");
+        }
+    }
+
+    // 34: 特定の場所から鳴る音
+    public void StartSoundFromLocation()
+    {
+        if (soundFromLocationSource != null)
+        {
+            // 3D設定を強制
+            soundFromLocationSource.spatialBlend = 1.0f; // 1.0 = 完全3D
+            soundFromLocationSource.loop = true;
+
+            if (!soundFromLocationSource.isPlaying)
+            {
+                soundFromLocationSource.Play();
+                Debug.Log("🔊 特定の場所からの音(34)を再生開始しました。");
+            }
+        }
+        // 設定されていない場合は何もしない（エラーログは出さない、必須ではないかもしれないため）
     }
 
 
