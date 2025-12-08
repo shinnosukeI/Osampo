@@ -1,6 +1,8 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 
 public class HorrorEventManager : MonoBehaviour
 {
@@ -24,6 +26,15 @@ public class HorrorEventManager : MonoBehaviour
     [Header("31: 血が滴るイベント")]
     [SerializeField]
     private GameObject bloodDripObject;
+    [SerializeField]
+    private AudioClip bloodDripSound; // ★ 追加
+    [SerializeField]
+    [Tooltip("滴る音の間隔（秒）")]
+    private float bloodDripInterval = 1.5f; // ★ 追加: 間隔調整用
+
+    [Header("34: 特定の場所から鳴る音")] // ★ 追加
+    [SerializeField]
+    private AudioSource soundFromLocationSource;
 
     [Header("45: ラジオイベント")]
     [SerializeField]
@@ -62,6 +73,22 @@ public class HorrorEventManager : MonoBehaviour
     [SerializeField]
     private ZombieChaseEvent zombieChaseEventTarget;
 
+    [Header("46: 雷イベント")] // ★ 追加
+    [SerializeField]
+    private AudioSource thunderAudioSource;
+    [SerializeField]
+    private AudioClip thunderSound;
+
+    [Header("42: 笑い声イベント")] // ★ 追加
+    [SerializeField]
+    private AudioSource laughAudioSource;
+    [SerializeField]
+    private AudioClip laughSound;
+
+    [Header("41: 背後の足音イベント")] // ★ 追加
+    [SerializeField]
+    private AudioClip footstepsSound;
+
     public List<(string Timestamp, int eventType)> eventLog = new List<(string, int)>();
 
     // ★ 周期カウント（ドア/ワープした回数）
@@ -75,10 +102,23 @@ public class HorrorEventManager : MonoBehaviour
     [SerializeField] private List<int> cycleEventTypes = new List<int>();
 
     // イベントタイプ → 実行アクション のマップ
+    // アンケート結果を保持する変数
+    private int currentSurveyResult = -1;
+
+    // ログ保存用
+    private StreamWriter eventLogWriter;
+
     private Dictionary<int, Action> eventActionMap = new Dictionary<int, Action>();
 
     void Start()
     {
+        // GameManagerからアンケート結果を取得
+        currentSurveyResult = GameManager.SavedSurveyResult;
+        Debug.Log($"📊 [HorrorEventManager] アンケート結果を取得しました: {currentSurveyResult}");
+
+        // ログ保存の初期化
+        InitializeEventLogger();
+
         if (eventDatabase != null)
         {
             eventDatabase.Initialize();
@@ -90,6 +130,9 @@ public class HorrorEventManager : MonoBehaviour
         //TriggerHorrorEvent(54);
         //TriggerHorrorEvent(14);
         //TriggerHorrorEvent(31);
+
+        // 34: 特定の場所から鳴る音を開始
+        StartSoundFromLocation();
     }
 
     /// <summary>
@@ -110,6 +153,11 @@ public class HorrorEventManager : MonoBehaviour
         eventActionMap[21] = TriggerBearMove;
         eventActionMap[53] = TriggerVanishingWoman;
         eventActionMap[15] = TriggerZombieChase;
+        eventActionMap[46] = TriggerThunder; // ★ 追加
+        eventActionMap[42] = TriggerLaugh;   // ★ 追加
+        eventActionMap[41] = TriggerFootstepsBehind; // ★ 追加
+        eventActionMap[34] = StartSoundFromLocation; // ★ 追加
+        eventActionMap[32] = TriggerBloodstain;      // ★ 追加
     }
 
     /// <summary>
@@ -126,6 +174,9 @@ public class HorrorEventManager : MonoBehaviour
         }
 
         Debug.Log($"🎃 イベント発生: {data.eventName} (Type: {eventType})");
+
+        // ログ保存
+        LogEvent(eventType);
 
         string currentTimestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
         eventLog.Add((currentTimestamp, eventType));
@@ -176,10 +227,52 @@ public class HorrorEventManager : MonoBehaviour
         {
             Debug.Log("🩸 血が滴り始めました...");
             bloodDripObject.SetActive(true);
+
+            // コルーチンで間隔をあけて再生
+            StartCoroutine(PlayBloodDripLoop());
         }
         else
         {
             Debug.LogError("31: 血のパーティクルが設定されていません。");
+        }
+    }
+
+    private System.Collections.IEnumerator PlayBloodDripLoop()
+    {
+        AudioSource source = bloodDripObject.GetComponent<AudioSource>();
+        
+        // AudioSourceがない場合は追加する
+        if (source == null)
+        {
+            source = bloodDripObject.AddComponent<AudioSource>();
+            source.spatialBlend = 1.0f; // 3Dサウンドにする
+        }
+
+        // Clipがない場合は何もしない
+        if (bloodDripSound == null) yield break;
+
+        source.clip = bloodDripSound;
+        source.loop = false; // 標準ループはオフにする（コルーチンで制御するため）
+
+        while (true)
+        {
+            source.Play();
+            // 指定した間隔だけ待つ
+            yield return new WaitForSeconds(bloodDripInterval);
+        }
+    }
+
+    // 32: 血痕
+    public void TriggerBloodstain()
+    {
+        if (bloodSplashObject != null)
+        {
+            Debug.Log("🩸 血痕が現れました！");
+            bloodSplashObject.SetActive(true);
+        }
+        else
+        {
+            Debug.LogError("32: 血痕オブジェクト(bloodSplashObject)が設定されていません。");
         }
     }
 
@@ -310,6 +403,68 @@ public class HorrorEventManager : MonoBehaviour
         }
     }
 
+    // 46: 雷
+    public void TriggerThunder()
+    {
+        if (thunderAudioSource != null && thunderSound != null)
+        {
+            Debug.Log("⚡ 雷が鳴りました！");
+            thunderAudioSource.PlayOneShot(thunderSound);
+        }
+        else
+        {
+            Debug.LogError("46: 雷のAudioSourceまたはAudioClipが設定されていません。");
+        }
+    }
+
+    // 42: 笑い声
+    public void TriggerLaugh()
+    {
+        if (laughAudioSource != null && laughSound != null)
+        {
+            Debug.Log("😈 笑い声が聞こえます...");
+            laughAudioSource.PlayOneShot(laughSound);
+        }
+        else
+        {
+            Debug.LogError("42: 笑い声のAudioSourceまたはAudioClipが設定されていません。");
+        }
+    }
+
+    // 41: 背後の足音
+    public void TriggerFootstepsBehind()
+    {
+        if (footstepsSound != null && Camera.main != null)
+        {
+            Debug.Log("👣 背後から足音が聞こえます...");
+            // プレイヤーの2メートル後ろ
+            Vector3 spawnPos = Camera.main.transform.position - Camera.main.transform.forward * 2.0f;
+            AudioSource.PlayClipAtPoint(footstepsSound, spawnPos);
+        }
+        else
+        {
+            Debug.LogError("41: 足音のAudioClipまたはMainCameraが設定されていません。");
+        }
+    }
+
+    // 34: 特定の場所から鳴る音
+    public void StartSoundFromLocation()
+    {
+        if (soundFromLocationSource != null)
+        {
+            // 3D設定を強制
+            soundFromLocationSource.spatialBlend = 1.0f; // 1.0 = 完全3D
+            soundFromLocationSource.loop = true;
+
+            if (!soundFromLocationSource.isPlaying)
+            {
+                soundFromLocationSource.Play();
+                Debug.Log("🔊 特定の場所からの音(34)を再生開始しました。");
+            }
+        }
+        // 設定されていない場合は何もしない（エラーログは出さない、必須ではないかもしれないため）
+    }
+
 
     // ============================
     // ★ ドア（ワープ含む）で呼び出す周期カウント
@@ -343,5 +498,67 @@ public class HorrorEventManager : MonoBehaviour
         int eventType = cycleEventTypes[index];
         TriggerHorrorEvent(eventType);
         ------------------------------------------------- */
+    }
+    // ========================================================================
+    // ▼▼▼ ログ保存機能 ▼▼▼
+    // ========================================================================
+
+    private void InitializeEventLogger()
+    {
+        string subjectID = GameManager.SubjectID;
+        if (string.IsNullOrEmpty(subjectID))
+        {
+            subjectID = "TestUser"; // IDがない場合のフォールバック
+        }
+
+        // ファイル名: 被験者ID_03_HorrorEvent_log.csv
+        string fileName = $"{subjectID}_03_HorrorEvent_log.csv";
+        string directoryPath = Path.Combine(Application.persistentDataPath, "CSV");
+
+        if (!Directory.Exists(directoryPath))
+        {
+            Directory.CreateDirectory(directoryPath);
+        }
+
+        string fullPath = Path.Combine(directoryPath, fileName);
+
+        try
+        {
+            // 上書きモード(false)で作成。追記したい場合はtrueにするが、今回は新規作成とする
+            eventLogWriter = new StreamWriter(fullPath, false, Encoding.UTF8);
+            eventLogWriter.WriteLine("Timestamp,EventID"); // ヘッダー
+            eventLogWriter.Flush();
+            Debug.Log($"📄 [HorrorEventManager] ログファイルを作成しました: {fullPath}");
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"⚠ [HorrorEventManager] ログファイル作成エラー: {e.Message}");
+        }
+    }
+
+    private void LogEvent(int eventType)
+    {
+        if (eventLogWriter != null)
+        {
+            string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            eventLogWriter.WriteLine($"{timestamp},{eventType}");
+            eventLogWriter.Flush(); // 即時書き込み
+        }
+    }
+
+    private void CloseEventLogger()
+    {
+        if (eventLogWriter != null)
+        {
+            eventLogWriter.Flush();
+            eventLogWriter.Close();
+            eventLogWriter = null;
+            Debug.Log("📄 [HorrorEventManager] ログファイルを閉じました。");
+        }
+    }
+
+    void OnDestroy()
+    {
+        CloseEventLogger();
     }
 }
