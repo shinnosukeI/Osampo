@@ -1,6 +1,8 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 
 public class HorrorEventManager : MonoBehaviour
 {
@@ -103,6 +105,9 @@ public class HorrorEventManager : MonoBehaviour
     // アンケート結果を保持する変数
     private int currentSurveyResult = -1;
 
+    // ログ保存用
+    private StreamWriter eventLogWriter;
+
     private Dictionary<int, Action> eventActionMap = new Dictionary<int, Action>();
 
     void Start()
@@ -110,6 +115,9 @@ public class HorrorEventManager : MonoBehaviour
         // GameManagerからアンケート結果を取得
         currentSurveyResult = GameManager.SavedSurveyResult;
         Debug.Log($"📊 [HorrorEventManager] アンケート結果を取得しました: {currentSurveyResult}");
+
+        // ログ保存の初期化
+        InitializeEventLogger();
 
         if (eventDatabase != null)
         {
@@ -166,6 +174,9 @@ public class HorrorEventManager : MonoBehaviour
         }
 
         Debug.Log($"🎃 イベント発生: {data.eventName} (Type: {eventType})");
+
+        // ログ保存
+        LogEvent(eventType);
 
         string currentTimestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
         eventLog.Add((currentTimestamp, eventType));
@@ -487,5 +498,67 @@ public class HorrorEventManager : MonoBehaviour
         int eventType = cycleEventTypes[index];
         TriggerHorrorEvent(eventType);
         ------------------------------------------------- */
+    }
+    // ========================================================================
+    // ▼▼▼ ログ保存機能 ▼▼▼
+    // ========================================================================
+
+    private void InitializeEventLogger()
+    {
+        string subjectID = GameManager.SubjectID;
+        if (string.IsNullOrEmpty(subjectID))
+        {
+            subjectID = "TestUser"; // IDがない場合のフォールバック
+        }
+
+        // ファイル名: 被験者ID_03_HorrorEvent_log.csv
+        string fileName = $"{subjectID}_03_HorrorEvent_log.csv";
+        string directoryPath = Path.Combine(Application.persistentDataPath, "CSV");
+
+        if (!Directory.Exists(directoryPath))
+        {
+            Directory.CreateDirectory(directoryPath);
+        }
+
+        string fullPath = Path.Combine(directoryPath, fileName);
+
+        try
+        {
+            // 上書きモード(false)で作成。追記したい場合はtrueにするが、今回は新規作成とする
+            eventLogWriter = new StreamWriter(fullPath, false, Encoding.UTF8);
+            eventLogWriter.WriteLine("Timestamp,EventID"); // ヘッダー
+            eventLogWriter.Flush();
+            Debug.Log($"📄 [HorrorEventManager] ログファイルを作成しました: {fullPath}");
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"⚠ [HorrorEventManager] ログファイル作成エラー: {e.Message}");
+        }
+    }
+
+    private void LogEvent(int eventType)
+    {
+        if (eventLogWriter != null)
+        {
+            string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            eventLogWriter.WriteLine($"{timestamp},{eventType}");
+            eventLogWriter.Flush(); // 即時書き込み
+        }
+    }
+
+    private void CloseEventLogger()
+    {
+        if (eventLogWriter != null)
+        {
+            eventLogWriter.Flush();
+            eventLogWriter.Close();
+            eventLogWriter = null;
+            Debug.Log("📄 [HorrorEventManager] ログファイルを閉じました。");
+        }
+    }
+
+    void OnDestroy()
+    {
+        CloseEventLogger();
     }
 }
