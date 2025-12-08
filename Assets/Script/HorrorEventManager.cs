@@ -100,10 +100,17 @@ public class HorrorEventManager : MonoBehaviour
     [SerializeField] private List<int> cycleEventTypes = new List<int>();
 
     // イベントタイプ → 実行アクション のマップ
+    // アンケート結果を保持する変数
+    private int currentSurveyResult = -1;
+
     private Dictionary<int, Action> eventActionMap = new Dictionary<int, Action>();
 
     void Start()
     {
+        // GameManagerからアンケート結果を取得
+        currentSurveyResult = GameManager.SavedSurveyResult;
+        Debug.Log($"📊 [HorrorEventManager] アンケート結果を取得しました: {currentSurveyResult}");
+
         if (eventDatabase != null)
         {
             eventDatabase.Initialize();
