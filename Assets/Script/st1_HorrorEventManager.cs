@@ -12,9 +12,11 @@ public class st1_HorrorEventManager : MonoBehaviour
     [Header("45: ラジオイベント")]
     [SerializeField] private RadioEventController radioController;
 
+    [Header("血の表現")]
+    [SerializeField] private GameObject bloodOnFloor; // 床用
+
     [Header("雨の音")]
     [SerializeField] private AudioSource rainAudio;
-
 
     [Header("54: 落下イベント")]
     [SerializeField] private FallingCorpse fallingCorpse; 
@@ -26,7 +28,7 @@ public class st1_HorrorEventManager : MonoBehaviour
     private GameObject brokenWindowObject;
 
     [Header("11: ゴキブリイベント")]
-[SerializeField] private CockroachSwarm cockroachSwarmTarget;
+    [SerializeField] private CockroachSwarm cockroachSwarmTarget;
 
     // ★ 周回カウント（ドア/ワープを通った回数）
     [Header("周回カウント")]
@@ -44,9 +46,6 @@ public class st1_HorrorEventManager : MonoBehaviour
     // この周回ではもうイベントを発動したか？
     private int lastTriggeredCycle = 0;
 
-    
-
-
     void Start()
     {
         if (eventDatabase != null)
@@ -57,6 +56,9 @@ public class st1_HorrorEventManager : MonoBehaviour
         Debug.Log("cycleEventTypes の要素数 = " + cycleEventTypes.Count);
         Debug.Log($"ゲーム開始時の周回 = {cycleCount}");
         RegisterEventActions();
+
+        // ★ 血のオブジェクトは最初は非表示
+        if (bloodOnFloor != null) bloodOnFloor.SetActive(false);
 
         // ★ 1周目だけ雨の音を止める
         if (cycleCount == 1 && rainAudio != null)
@@ -70,9 +72,9 @@ public class st1_HorrorEventManager : MonoBehaviour
     private void RegisterEventActions()
     {
         eventActionMap[45] = TriggerRadioEvent;
-        eventActionMap[54] = TriggerCorpseFall;    // ラジオイベント
-        eventActionMap[55] = TriggerWindowBreak; //55.ガラスが割れる
-        // eventActionMap[14] = TriggerZombieFall; など追加していく
+        eventActionMap[54] = TriggerCorpseFall;     // 落下イベント
+        eventActionMap[55] = TriggerWindowBreak;    // 55.ガラスが割れる
+        eventActionMap[11] = TriggerCockroachSwarm; // 11.ゴキブリイベント
     }
 
     // ★ ラジオイベント実行
@@ -89,16 +91,16 @@ public class st1_HorrorEventManager : MonoBehaviour
     }
 
     private void TriggerCockroachSwarm()
-{
-    if (cockroachSwarmTarget == null)
     {
-        Debug.LogError("11: CockroachSwarm が設定されていません。");
-        return;
-    }
+        if (cockroachSwarmTarget == null)
+        {
+            Debug.LogError("11: CockroachSwarm が設定されていません。");
+            return;
+        }
 
-    Debug.Log("🪳 11: ゴキブリイベント発動！");
-    cockroachSwarmTarget.StartSwarm();
-}
+        Debug.Log("🪳 11: ゴキブリイベント発動！");
+        cockroachSwarmTarget.StartSwarm();
+    }
 
     private void TriggerCorpseFall()
     {
@@ -158,12 +160,20 @@ public class st1_HorrorEventManager : MonoBehaviour
     {
         cycleCount++;
         Debug.Log($"🚪 ドア/ワープで周期カウント: {cycleCount}");
-        // ここではイベントを発動しない
+
+        // 6周目に入った瞬間だけ血を出す
+        if (cycleCount == 6)
+        {
+            if (bloodOnFloor != null) bloodOnFloor.SetActive(true);
+            Debug.Log("🩸 6周目：床に血を出しました");
+        }
+
+        // 2周目に入ったら雨を開始
         if (cycleCount == 2 && rainAudio != null)
-    {
-        rainAudio.Play();
-        Debug.Log("🌧️ 2周目に入ったので雨を開始しました！");
-    }
+        {
+            rainAudio.Play();
+            Debug.Log("🌧️ 2周目に入ったので雨を開始しました！");
+        }
     }
 
     // ★ トリガーから呼ぶ：今の周回のイベントを発動していいなら発動
