@@ -89,6 +89,10 @@ public class HorrorEventManager : MonoBehaviour
     [SerializeField]
     private AudioClip footstepsSound;
 
+    [Header("44: 接近する人影イベント")] // ★ 追加
+    [SerializeField]
+    private ApproachingPersonEvent approachingPersonEvent;
+
     public List<(string Timestamp, int eventType)> eventLog = new List<(string, int)>();
 
     // ★ 周期カウント（ドア/ワープした回数）
@@ -143,6 +147,7 @@ public class HorrorEventManager : MonoBehaviour
         eventActionMap[11] = TriggerCockroachSwarm;
         eventActionMap[14] = TriggerZombieFall;
         eventActionMap[31] = TriggerBloodDrip;
+        eventActionMap[44] = TriggerApproachingPerson; // ★ 追加
         eventActionMap[45] = TriggerRadio;
         eventActionMap[54] = TriggerFallEvent;
         eventActionMap[56] = TriggerBallRoll;
@@ -444,6 +449,20 @@ public class HorrorEventManager : MonoBehaviour
         else
         {
             Debug.LogError("41: 足音のAudioClipまたはMainCameraが設定されていません。");
+        }
+    }
+
+    // 44: 接近する人影
+    public void TriggerApproachingPerson()
+    {
+        Debug.Log("🎃 [HorrorEventManager] TriggerApproachingPerson が呼ばれました");
+        if (approachingPersonEvent != null)
+        {
+            approachingPersonEvent.TriggerEvent();
+        }
+        else
+        {
+            Debug.LogError("❌ [HorrorEventManager] approachingPersonEvent が割り当てられていません！Inspectorで設定してください。");
         }
     }
 
