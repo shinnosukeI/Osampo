@@ -12,6 +12,10 @@ public class st1_HorrorEventManager : MonoBehaviour
     [Header("45: ラジオイベント")]
     [SerializeField] private RadioEventController radioController;
 
+    [Header("雨の音")]
+    [SerializeField] private AudioSource rainAudio;
+
+
     [Header("54: 落下イベント")]
     [SerializeField] private FallingCorpse fallingCorpse; 
 
@@ -20,6 +24,9 @@ public class st1_HorrorEventManager : MonoBehaviour
     private GameObject normalWindowObject; // 割れる前の窓
     [SerializeField]
     private GameObject brokenWindowObject;
+
+    [Header("11: ゴキブリイベント")]
+[SerializeField] private CockroachSwarm cockroachSwarmTarget;
 
     // ★ 周回カウント（ドア/ワープを通った回数）
     [Header("周回カウント")]
@@ -37,6 +44,8 @@ public class st1_HorrorEventManager : MonoBehaviour
     // この周回ではもうイベントを発動したか？
     private int lastTriggeredCycle = 0;
 
+    
+
 
     void Start()
     {
@@ -48,6 +57,13 @@ public class st1_HorrorEventManager : MonoBehaviour
         Debug.Log("cycleEventTypes の要素数 = " + cycleEventTypes.Count);
         Debug.Log($"ゲーム開始時の周回 = {cycleCount}");
         RegisterEventActions();
+
+        // ★ 1周目だけ雨の音を止める
+        if (cycleCount == 1 && rainAudio != null)
+        {
+            rainAudio.Stop();
+            Debug.Log("🌧️ 1周目なので雨の音を停止しました");
+        }
     }
 
     // ★ 各イベントアクション登録
@@ -71,6 +87,18 @@ public class st1_HorrorEventManager : MonoBehaviour
         Debug.Log("📻 ラジオイベント発動");
         radioController.PlayRadioSequence();
     }
+
+    private void TriggerCockroachSwarm()
+{
+    if (cockroachSwarmTarget == null)
+    {
+        Debug.LogError("11: CockroachSwarm が設定されていません。");
+        return;
+    }
+
+    Debug.Log("🪳 11: ゴキブリイベント発動！");
+    cockroachSwarmTarget.StartSwarm();
+}
 
     private void TriggerCorpseFall()
     {
@@ -131,6 +159,11 @@ public class st1_HorrorEventManager : MonoBehaviour
         cycleCount++;
         Debug.Log($"🚪 ドア/ワープで周期カウント: {cycleCount}");
         // ここではイベントを発動しない
+        if (cycleCount == 2 && rainAudio != null)
+    {
+        rainAudio.Play();
+        Debug.Log("🌧️ 2周目に入ったので雨を開始しました！");
+    }
     }
 
     // ★ トリガーから呼ぶ：今の周回のイベントを発動していいなら発動
