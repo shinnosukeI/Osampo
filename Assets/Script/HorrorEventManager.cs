@@ -93,6 +93,10 @@ public class HorrorEventManager : MonoBehaviour
     [SerializeField]
     private ApproachingPersonEvent approachingPersonEvent;
 
+    [Header("35: 壁の集合体イベント")] // ★ 追加
+    [SerializeField]
+    private ClusterWallEvent clusterWallEvent;
+
     public List<(string Timestamp, int eventType)> eventLog = new List<(string, int)>();
 
     // ★ 周期カウント（ドア/ワープした回数）
@@ -147,6 +151,7 @@ public class HorrorEventManager : MonoBehaviour
         eventActionMap[11] = TriggerCockroachSwarm;
         eventActionMap[14] = TriggerZombieFall;
         eventActionMap[31] = TriggerBloodDrip;
+        eventActionMap[35] = TriggerClusterWall; // ★ 追加
         eventActionMap[44] = TriggerApproachingPerson; // ★ 追加
         eventActionMap[45] = TriggerRadio;
         eventActionMap[54] = TriggerFallEvent;
@@ -449,6 +454,16 @@ public class HorrorEventManager : MonoBehaviour
         else
         {
             Debug.LogError("41: 足音のAudioClipまたはMainCameraが設定されていません。");
+        }
+    }
+
+    // 35: 壁の集合体
+    public void TriggerClusterWall()
+    {
+        Debug.Log("🌑 [HorrorEventManager] TriggerClusterWall が呼ばれました");
+        if (clusterWallEvent != null)
+        {
+            clusterWallEvent.TriggerEvent();
         }
     }
 
