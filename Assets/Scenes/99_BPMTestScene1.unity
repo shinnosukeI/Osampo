@@ -1065,7 +1065,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 562d8d65dc983a346be3eed555371cdc, type: 2}
     - target: {fileID: 919132149155446097, guid: 92d8ab00debbdbb4a83e363a290bcdd2, type: 3}
       propertyPath: m_Name
-      value: 068_Syun_no-rig-free
+      value: shadow_man3d
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
