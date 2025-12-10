@@ -81,6 +81,11 @@ crashlytics-build.properties
 /[Aa]ssets/CSV/
 
 /Assets/Materials/
-/Assets/恐怖要素用アセット/
+/Assets/恐怖要素用アセット/1.異形の恐怖/
+/Assets/恐怖要素用アセット/2.人体・模造品の恐怖/
+/Assets/恐怖要素用アセット/3.生理的嫌悪・外傷的恐怖/
+/Assets/恐怖要素用アセット/4.心理的・行動的恐怖/
+/Assets/恐怖要素用アセット/5.超常的な恐怖/
+/Assets/恐怖要素用アセット/その他/
 
 /HeartRate/logs.txt
