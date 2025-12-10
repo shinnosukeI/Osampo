@@ -1,6 +1,8 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 
 public class st1_HorrorEventManager : MonoBehaviour
 {
@@ -46,6 +48,9 @@ public class st1_HorrorEventManager : MonoBehaviour
     // この周回ではもうイベントを発動したか？
     private int lastTriggeredCycle = 0;
 
+    // ログ保存用
+    private StreamWriter eventLogWriter;
+
     void Start()
     {
         if (eventDatabase != null)
@@ -53,9 +58,18 @@ public class st1_HorrorEventManager : MonoBehaviour
             eventDatabase.Initialize();
         }
 
+        // ログ保存の初期化
+        InitializeEventLogger();
+
         Debug.Log("cycleEventTypes の要素数 = " + cycleEventTypes.Count);
         Debug.Log($"ゲーム開始時の周回 = {cycleCount}");
         RegisterEventActions();
+
+        // ★ ラジオ再生イベントの購読
+        if (radioController != null)
+        {
+            radioController.OnRadioPlaybackStarted += () => LogEvent(45);
+        }
 
         // ★ 血のオブジェクトは最初は非表示
         if (bloodOnFloor != null) bloodOnFloor.SetActive(false);
@@ -145,6 +159,12 @@ public class st1_HorrorEventManager : MonoBehaviour
         string currentTimestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
         eventLog.Add((currentTimestamp, eventType));
 
+        // ログ保存 (45番はラジオ再生時にコールバックで保存するので除外)
+        if (eventType != 45)
+        {
+           LogEvent(eventType);
+        }
+
         if (eventActionMap.TryGetValue(eventType, out Action action))
         {
             action.Invoke();
@@ -220,5 +240,68 @@ public class st1_HorrorEventManager : MonoBehaviour
         Debug.Log($"[EventManager] 周回 {cycleCount} のトリガーからイベント {eventType} を発動");
         TriggerHorrorEvent(eventType);
         return true;
+    }
+    // ========================================================================
+    // ▼▼▼ ログ保存機能 ▼▼▼
+    // ========================================================================
+
+    private void InitializeEventLogger()
+    {
+        string subjectID = GameManager.SubjectID;
+        if (string.IsNullOrEmpty(subjectID))
+        {
+            subjectID = "TestUser"; // IDがない場合のフォールバック
+        }
+
+        // ファイル名: ユーザー名_02_HorrorEvent_log.csv
+        string fileName = $"{subjectID}_02_HorrorEvent_log.csv";
+        string directoryPath = Path.Combine(Application.persistentDataPath, "CSV");
+
+        if (!Directory.Exists(directoryPath))
+        {
+            Directory.CreateDirectory(directoryPath);
+        }
+
+        string fullPath = Path.Combine(directoryPath, fileName);
+
+        try
+        {
+            // 上書きモード(false)で作成
+            eventLogWriter = new StreamWriter(fullPath, false, Encoding.UTF8);
+            eventLogWriter.WriteLine("Timestamp,EventID"); // ヘッダー
+            eventLogWriter.Flush();
+            Debug.Log($"📄 [st1_HorrorEventManager] ログファイルを作成しました: {fullPath}");
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"⚠ [st1_HorrorEventManager] ログファイル作成エラー: {e.Message}");
+        }
+    }
+
+    private void LogEvent(int eventType)
+    {
+        if (eventLogWriter != null)
+        {
+            string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            eventLogWriter.WriteLine($"{timestamp},{eventType}");
+            eventLogWriter.Flush(); // 即時書き込み
+            Debug.Log($"📝 [st1_HorrorEventManager] イベントログ保存: {timestamp}, ID: {eventType}");
+        }
+    }
+
+    private void CloseEventLogger()
+    {
+        if (eventLogWriter != null)
+        {
+            eventLogWriter.Flush();
+            eventLogWriter.Close();
+            eventLogWriter = null;
+            Debug.Log("📄 [st1_HorrorEventManager] ログファイルを閉じました。");
+        }
+    }
+
+    void OnDestroy()
+    {
+        CloseEventLogger();
     }
 }
