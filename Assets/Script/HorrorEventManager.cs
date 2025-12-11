@@ -141,6 +141,9 @@ public class HorrorEventManager : MonoBehaviour
 
         // 34: 特定の場所から鳴る音を開始
         StartSoundFromLocation();
+
+        // 35: 壁の集合体イベントを開始
+        TriggerClusterWall();
     }
 
     /// <summary>
@@ -570,7 +573,7 @@ public class HorrorEventManager : MonoBehaviour
         }
     }
 
-    private void LogEvent(int eventType)
+    public void LogEvent(int eventType)
     {
         if (eventLogWriter != null)
         {

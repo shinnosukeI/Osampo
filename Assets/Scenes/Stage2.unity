@@ -1678,8 +1678,8 @@ Transform:
   m_GameObject: {fileID: 329737279}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -0, y: 0, z: 0.9}
-  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
+  m_LocalPosition: {x: 0, y: 0, z: 0.67}
+  m_LocalScale: {x: 0.2, y: 0.01, z: 0.2}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 862705110}
@@ -7835,6 +7835,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 862705110}
+  - component: {fileID: 862705112}
+  - component: {fileID: 862705111}
   m_Layer: 0
   m_Name: 35
   m_TagString: Untagged
@@ -7858,6 +7860,47 @@ Transform:
   - {fileID: 329737280}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+--- !u!114 &862705111
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 862705109}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00904a05a52d333418455c27fda3df63, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ClusterWallEvent
+  elementPrefab1: {fileID: 329737279}
+  elementPrefab2: {fileID: 1956963636}
+  spawnAreas:
+  - {fileID: 862705112}
+  spawnCount: 250
+  minDistance: 0.2
+  maxAttempts: 10
+  scaleRange: {x: 0.8, y: 1.2}
+--- !u!65 &862705112
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 862705109}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 17.938007, y: 6.3496575, z: 1}
+  m_Center: {x: 6.6383085, y: 2.6748283, z: 8.030447e-14}
 --- !u!1 &876836347
 GameObject:
   m_ObjectHideFlags: 0
@@ -10687,12 +10730,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b37554a1ddabb842be9c680c0ec4250, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::St2DoorTeleporter
-  player: {fileID: 643491820}
-  teleportPosition: {x: 0.16, y: 0.5, z: -20}
-  openAngle: -90
-  speed: 2
-  doorPivot: {fileID: 1638990973}
-  eventManager: {fileID: 1697327539}
 --- !u!65 &1085293756
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -16947,7 +16984,7 @@ MonoBehaviour:
   laughSound: {fileID: 8300000, guid: febb18d12aea878458060df8713c88f2, type: 3}
   footstepsSound: {fileID: 8300000, guid: 3ac005d8a882bd540aa4c1a2b34f61d3, type: 3}
   approachingPersonEvent: {fileID: 700739170}
-  clusterWallEvent: {fileID: 0}
+  clusterWallEvent: {fileID: 862705111}
   cycleCount: 0
   cycleEventTypes: 
 --- !u!4 &1697327540
@@ -17508,7 +17545,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 3e0ed638fb0e0354a8f99c20ba60aaa2, type: 2}
     - target: {fileID: 919132149155446097, guid: 2da78c673061267478c4aea27528a8cf, type: 3}
       propertyPath: m_Name
-      value: huhai_man
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 2449890979326052140, guid: 2da78c673061267478c4aea27528a8cf, type: 3}
       propertyPath: m_LocalPosition.x
@@ -18772,6 +18809,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a25107b7efe4e0941bed4252077d72c1, type: 3}
+--- !u!1 &1956963636 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: a25107b7efe4e0941bed4252077d72c1, type: 3}
+  m_PrefabInstance: {fileID: 1956963635}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1966074516
 GameObject:
   m_ObjectHideFlags: 0
@@ -20506,9 +20548,9 @@ SceneRoots:
   - {fileID: 844690588}
   - {fileID: 1222705937}
   - {fileID: 952473257}
-  - {fileID: 1759899499}
   - {fileID: 1201711939}
   - {fileID: 1697327540}
+  - {fileID: 1759899499}
   - {fileID: 543631643}
   - {fileID: 763557765}
   - {fileID: 400829274}
