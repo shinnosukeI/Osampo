@@ -77,24 +77,7 @@ crashlytics-build.properties
 # Ignore specific large font asset
 [Aa]ssets/TextMesh Pro/[Ff]onts/
 
-# CSV
-/[Aa]ssets/CSV/
-
-/Assets/Materials/
-# 1.異形の恐怖 (12.死体の腐敗 is tracked)
-/Assets/恐怖要素用アセット/1.異形の恐怖/*
-!/Assets/恐怖要素用アセット/1.異形の恐怖/12.死体の腐敗/
-!/Assets/恐怖要素用アセット/1.異形の恐怖/12.死体の腐敗.meta
-
-/Assets/恐怖要素用アセット/2.人体・模造品の恐怖/
-/Assets/恐怖要素用アセット/3.生理的嫌悪・外傷的恐怖/
-/Assets/恐怖要素用アセット/4.心理的・行動的恐怖/
-
-# 5.超常的な恐怖 (51.影が見える is tracked)
-/Assets/恐怖要素用アセット/5.超常的な恐怖/*
-!/Assets/恐怖要素用アセット/5.超常的な恐怖/51.影が見える/
-!/Assets/恐怖要素用アセット/5.超常的な恐怖/51.影が見える.meta
-
-/Assets/恐怖要素用アセット/その他/
+/Assets/恐怖要素用アセット/2.人体・模造品の恐怖/22.マネキンが道に置かれている
+/Assets/恐怖要素用アセット/2.人体・模造品の恐怖/22.マネキンが道に置かれている.meta
 
 /HeartRate/logs.txt

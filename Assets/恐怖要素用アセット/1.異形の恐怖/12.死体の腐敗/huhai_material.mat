@@ -123,7 +123,7 @@ Material:
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _RotAmount: 0.446
+    - _RotAmount: 0
     - _Smoothness: 0.356
     - _SmoothnessTextureChannel: 1
     - _SpecularHighlights: 1
