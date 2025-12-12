@@ -14,7 +14,7 @@ public class RadioTriggerZone : MonoBehaviour
         if (!other.CompareTag("Player")) return;
         if (used) return;
 
-        Debug.Log("[RadioTrigger] プレイヤーがトリガー領域に侵入");
+    
 
         // 周回数チェック（EventManager を経由）
         st1_HorrorEventManager em = FindObjectOfType<st1_HorrorEventManager>();
@@ -24,11 +24,11 @@ public class RadioTriggerZone : MonoBehaviour
             return;
         }
 
-        Debug.Log($"[RadioTrigger] 現在周回: {em.CycleCount}");
+        
 
         if (em.CycleCount >= requiredCycle)
         {
-            Debug.Log("[RadioTrigger] 周回条件を満たしたためラジオ再生開始");
+            
 
             radioController.PlayRadioSequence();
             used = true;   // ★ 1回だけ発動
