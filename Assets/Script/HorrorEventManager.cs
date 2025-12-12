@@ -97,6 +97,14 @@ public class HorrorEventManager : MonoBehaviour
     [SerializeField]
     private ClusterWallEvent clusterWallEvent;
 
+    [Header("51: 通行人イベント")] // ★ 追加
+    [SerializeField]
+    private WalkingPersonEvent walkingPersonEvent;
+
+    [Header("52: ドアの隙間から女")] // ★ 追加
+    [SerializeField]
+    private DoorGapEvent doorGapEvent;
+
     public List<(string Timestamp, int eventType)> eventLog = new List<(string, int)>();
 
     // ★ 周期カウント（ドア/ワープした回数）
@@ -171,6 +179,8 @@ public class HorrorEventManager : MonoBehaviour
         eventActionMap[41] = TriggerFootstepsBehind; // ★ 追加
         eventActionMap[34] = StartSoundFromLocation; // ★ 追加
         eventActionMap[32] = TriggerBloodstain;      // ★ 追加
+        eventActionMap[51] = TriggerWalkingPerson; // ★ 追加
+        eventActionMap[52] = TriggerDoorGap;       // ★ 追加
     }
 
     /// <summary>
@@ -500,6 +510,34 @@ public class HorrorEventManager : MonoBehaviour
             }
         }
         // 設定されていない場合は何もしない（エラーログは出さない、必須ではないかもしれないため）
+    }
+
+    // 51: 通行人
+    public void TriggerWalkingPerson()
+    {
+        Debug.Log("🌑 [HorrorEventManager] TriggerWalkingPerson が呼ばれました");
+        if (walkingPersonEvent != null)
+        {
+            walkingPersonEvent.TriggerEvent();
+        }
+        else
+        {
+             Debug.LogError("❌ [HorrorEventManager] walkingPersonEvent が割り当てられていません！Inspectorで設定してください。");
+        }
+    }
+
+    // 52: ドアの隙間から女
+    public void TriggerDoorGap()
+    {
+        Debug.Log("🌑 [HorrorEventManager] TriggerDoorGap が呼ばれました");
+        if (doorGapEvent != null)
+        {
+            doorGapEvent.TriggerEvent();
+        }
+        else
+        {
+            Debug.LogError("❌ [HorrorEventManager] doorGapEvent is not assigned!");
+        }
     }
 
 

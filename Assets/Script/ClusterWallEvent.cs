@@ -10,13 +10,13 @@ public class ClusterWallEvent : MonoBehaviour
     private GameObject elementPrefab2; // 2つ目のプレハブ（例：球体）
 
     [SerializeField]
-    private List<BoxCollider> spawnAreas = new List<BoxCollider>(); // 複数の生成範囲
+    private List<BoxCollider> spawnAreas = new List<BoxCollider>(); // 生成範囲（複数指定可能）
 
     [SerializeField]
     private int spawnCount = 100; // 生成する数
 
     [SerializeField]
-    private float minDistance = 0.2f; // 重なり防止のための最小距離
+    private float minDistance = 0.3f; // 重なり防止のための最小距離
     [SerializeField]
     private int maxAttempts = 10; // 生成位置決定の最大試行回数
 
@@ -24,14 +24,11 @@ public class ClusterWallEvent : MonoBehaviour
     [SerializeField]
     private Vector2 scaleRange = new Vector2(0.8f, 1.2f); // サイズのばらつき
 
-    // 回転はプレハブ依存とし、ランダム回転フラグは削除済み
+    [SerializeField]
+    private bool randomRotationZ = true; // Z軸（平面上の回転）をランダムにするか（現在は使用していない）
 
     private bool hasTriggered = false;
-    private List<Vector3> spawnedPositions = new List<Vector3>(); // 生成済み位置リスト
-
-    [Header("回転微調整")]
-    [SerializeField]
-    private Vector3 rotationOffset = Vector3.zero; // プレハブの向きが合わない場合の補正値
+    private List<Vector3> spawnedPositions = new List<Vector3>();
 
     // イベント実行
     public void TriggerEvent()
@@ -57,7 +54,7 @@ public class ClusterWallEvent : MonoBehaviour
         }
 
         hasTriggered = true;
-        Debug.Log($"🌑 [ClusterWallEvent] Generating {spawnCount} items across {spawnAreas.Count} walls...");
+        Debug.Log($"🌑 [ClusterWallEvent] Generating {spawnCount} items...");
 
         // イベントID 35 をログに記録
         HorrorEventManager hm = FindFirstObjectByType<HorrorEventManager>();
@@ -68,73 +65,71 @@ public class ClusterWallEvent : MonoBehaviour
 
         spawnedPositions.Clear();
 
+        int skippedCount = 0;
+
         for (int i = 0; i < spawnCount; i++)
         {
-            // 位置決定の試行（重ならない場所を探す）
             for (int attempt = 0; attempt < maxAttempts; attempt++)
             {
-                // ランダムなエリアを選択
+                // ランダムにエリア（壁）を1つ選ぶ
                 BoxCollider area = spawnAreas[Random.Range(0, spawnAreas.Count)];
                 if (area == null) continue;
 
-                // BoxColliderのローカル座標系内でランダム点を生成
-                Vector3 center = area.center;
-                Vector3 size = area.size;
-
-                float rx = Random.Range(-size.x / 2f, size.x / 2f);
-                float ry = Random.Range(-size.y / 2f, size.y / 2f);
-                float rz = Random.Range(-size.z / 2f, size.z / 2f);
-
-                Vector3 localPoint = center + new Vector3(rx, ry, rz);
-                Vector3 worldPoint = area.transform.TransformPoint(localPoint);
+                // 選んだエリアの範囲内でランダムな位置を決定
+                Bounds bounds = area.bounds;
+                float x = Random.Range(bounds.min.x, bounds.max.x);
+                float y = Random.Range(bounds.min.y, bounds.max.y);
+                float z = Random.Range(bounds.min.z, bounds.max.z);
+                Vector3 spawnPos = new Vector3(x, y, z);
 
                 // 重なりチェック
                 bool isOverlapping = false;
-                foreach (Vector3 pos in spawnedPositions)
+                foreach (Vector3 existingPos in spawnedPositions)
                 {
-                    if (Vector3.Distance(worldPoint, pos) < minDistance)
+                    if (Vector3.Distance(spawnPos, existingPos) < minDistance)
                     {
                         isOverlapping = true;
                         break;
                     }
                 }
 
-                if (!isOverlapping)
+                // 重なっていたら再抽選
+                if (isOverlapping)
                 {
-                    // 生成実行
-                    SpawnAt(worldPoint, area);
-                    spawnedPositions.Add(worldPoint);
-                    break; // 成功したので次のアイテムへ
+                    skippedCount++;
+                    continue; // 次の試行へ
                 }
+
+                // 重なっていなければ生成してループを抜ける
+                spawnedPositions.Add(spawnPos);
+                SpawnAt(spawnPos);
+                break; // 成功したので i (生成個数) のループを進める
             }
         }
+
+        Debug.Log($"🌑 [ClusterWallEvent] Generation complete. Skipped {skippedCount} overlaps.");
     }
 
-    private void SpawnAt(Vector3 pos, BoxCollider area)
+    private void SpawnAt(Vector3 spawnPos)
     {
+        // ランダムなスケールのみ適用（回転はしない）
         float randomScaleFactor = Random.Range(scaleRange.x, scaleRange.y);
-        Quaternion offsetRot = Quaternion.Euler(rotationOffset);
 
         // 1つ目のプレハブ生成
         if (elementPrefab1 != null)
         {
-            // 壁の回転 + プレハブの回転 + 補正回転 を合成
-            Quaternion finalRot = area.transform.rotation * elementPrefab1.transform.rotation * offsetRot;
-            GameObject obj1 = Instantiate(elementPrefab1, pos, finalRot);
-            
-            // マネージャーの子にする
+            // プレハブ自体の回転をそのまま採用
+            GameObject obj1 = Instantiate(elementPrefab1, spawnPos, elementPrefab1.transform.rotation);
             obj1.transform.SetParent(this.transform);
             
-            // スケール適用
+            // プレハブ自体のスケール × ランダム倍率
             obj1.transform.localScale = elementPrefab1.transform.localScale * randomScaleFactor;
         }
 
         // 2つ目のプレハブ生成
         if (elementPrefab2 != null)
         {
-            Quaternion finalRot = area.transform.rotation * elementPrefab2.transform.rotation * offsetRot;
-            GameObject obj2 = Instantiate(elementPrefab2, pos, finalRot);
-            
+            GameObject obj2 = Instantiate(elementPrefab2, spawnPos, elementPrefab2.transform.rotation);
             obj2.transform.SetParent(this.transform);
 
             obj2.transform.localScale = elementPrefab2.transform.localScale * randomScaleFactor;

@@ -328,6 +328,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4da8d717a0b69a6429b573638c52d8a3, type: 3}
       insertIndex: -1
       addedObject: {fileID: 72546083}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4da8d717a0b69a6429b573638c52d8a3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 72546085}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4da8d717a0b69a6429b573638c52d8a3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 72546086}
   m_SourcePrefab: {fileID: 100100000, guid: 4da8d717a0b69a6429b573638c52d8a3, type: 3}
 --- !u!1 &72546082 stripped
 GameObject:
@@ -356,6 +362,37 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &72546085
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 72546082}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0f3e94ab3e7a9741a91e66553927efb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DoorGapEvent
+  targetDoor: {fileID: 1071550489}
+  gapAngle: 20
+  slamSound: {fileID: 0}
+  zombieObject: {fileID: 72546082}
+  openOnStart: 1
+--- !u!114 &72546086
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 72546082}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d06a5cdb9056c64a80338e42484bbf4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HorrorEventTrigger
+  eventType: 52
+  triggerOnce: 1
 --- !u!1 &72571482 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: a25107b7efe4e0941bed4252077d72c1, type: 3}
@@ -1042,6 +1079,91 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
+--- !u!1 &164521149
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 164521152}
+  - component: {fileID: 164521151}
+  - component: {fileID: 164521150}
+  - component: {fileID: 164521153}
+  m_Layer: 0
+  m_Name: 51
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!65 &164521150
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 164521149}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 6.530538, y: 4.482738, z: 1}
+  m_Center: {x: 0.5046332, y: 1.7413688, z: 0}
+--- !u!114 &164521151
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 164521149}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ac3a6b727d0fe24da953fb065643985, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WalkingPersonEvent
+  targetAnimator: {fileID: 1620891667}
+  animationTriggerName: Walk
+  startPosition: {fileID: 1620891668}
+  targetObject: {fileID: 1620891666}
+--- !u!4 &164521152
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 164521149}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.056, y: 0.28, z: -8.698}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &164521153
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 164521149}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d06a5cdb9056c64a80338e42484bbf4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HorrorEventTrigger
+  eventType: 51
+  triggerOnce: 1
 --- !u!1 &193975276
 GameObject:
   m_ObjectHideFlags: 0
@@ -7853,7 +7975,7 @@ Transform:
   m_GameObject: {fileID: 862705109}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 2.847, y: 0.819, z: 13.639}
+  m_LocalPosition: {x: 2.847, y: 0.819, z: 12.92}
   m_LocalScale: {x: 0.7, y: 0.7, z: 0.05}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -7876,10 +7998,12 @@ MonoBehaviour:
   elementPrefab2: {fileID: 1956963636}
   spawnAreas:
   - {fileID: 862705112}
+  - {fileID: 1774836774}
   spawnCount: 250
-  minDistance: 0.2
+  minDistance: 0.1
   maxAttempts: 10
   scaleRange: {x: 0.8, y: 1.2}
+  randomRotationZ: 1
 --- !u!65 &862705112
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -10571,6 +10695,7 @@ GameObject:
   - component: {fileID: 1071550489}
   - component: {fileID: 1071550488}
   - component: {fileID: 1071550490}
+  - component: {fileID: 1071550491}
   m_Layer: 0
   m_Name: doorpovit
   m_TagString: Untagged
@@ -10629,6 +10754,19 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 4, z: 2}
   m_Center: {x: 0, y: 0, z: -1}
+--- !u!114 &1071550491
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1071550487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b65b10a85bd0764bb0b311e9c86b419, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FocusRelay
+  targetEvent: {fileID: 72546085}
 --- !u!1001 &1085293748
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -14188,7 +14326,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0a7f5e3476392204db73d55bd9816256, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -8.55
+      value: -7.75
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 0a7f5e3476392204db73d55bd9816256, type: 3}
       propertyPath: m_LocalPosition.y
@@ -14232,7 +14370,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 562d8d65dc983a346be3eed555371cdc, type: 2}
     - target: {fileID: 919132149155446097, guid: 0a7f5e3476392204db73d55bd9816256, type: 3}
       propertyPath: m_Name
-      value: 51
+      value: "51.\u4EBA\u5F71\u304C\u898B\u3048\u308B"
       objectReference: {fileID: 0}
     - target: {fileID: 1330755669629619180, guid: 0a7f5e3476392204db73d55bd9816256, type: 3}
       propertyPath: m_LocalRotation.x
@@ -16213,6 +16351,21 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1488657982}
   m_SourcePrefab: {fileID: 100100000, guid: f1ace73451f5558408d40ef71c4ecdc3, type: 3}
+--- !u!1 &1620891666 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 0a7f5e3476392204db73d55bd9816256, type: 3}
+  m_PrefabInstance: {fileID: 1394784442}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &1620891667 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 0a7f5e3476392204db73d55bd9816256, type: 3}
+  m_PrefabInstance: {fileID: 1394784442}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1620891668 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 0a7f5e3476392204db73d55bd9816256, type: 3}
+  m_PrefabInstance: {fileID: 1394784442}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1625010970
 GameObject:
   m_ObjectHideFlags: 0
@@ -16985,6 +17138,8 @@ MonoBehaviour:
   footstepsSound: {fileID: 8300000, guid: 3ac005d8a882bd540aa4c1a2b34f61d3, type: 3}
   approachingPersonEvent: {fileID: 700739170}
   clusterWallEvent: {fileID: 862705111}
+  walkingPersonEvent: {fileID: 164521151}
+  doorGapEvent: {fileID: 72546085}
   cycleCount: 0
   cycleEventTypes: 
 --- !u!4 &1697327540
@@ -17731,6 +17886,59 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 3334416122366563163, guid: 2da78c673061267478c4aea27528a8cf, type: 3}
+--- !u!1 &1774836773
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1774836775}
+  - component: {fileID: 1774836774}
+  m_Layer: 0
+  m_Name: 35_2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!65 &1774836774
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1774836773}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 8.308603, y: 3.539295, z: 1}
+  m_Center: {x: -1.2121019, y: 1.2696476, z: -1.1624538e-13}
+--- !u!4 &1774836775
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1774836773}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 2.847, y: 0.819, z: -3.84}
+  m_LocalScale: {x: 0.7000001, y: 1.1, z: 0.06681002}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1777813931
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -20578,6 +20786,7 @@ SceneRoots:
   - {fileID: 44769584}
   - {fileID: 1792127237}
   - {fileID: 862705110}
+  - {fileID: 1774836775}
   - {fileID: 1956963635}
   - {fileID: 1907797398}
   - {fileID: 1123340651}
@@ -20594,6 +20803,7 @@ SceneRoots:
   - {fileID: 585576986}
   - {fileID: 1291720597}
   - {fileID: 1143492900}
+  - {fileID: 164521152}
   - {fileID: 1394784442}
   - {fileID: 72546081}
   - {fileID: 2014870448}
