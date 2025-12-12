@@ -63,7 +63,7 @@ public class st2_warptrigger : MonoBehaviour
                 // このドア自身がクリックされたか？
                 if (hit.transform == transform)
                 {
-                    Debug.Log("[Stage2][WarpTrigger] ドアがクリックされました。");
+                    
                     OnDoorClicked();
                 }
             }
@@ -112,7 +112,6 @@ public class st2_warptrigger : MonoBehaviour
         cc.enabled = true;
     }
 
-    Debug.Log($"[Stage2][WarpTrigger] プレイヤーを {before} → {player.position} にワープしました。");
 }
 
     private void OpenDoor()
@@ -156,6 +155,6 @@ public class st2_warptrigger : MonoBehaviour
             }
         }
 
-        Debug.Log("[Stage2][WarpTrigger] 開いているドアをすべて閉じました。");
+        
     }
 }
