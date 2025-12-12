@@ -25,7 +25,7 @@ public class HorrorEventTrigger : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         // デバッグログ：何かが触れた
-        // Debug.Log($"[HorrorEventTrigger] Hit: {other.name}, Tag: {other.tag}, EventType: {eventType}");
+        Debug.Log($"[HorrorEventTrigger] Hit: {other.name}, Tag: {other.tag}, EventType: {eventType}");
 
         if (hasTriggered && triggerOnce) return;
 
