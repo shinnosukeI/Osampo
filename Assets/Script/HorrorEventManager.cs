@@ -171,6 +171,20 @@ public class HorrorEventManager : MonoBehaviour
     [SerializeField]
     private DecayingCorpseEvent decayingCorpseEvent;
 
+    // ==========================================
+    // ★ デバッグ機能
+    // ==========================================
+    [Header("Debug Settings")]
+    [Tooltip("有効にすると、以下の設定でゲームを開始します")]
+    [SerializeField] private bool debugMode = false;
+    
+    [Tooltip("デバッグ用：強制的にこのアンケート結果（ステージ）にする (1～5)")]
+    [Range(1, 5)]
+    [SerializeField] private int debugSurveyResult = 1;
+
+    [Tooltip("デバッグ用：開始時の周回数 (0始まり。例: 3なら4周目から)")]
+    [SerializeField] private int debugStartCycle = 0;
+
     // 12と22は現在不明のためプレースホルダ
     // 22: クマ移動2?
     // 12: 死体引きずり?
@@ -186,6 +200,14 @@ public class HorrorEventManager : MonoBehaviour
         // GameManagerからアンケート結果を取得
         currentSurveyResult = GameManager.SavedSurveyResult;
         
+        // ★ デバッグモードの優先適用
+        if (debugMode)
+        {
+            currentSurveyResult = debugSurveyResult;
+            cycleCount = debugStartCycle;
+            Debug.Log($"🔧 [HorrorEventManager] Debug Mode ENABLED. Result: {currentSurveyResult}, Cycle: {cycleCount}");
+        }
+
         if (currentSurveyResult == -1)
         {
             Debug.LogWarning("⚠️ [HorrorEventManager] アンケート結果が取得できていません (Result is -1)");
@@ -211,8 +233,8 @@ public class HorrorEventManager : MonoBehaviour
         // ★ 使わないイベントトリガーを無効化（軽量化・バグ防止）
         PruneUnusedTriggers();
 
-        // 1周目の設定を適用
-        ApplyLoopSetting(0);
+        // 指定周回数の設定を適用
+        ApplyLoopSetting(cycleCount);
     }
 
     /// <summary>
@@ -877,5 +899,23 @@ public class HorrorEventManager : MonoBehaviour
     void OnDestroy()
     {
         CloseEventLogger();
+    }
+    // ============================
+    // ★ 外部からスケジュール確認用
+    // ============================
+    public bool IsEventScheduled(int eventID)
+    {
+        // Debug Modeの場合は常に許可するか、あるいは設定に従う
+        if (debugMode && currentStageSchedule.Count == 0 && eventID == debugSurveyResult) 
+        {
+             // 簡易的な救済（本来はScheduleが作られているはず）
+             return true; 
+        }
+
+        foreach (var data in currentStageSchedule)
+        {
+            if (data.eventID == eventID) return true;
+        }
+        return false;
     }
 }
