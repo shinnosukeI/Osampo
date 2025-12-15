@@ -33,7 +33,9 @@ public class FallingCorpseTrigger : MonoBehaviour
         Debug.Log($"[CorpseTrigger] 周回 {current} でトリガーに侵入");
 
         // ★ 本来のスケジュールに含まれているか確認
-        if (eventManager is HorrorEventManager hm)
+        // Stage2用のマネージャーがあれば、そちらのスケジュールを優先
+        HorrorEventManager hm = FindFirstObjectByType<HorrorEventManager>();
+        if (hm != null)
         {
             if (!hm.IsEventScheduled(14))
             {
