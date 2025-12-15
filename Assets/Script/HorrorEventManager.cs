@@ -105,6 +105,10 @@ public class HorrorEventManager : MonoBehaviour
     [SerializeField]
     private DoorGapEvent doorGapEvent;
 
+    [Header("43: 鏡の中の幽霊")] // ★ 追加
+    [SerializeField]
+    private MirrorGhostEvent mirrorGhostEvent;
+
     public List<(string Timestamp, int eventType)> eventLog = new List<(string, int)>();
 
     // ★ 周期カウント（ドア/ワープした回数）
@@ -181,6 +185,7 @@ public class HorrorEventManager : MonoBehaviour
         eventActionMap[32] = TriggerBloodstain;      // ★ 追加
         eventActionMap[51] = TriggerWalkingPerson; // ★ 追加
         eventActionMap[52] = TriggerDoorGap;       // ★ 追加
+        eventActionMap[43] = TriggerMirrorGhost;   // ★ 追加
     }
 
     /// <summary>
@@ -537,6 +542,20 @@ public class HorrorEventManager : MonoBehaviour
         else
         {
             Debug.LogError("❌ [HorrorEventManager] doorGapEvent is not assigned!");
+        }
+    }
+
+    // 43: 鏡の中の幽霊
+    public void TriggerMirrorGhost()
+    {
+        Debug.Log("🌑 [HorrorEventManager] TriggerMirrorGhost が呼ばれました");
+        if (mirrorGhostEvent != null)
+        {
+            mirrorGhostEvent.TriggerEvent();
+        }
+        else
+        {
+            Debug.LogError("❌ [HorrorEventManager] mirrorGhostEvent is not assigned!");
         }
     }
 
