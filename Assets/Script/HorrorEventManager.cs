@@ -171,6 +171,21 @@ public class HorrorEventManager : MonoBehaviour
     [SerializeField]
     private DecayingCorpseEvent decayingCorpseEvent;
 
+    [Header("12: 死体の腐敗（13とは別扱い?）")]
+    [SerializeField] private GameObject corpseRotTarget;
+
+    [Header("22: マネキン")]
+    [SerializeField] private GameObject mannequinTarget;
+
+    [Header("23: 水回りの髪")]
+    [SerializeField] private GameObject hairTarget;
+
+    [Header("33: 血とガラス片")]
+    [SerializeField] private GameObject bloodAndGlassTarget;
+
+    [Header("56: ポールポンポン")]
+    [SerializeField] private GameObject polePonPonTarget;
+
     // ==========================================
     // ★ デバッグ機能
     // ==========================================
@@ -233,6 +248,12 @@ public class HorrorEventManager : MonoBehaviour
         // ★ 使わないイベントトリガーを無効化（軽量化・バグ防止）
         PruneUnusedTriggers();
 
+        // ★ 使わないイベントオブジェクトそのものを無効化（表示物対策）
+        PruneUnusedObjects();
+
+        // ★ 初期状態の設定（該当イベントがあっても、最初は隠しておくものなど）
+        InitializeObjectStates();
+
         // 指定周回数の設定を適用
         ApplyLoopSetting(cycleCount);
     }
@@ -253,7 +274,6 @@ public class HorrorEventManager : MonoBehaviour
         foreach (var trigger in allTriggers)
         {
             // トリガーが担当するイベントIDが含まれていなければ無効化
-            // ※ eventType=0 など特殊な用途がある場合は除外判定を入れる
             if (!allowedEvents.Contains(trigger.eventType))
             {
                 trigger.gameObject.SetActive(false);
@@ -262,6 +282,124 @@ public class HorrorEventManager : MonoBehaviour
         }
 
         Debug.Log($"🗑 [HorrorEventManager] 不要なトリガーを {disabledCount} 個 無効化しました。");
+    }
+
+    /// <summary>
+    /// 現在のスケジュールに含まれないイベントのオブジェクトを非表示/無効化する
+    /// </summary>
+    private void PruneUnusedObjects()
+    {
+        HashSet<int> allowedEvents = new HashSet<int>(currentStageSchedule.Select(x => x.eventID));
+
+        // イベントID と 管理オブジェクト のペアをリスト化
+        // ここに登録されたオブジェクトは、スケジュールになければ Disable される
+        var managedObjects = new List<(int id, Component comp, GameObject obj)>
+        {
+            (11, cockroachSwarmTarget, null),
+            (14, null, null), 
+            (31, null, bloodDripObject),
+            (32, null, bloodSplashObject),
+            (45, radioController, null),
+            (54, objectToFallTarget, null),
+            (55, null, normalWindowObject), 
+            (55, null, brokenWindowObject), 
+
+            (56, null, polePonPonTarget),
+            (24, handprintEventTarget, null),
+            (25, wallEyesEventTarget, null),
+            (21, bearMoveEventTarget, null),
+            (53, vanishingWomanEventTarget, null),
+            (15, zombieChaseEventTarget, null),
+            (46, thunderAudioSource, null),
+            (42, laughAudioSource, null),
+            (34, soundFromLocationSource, null),
+            (44, approachingPersonEvent, null),
+            (35, clusterWallEvent, null),
+            (51, walkingPersonEvent, null),
+            (52, doorGapEvent, null),
+            (43, mirrorGhostEvent, null),
+            (13, decayingCorpseEvent, null),
+            (12, null, corpseRotTarget),
+            (22, null, mannequinTarget),
+            (23, null, hairTarget),
+            (33, null, bloodAndGlassTarget)
+        };
+
+        int disabledCount = 0;
+
+        foreach (var item in managedObjects)
+        {
+            // スケジュールに含まれているか？
+            if (allowedEvents.Contains(item.id)) continue;
+
+            // 含まれていない場合、無効化する
+            if (item.comp != null)
+            {
+                if (item.comp.gameObject.activeSelf)
+                {
+                    item.comp.gameObject.SetActive(false);
+                    disabledCount++;
+                }
+            }
+            else if (item.obj != null)
+            {
+                if (item.obj.activeSelf)
+                {
+                    item.obj.SetActive(false);
+                    disabledCount++;
+                }
+            }
+        }
+
+        Debug.Log($"👻 [HorrorEventManager] スケジュール外のイベントオブジェクト {disabledCount} 個を非表示にしました。");
+    }
+
+    /// <summary>
+    /// 各イベントオブジェクトの初期状態を設定（基本非表示にするなど）
+    /// </summary>
+    private void InitializeObjectStates()
+    {
+        // st1_HorrorEventManagerを参考に、開始時は非表示にすべきものをここで切る
+        if (bloodSplashObject != null) bloodSplashObject.SetActive(false);
+        if (bloodDripObject != null) bloodDripObject.SetActive(false);
+        
+        // 窓: 割れる前は表示、割れた後は非表示
+        if (normalWindowObject != null) normalWindowObject.SetActive(true);
+        if (brokenWindowObject != null) brokenWindowObject.SetActive(false);
+
+        // 死体腐敗: 最初はいない
+        if (decayingCorpseEvent != null) decayingCorpseEvent.gameObject.SetActive(false);
+        if (corpseRotTarget != null) corpseRotTarget.SetActive(false);
+
+        // ミラーゴースト: 最初はいない
+        if (mirrorGhostEvent != null) mirrorGhostEvent.gameObject.SetActive(false);
+
+        // 隙間女: 最初はいない
+        if (doorGapEvent != null) doorGapEvent.gameObject.SetActive(false);
+
+        // 通行人: 最初はいない
+        if (walkingPersonEvent != null) walkingPersonEvent.gameObject.SetActive(false);
+
+        // 壁の集合体: 最初はいない
+        if (clusterWallEvent != null) clusterWallEvent.gameObject.SetActive(false);
+        
+        // 人形移動: 最初は非表示
+        if (bearMoveEventTarget != null) bearMoveEventTarget.gameObject.SetActive(false);
+
+        // 接近する人影
+        if (approachingPersonEvent != null) approachingPersonEvent.gameObject.SetActive(false);
+        
+        // 追加オブジェクト
+        if (mannequinTarget != null) mannequinTarget.SetActive(false);
+        if (hairTarget != null) hairTarget.SetActive(false);
+        if (bloodAndGlassTarget != null) bloodAndGlassTarget.SetActive(false);
+        if (polePonPonTarget != null) polePonPonTarget.SetActive(false);
+
+        // ラジオなども最初は止めておく？（AutoPlayかどうかによるが念のため）
+        if (radioController != null) radioController.gameObject.SetActive(false); 
+        // 45はトリガーで開始するならOK。RadioEventControllerの実装次第。
+
+        Debug.Log("🔒 [HorrorEventManager] イベントオブジェクトの初期表示状態をリセットしました");
     }
 
     /// <summary>
@@ -305,51 +443,63 @@ public class HorrorEventManager : MonoBehaviour
     {
         currentStageSchedule.Clear();
 
+        // 1=2-1, 2=2-2, 3=2-3, 4=2-4, 5=2-5
+        
         switch (result)
         {
+            case 1: // Stage 2-1
+                currentStageSchedule.Add(new StageLoopData(13, LightingType.Default)); // Loop1: 虫が手を上ってくる
+                currentStageSchedule.Add(new StageLoopData(14, LightingType.Default)); // Loop2: 死体落下
+                currentStageSchedule.Add(new StageLoopData(12, LightingType.Default)); // Loop3: 死体の腐敗
+                currentStageSchedule.Add(new StageLoopData(15, LightingType.PitchBlack)); // Loop4: ゾンビ追跡
+                currentStageSchedule.Add(new StageLoopData(44, LightingType.FaintLight)); // Loop5: ラスト
+                break;
+
             case 2: // Stage 2-2
-                currentStageSchedule.Add(new StageLoopData(21, LightingType.Default));
-                currentStageSchedule.Add(new StageLoopData(22, LightingType.Default));
-                currentStageSchedule.Add(new StageLoopData(24, LightingType.Default));
-                currentStageSchedule.Add(new StageLoopData(25, LightingType.RedSpace));
-                currentStageSchedule.Add(new StageLoopData(44, LightingType.FaintLight));
+                currentStageSchedule.Add(new StageLoopData(21, LightingType.Default)); // Loop1: 人形移動
+                currentStageSchedule.Add(new StageLoopData(22, LightingType.Default)); // Loop2: マネキン
+                currentStageSchedule.Add(new StageLoopData(24, LightingType.Default)); // Loop3: 窓手形
+                currentStageSchedule.Add(new StageLoopData(25, LightingType.RedSpace)); // Loop4: 壁に目
+                currentStageSchedule.Add(new StageLoopData(44, LightingType.FaintLight)); // Loop5: ラスト
                 break;
 
             case 3: // Stage 2-3
-                currentStageSchedule.Add(new StageLoopData(31, LightingType.Default));
-                currentStageSchedule.Add(new StageLoopData(34, LightingType.Default));
-                currentStageSchedule.Add(new StageLoopData(32, LightingType.Default));
-                currentStageSchedule.Add(new StageLoopData(35, LightingType.RedSpace));
-                currentStageSchedule.Add(new StageLoopData(44, LightingType.FaintLight));
+                currentStageSchedule.Add(new StageLoopData(31, LightingType.Default)); // Loop1: 滴る血
+                currentStageSchedule.Add(new StageLoopData(34, LightingType.Default)); // Loop2: 肉裂き音
+                currentStageSchedule.Add(new StageLoopData(32, LightingType.Default)); // Loop3: 血痕
+                currentStageSchedule.Add(new StageLoopData(35, LightingType.RedSpace)); // Loop4: 集合体
+                currentStageSchedule.Add(new StageLoopData(44, LightingType.FaintLight)); // Loop5: ラスト
                 break;
 
             case 4: // Stage 2-4
-                currentStageSchedule.Add(new StageLoopData(43, LightingType.HallwayDark));
-                currentStageSchedule.Add(new StageLoopData(41, LightingType.SlightlyDark));
-                currentStageSchedule.Add(new StageLoopData(42, LightingType.Default));
-                currentStageSchedule.Add(new StageLoopData(46, LightingType.ThunderBlack));
-                currentStageSchedule.Add(new StageLoopData(44, LightingType.FaintLight));
+                currentStageSchedule.Add(new StageLoopData(43, LightingType.HallwayDark)); // Loop1: 鏡幽霊
+                currentStageSchedule.Add(new StageLoopData(41, LightingType.SlightlyDark)); // Loop2: 背後足音
+                currentStageSchedule.Add(new StageLoopData(42, LightingType.Default)); // Loop3: 笑い声
+                currentStageSchedule.Add(new StageLoopData(46, LightingType.ThunderBlack)); // Loop4: 雷
+                currentStageSchedule.Add(new StageLoopData(44, LightingType.FaintLight)); // Loop5: ラスト
                 break;
 
             case 5: // Stage 2-5
-                currentStageSchedule.Add(new StageLoopData(51, LightingType.SlightlyDark));
-                currentStageSchedule.Add(new StageLoopData(52, LightingType.Default));
-                currentStageSchedule.Add(new StageLoopData(56, LightingType.Default));
-                currentStageSchedule.Add(new StageLoopData(53, LightingType.SlightlyDark));
-                currentStageSchedule.Add(new StageLoopData(44, LightingType.FaintLight));
+                currentStageSchedule.Add(new StageLoopData(51, LightingType.SlightlyDark)); // Loop1: 人影
+                currentStageSchedule.Add(new StageLoopData(52, LightingType.Default)); // Loop2: 隙間女
+                currentStageSchedule.Add(new StageLoopData(56, LightingType.Default)); // Loop3: ポールポンポン
+                currentStageSchedule.Add(new StageLoopData(53, LightingType.SlightlyDark)); // Loop4: 消える女
+                currentStageSchedule.Add(new StageLoopData(44, LightingType.FaintLight)); // Loop5: ラスト
                 break;
 
-            case 1:
-            default: // Stage 2-1 (Default / -1)
+            default:
+                Debug.LogWarning("Unknown survey result: " + result + ". Using fallback (Stage 2-1).");
                 currentStageSchedule.Add(new StageLoopData(13, LightingType.Default));
-                currentStageSchedule.Add(new StageLoopData(14, LightingType.Default));
-                currentStageSchedule.Add(new StageLoopData(12, LightingType.Default));
-                currentStageSchedule.Add(new StageLoopData(15, LightingType.PitchBlack));
-                currentStageSchedule.Add(new StageLoopData(44, LightingType.FaintLight));
                 break;
         }
 
-        Debug.Log($"📅 [HorrorEventManager] Schedule Setup Complete based on Result {result}. Steps: {currentStageSchedule.Count}");
+        StringBuilder sb = new StringBuilder();
+        sb.AppendLine($"📅 [HorrorEventManager] Schedule Setup Complete based on Result {result}. Steps: {currentStageSchedule.Count}");
+        for(int i=0; i<currentStageSchedule.Count; i++)
+        {
+            sb.AppendLine($"  Loop {i+1}: Event {currentStageSchedule[i].eventID}, Light {currentStageSchedule[i].lighting}");
+        }
+        Debug.Log(sb.ToString());
     }
 
     /// <summary>
