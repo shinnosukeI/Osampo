@@ -4,11 +4,14 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(CharacterController))]
 public class FreeMoveInputSystem : MonoBehaviour
 {
+    [Header("Animator")]
+    [SerializeField] private Animator animator;
+
     public float walkSpeed = 4f;
-    public float runSpeed  = 7f;
-    public float accel     = 12f;
+    public float runSpeed = 7f;
+    public float accel = 12f;
     public float jumpPower = 5.5f;
-    public float gravity   = -9.81f;
+    public float gravity = -9.81f;
     public float groundSnap = -2f;
 
     public Transform groundCheck;
@@ -29,6 +32,7 @@ public class FreeMoveInputSystem : MonoBehaviour
     void Awake()
     {
         cc = GetComponent<CharacterController>();
+
         if (!groundCheck)
         {
             var gc = new GameObject("GroundCheck");
@@ -36,37 +40,54 @@ public class FreeMoveInputSystem : MonoBehaviour
             gc.transform.localPosition = new Vector3(0, -cc.height * 0.5f + cc.skinWidth + 0.05f, 0);
             groundCheck = gc.transform;
         }
+
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 
     void OnEnable()
     {
-        moveAction?.action.Enable();
-        lookAction?.action.Enable();
-        jumpAction?.action.Enable();
-        sprintAction?.action.Enable();
+        moveAction?.action?.Enable();
+        lookAction?.action?.Enable();
+        jumpAction?.action?.Enable();
+        sprintAction?.action?.Enable();
     }
+
     void OnDisable()
     {
-        moveAction?.action.Disable();
-        lookAction?.action.Disable();
-        jumpAction?.action.Disable();
-        sprintAction?.action.Disable();
+        moveAction?.action?.Disable();
+        lookAction?.action?.Disable();
+        jumpAction?.action?.Disable();
+        sprintAction?.action?.Disable();
     }
 
     void Update()
     {
-        // Ground
-        isGrounded = Physics.CheckSphere(groundCheck.position, groundCheckRadius, groundMask, QueryTriggerInteraction.Ignore);
+        // === 止める方式：Wキーでアニメ再生/停止（パラメータ不要） ===
+        bool isPressW = Keyboard.current != null && Keyboard.current.wKey.isPressed;
+        if (animator != null)
+        {
+            animator.speed = isPressW ? 1f : 0f;
+        }
 
-        // 入力
-        Vector2 mv = moveAction.action.ReadValue<Vector2>();   // (-1..1, -1..1)
+        // === 移動処理（今まで通り InputAction を使う） ===
+        Vector2 mv = (moveAction != null) ? moveAction.action.ReadValue<Vector2>() : Vector2.zero;
+
         Vector3 inputDir = new Vector3(mv.x, 0f, mv.y);
         inputDir = Vector3.ClampMagnitude(inputDir, 1f);
+
+        // Ground
+        isGrounded = Physics.CheckSphere(
+            groundCheck.position,
+            groundCheckRadius,
+            groundMask,
+            QueryTriggerInteraction.Ignore
+        );
+
+        // 移動方向（プレイヤーの向き基準）
         Vector3 moveDir = transform.TransformDirection(inputDir);
 
-        bool sprint = sprintAction.action.IsPressed();
+        bool sprint = (sprintAction != null) && sprintAction.action.IsPressed();
         float targetSpeed = (sprint ? runSpeed : walkSpeed) * inputDir.magnitude;
         currentSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, accel * Time.deltaTime);
 
@@ -74,7 +95,7 @@ public class FreeMoveInputSystem : MonoBehaviour
         if (isGrounded)
         {
             if (yVel < 0f) yVel = groundSnap;
-            if (jumpAction.action.WasPressedThisFrame())
+            if (jumpAction != null && jumpAction.action.WasPressedThisFrame())
                 yVel = jumpPower;
         }
         else
@@ -86,7 +107,7 @@ public class FreeMoveInputSystem : MonoBehaviour
         cc.Move(vel * Time.deltaTime);
 
         // ESCでマウス解放
-        if (Keyboard.current.escapeKey.wasPressedThisFrame)
+        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
         {
             if (Cursor.lockState == CursorLockMode.Locked)
             { Cursor.lockState = CursorLockMode.None; Cursor.visible = true; }
