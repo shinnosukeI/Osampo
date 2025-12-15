@@ -63,6 +63,24 @@ public class DecayingCorpseEvent : MonoBehaviour, IFocusable
         TriggerDecay();
     }
 
+    // イベントマネージャーから呼び出す用（強制実行、あるいは準備など）
+    public void ActivateEvent()
+    {
+        // 外部から強制的に起こす場合
+        // 今回の仕様では「見たら起きる」なので、ここでは
+        // 「オブジェクトを表示する」または「リセットする」などの処理が必要かもしれないが
+        // シンプルに TriggerDecay を呼ぶか、あるいは何もしない（見るのを待つ）か。
+        
+        // ユーザーの意図としては「このイベント発生タイミングになったよ」という合図なので、
+        // もしオブジェクトが非表示なら表示する、などの初期化を行うのが適切。
+        this.gameObject.SetActive(true);
+        hasTriggered = false; // リセット
+        
+        // もし即座に腐敗させるなら TriggerDecay() だが、
+        // 「注視したら」という条件なら、ここはSetActiveだけで良い。
+        Debug.Log("🧟 [DecayingCorpseEvent] アクティブ化されました（注視待ち）");
+    }
+
     private void TriggerDecay()
     {
         hasTriggered = true;
@@ -95,9 +113,12 @@ public class DecayingCorpseEvent : MonoBehaviour, IFocusable
         }
 
         // イベントマネージャーに通知（ログ保存など）
+        // ここで無限ループしないように注意（Managerから呼ばれた場合）
+        // Manager -> ActivateEvent -> (Wait) -> OnFocus -> TriggerDecay -> Manager.TriggerHorrorEvent -> Log
         if (eventManager != null)
         {
-            eventManager.TriggerHorrorEvent(eventID);
+           // eventManager.TriggerHorrorEvent(eventID); // ログ保存したいだけならOKだが、再帰呼び出しに注意
+           eventManager.LogEvent(eventID);
         }
     }
 }
