@@ -1,111 +1,115 @@
 using UnityEngine;
+using System;  
 using System.Collections;
 using TMPro;
 
 [RequireComponent(typeof(AudioSource))]
 public class RadioEventController : MonoBehaviour
 {
+    public event Action OnRadioPlaybackStarted;
+
     [Header("オーディオクリップ")]
-    [SerializeField] private AudioClip radioStoryClip; // 会話（英語）
-    [SerializeField] private AudioClip noiseLoopClip;  // ノイズ（ループ）
+    [SerializeField] private AudioClip radioStoryClip;
+    [SerializeField] private AudioClip noiseLoopClip;
 
     [Header("再生設定")]
-    [SerializeField] private bool playNoiseOnStart = false; // チェックを入れると、ゲーム開始直後からノイズが流れます
+    [SerializeField] private bool playNoiseOnStart = false;
 
     [Header("音量バランス")]
-    [Range(0f, 1f)] [SerializeField] private float talkVolume = 1.0f; 
-    [Range(0f, 1f)] [SerializeField] private float noiseVolume = 0.3f; 
+    [Range(0f, 1f)] [SerializeField] private float talkVolume = 1.0f;
+    [Range(0f, 1f)] [SerializeField] private float noiseVolume = 0.3f;
 
     [Header("字幕設定")]
     [SerializeField] private TextMeshProUGUI subtitleText;
-    [TextArea(2, 5)] 
+    [TextArea(2, 5)]
     [SerializeField] private string[] subtitleContent;
 
-    private AudioSource talkSource;  // 会話用
-    private AudioSource noiseSource; // ノイズ用
-
+    
+    private AudioSource talkSource;
+    private AudioSource noiseSource;
+    private Coroutine talkCoroutine;
 
     void Awake()
     {
-        // スピーカーの準備
         talkSource = GetComponent<AudioSource>();
         noiseSource = gameObject.AddComponent<AudioSource>();
 
-        // 設定コピー
         noiseSource.spatialBlend = talkSource.spatialBlend;
         noiseSource.minDistance = talkSource.minDistance;
         noiseSource.maxDistance = talkSource.maxDistance;
         noiseSource.rolloffMode = talkSource.rolloffMode;
 
-        // 自動再生はオフ（スクリプトで制御するため）
         talkSource.playOnAwake = false;
         noiseSource.playOnAwake = false;
     }
 
     void Start()
     {
-        // ★「最初からノイズを流す」設定の場合、ここで再生開始
-        if (playNoiseOnStart)
-        {
-            PlayNoiseLoop();
-        }
+        if (playNoiseOnStart) PlayNoiseLoop();
 
+        // ★ 起動時に参照チェック（ここで問題が出てると一発で分かる）
+        if (subtitleText == null)
+            Debug.LogError("[RadioEvent] subtitleText が未設定です（InspectorでTextMeshProUGUIを入れて）");
+        else
+            Debug.Log($"[RadioEvent] subtitleText OK: {subtitleText.name} / activeInHierarchy={subtitleText.gameObject.activeInHierarchy}");
 
+        if (subtitleContent == null || subtitleContent.Length == 0)
+            Debug.LogWarning("[RadioEvent] subtitleContent が空です（字幕が1行もありません）");
     }
 
-    // ノイズ再生専用の関数（ずっとループ再生）
     public void PlayNoiseLoop()
     {
-        if (noiseSource.isPlaying) return; // 既に鳴っていたら何もしない
+        if (noiseSource.isPlaying) return;
+        if (noiseLoopClip == null) return;
 
-        if (noiseLoopClip != null)
-        {
-            noiseSource.clip = noiseLoopClip;
-            noiseSource.loop = true;          // ★重要：ループON
-            noiseSource.volume = noiseVolume; 
-            noiseSource.Play();
-        }
+        noiseSource.clip = noiseLoopClip;
+        noiseSource.loop = true;
+        noiseSource.volume = noiseVolume;
+        noiseSource.Play();
     }
 
-    // イベント：会話を再生（ノイズがまだなら、ついでにノイズも開始）
     public void PlayRadioSequence()
-{
-    // もしノイズがまだ鳴っていなければ、ここで開始（以降ずっと鳴りっぱなし）
-    PlayNoiseLoop();
-
-    // ★ 強制テスト：配列の先頭を一回だけ表示してみる
-    if (subtitleText != null && subtitleContent != null && subtitleContent.Length > 0)
     {
-        subtitleText.gameObject.SetActive(true);
-        subtitleText.text = subtitleContent[0];
-    }
-    else
-    {
-        Debug.Log("⚠ 字幕テスト失敗: subtitleText か subtitleContent が設定されていない");
-    }
+        PlayNoiseLoop();
+        
+        OnRadioPlaybackStarted?.Invoke(); 
 
-    // 会話のコルーチンを開始
-    StartCoroutine(TalkSequenceCoroutine());
-}
+        // ★ 二重再生防止（連打でコルーチンが重なると字幕が消える/競合する）
+        if (talkCoroutine != null)
+        {
+            StopCoroutine(talkCoroutine);
+            talkCoroutine = null;
+        }
+
+        // ★ 強制テスト表示（親が非表示だと activeInHierarchy が false のまま）
+        if (subtitleText != null)
+        {
+            subtitleText.gameObject.SetActive(true);
+            subtitleText.color = new Color(subtitleText.color.r, subtitleText.color.g, subtitleText.color.b, 1f);
+            subtitleText.text = (subtitleContent != null && subtitleContent.Length > 0) ? subtitleContent[0] : "（字幕データが空）";
+
+            Debug.Log($"[RadioEvent] 字幕TEST表示: activeInHierarchy={subtitleText.gameObject.activeInHierarchy} text='{subtitleText.text}'");
+        }
+
+        talkCoroutine = StartCoroutine(TalkSequenceCoroutine());
+    }
 
     private IEnumerator TalkSequenceCoroutine()
-{
-  
-
-    if (radioStoryClip != null)
     {
-        // 会話再生開始
+        if (radioStoryClip == null)
+        {
+            Debug.LogWarning("[RadioEvent] radioStoryClip が未設定です");
+            yield break;
+        }
+
         talkSource.clip = radioStoryClip;
         talkSource.loop = false;
-        talkSource.volume = talkVolume; 
+        talkSource.volume = talkVolume;
         talkSource.Play();
-        
 
-        // ★ 字幕が設定されている場合は、クリップの長さを行数で割って表示時間を決める
+        // 字幕あり
         if (subtitleText != null && subtitleContent != null && subtitleContent.Length > 0)
         {
-           
-
             float totalDuration = radioStoryClip.length;
             float perLineDuration = totalDuration / subtitleContent.Length;
 
@@ -113,25 +117,22 @@ public class RadioEventController : MonoBehaviour
 
             for (int i = 0; i < subtitleContent.Length; i++)
             {
-               
-                subtitleText.text = subtitleContent[i]; // この行の字幕を表示
+                subtitleText.text = subtitleContent[i];
                 yield return new WaitForSeconds(perLineDuration);
             }
         }
         else
         {
-            
-            // 字幕がない場合は、音声の長さだけ待機
             yield return new WaitForSeconds(radioStoryClip.length);
         }
-    }
 
-    // --- 会話終了後の処理 ---
-    if (subtitleText != null)
-    {
-        subtitleText.gameObject.SetActive(false);
-        subtitleText.text = ""; // 念のため消しておく
-    }
+        // 終了後
+        if (subtitleText != null)
+        {
+            subtitleText.text = "";
+            subtitleText.gameObject.SetActive(false);
+        }
 
-}
+        talkCoroutine = null;
+    }
 }
