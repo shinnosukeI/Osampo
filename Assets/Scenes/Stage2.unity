@@ -17219,6 +17219,10 @@ MonoBehaviour:
   mirrorGhostEvent: {fileID: 355610373}
   cycleCount: 0
   cycleEventTypes: 
+  decayingCorpseEvent: {fileID: 0}
+  debugMode: 1
+  debugSurveyResult: 2
+  debugStartCycle: 0
 --- !u!4 &1697327540
 Transform:
   m_ObjectHideFlags: 0

@@ -32,6 +32,16 @@ public class FallingCorpseTrigger : MonoBehaviour
         int current = eventManager.CycleCount;
         Debug.Log($"[CorpseTrigger] 周回 {current} でトリガーに侵入");
 
+        // ★ 本来のスケジュールに含まれているか確認
+        if (eventManager is HorrorEventManager hm)
+        {
+            if (!hm.IsEventScheduled(14))
+            {
+                Debug.Log("[CorpseTrigger] スケジュールに含まれていないためスキップ (Event 14)");
+                return;
+            }
+        }
+
         // ★ 周回条件チェック（requiredCycle 未満なら何もしない）
         if (current < requiredCycle)
         {
