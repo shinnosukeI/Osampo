@@ -26,6 +26,9 @@ public class RestSceneManager : MonoBehaviour
 
     void Start()
     {
+        // カーソルを表示・ロック解除 (RestScene2対策)
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
 
         if (SoundManager.Instance != null)
         {
