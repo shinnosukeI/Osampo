@@ -245,7 +245,20 @@ public class HorrorEventManager : MonoBehaviour
         }
 
         Debug.Log("😱 ゾンビが降ってきます！");
-        Instantiate(zombiePrefab, zombieSpawnPoint.position, zombieSpawnPoint.rotation);
+        GameObject zombie = Instantiate(zombiePrefab, zombieSpawnPoint.position, zombieSpawnPoint.rotation);
+        
+        // スクリプトを取得して落下開始メソッドを呼ぶ
+        FallingCorpse corpseScript = zombie.GetComponent<FallingCorpse>();
+        if (corpseScript != null)
+        {
+            corpseScript.StartFalling();
+        }
+        else
+        {
+            // なければ物理だけONにする（保険）
+            Rigidbody rb = zombie.GetComponent<Rigidbody>();
+            if (rb != null) rb.isKinematic = false;
+        }
     }
 
     // 31: 血がしたたり落ちる
