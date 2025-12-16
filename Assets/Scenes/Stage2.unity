@@ -9046,7 +9046,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 7c3f4632b6d849246ab016110a179d90, type: 3}
       propertyPath: m_Name
-      value: zombie idle
+      value: 43.zombie idle
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -17218,7 +17218,16 @@ MonoBehaviour:
   doorGapEvent: {fileID: 72546085}
   mirrorGhostEvent: {fileID: 355610373}
   cycleCount: 0
-  cycleEventTypes: 000000000000000000000000000000000000000000000000
+  cycleEventTypes: 
+  decayingCorpseEvent: {fileID: 0}
+  corpseRotTarget: {fileID: 0}
+  mannequinTarget: {fileID: 0}
+  hairTarget: {fileID: 0}
+  bloodAndGlassTarget: {fileID: 0}
+  polePonPonTarget: {fileID: 0}
+  debugMode: 1
+  debugSurveyResult: 2
+  debugStartCycle: 0
 --- !u!4 &1697327540
 Transform:
   m_ObjectHideFlags: 0
