@@ -14,6 +14,17 @@ public class BearMoveEvent : MonoBehaviour
     [SerializeField] private AudioClip moveSound;
 
     private int currentIndex = 0;
+    private Vector3 initialPosition;
+    private Quaternion initialRotation;
+
+    private void Awake()
+    {
+        if (bearObject != null)
+        {
+            initialPosition = bearObject.transform.position;
+            initialRotation = bearObject.transform.rotation;
+        }
+    }
 
     public void MoveToNextPosition()
     {
@@ -57,5 +68,18 @@ public class BearMoveEvent : MonoBehaviour
             Debug.Log("🧸 クマはこれ以上移動しません（リストの最後まで到達しました）");
             // bearObject.SetActive(false); // 例: 最後は消える場合
         }
+    }
+
+    // ★ リセット用メソッド
+    public void ResetEvent()
+    {
+        currentIndex = 0;
+        if (bearObject != null)
+        {
+            // 初期位置に戻す
+            bearObject.transform.position = initialPosition;
+            bearObject.transform.rotation = initialRotation;
+        }
+        Debug.Log("🧸 BearMoveEvent: インデックスと位置をリセットしました");
     }
 }

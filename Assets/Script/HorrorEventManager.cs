@@ -7,6 +7,25 @@ using System.Linq; // Added for list operations
 
 public class HorrorEventManager : MonoBehaviour
 {
+    // ==========================================
+    // ★ デバッグ機能 (最上部に移動)
+    // ==========================================
+    [Header("Debug Settings")]
+    [Tooltip("有効にすると、以下のDebug設定でゲームを開始します")]
+    [SerializeField] private bool debugMode = false;
+    
+    [Tooltip("デバッグ用：強制的にこのアンケート結果（ステージ）にする (1～5)")]
+    [Range(1, 5)]
+    [SerializeField] private int debugSurveyResult = 1;
+
+    [Tooltip("デバッグ用：開始時の周回数 (0始まり。例: 3なら4周目から)")]
+    [SerializeField] private int debugStartCycle = 0;
+
+    [Space(10)]
+    [Header("Current Status (Read Only)")]
+    [Tooltip("現在のアンケート結果（実行時に決定されます）")]
+    [SerializeField] private int currentSurveyResult = -1;
+
     [SerializeField]
     private HorrorEventDatabase eventDatabase;
 
@@ -22,7 +41,8 @@ public class HorrorEventManager : MonoBehaviour
     [SerializeField]
     private Transform zombieSpawnPoint;
 
-    [SerializeField] private GameObject bloodSplashObject; // 32: 血痕
+    [Header("32: 血痕イベント")] // ★ 追加: ユーザーが見つけられるようにHeader付与
+    [SerializeField] private GameObject bloodSplashObject;
 
     [Header("31: 血が滴るイベント")]
     [SerializeField]
@@ -60,15 +80,21 @@ public class HorrorEventManager : MonoBehaviour
     [Header("25: 壁に目イベント")]
     [SerializeField]
     private WallEyesEvent wallEyesEventTarget;
+    [SerializeField]
+    private GameObject wallEyesRootObject; // ★ 追加: 目が表示されている親オブジェクトを指定
 
     [Header("21: 人形移動イベント")]
     [SerializeField]
     private BearMoveEvent bearMoveEventTarget;
+    [SerializeField]
+    private GameObject bearMoveRootObject; // ★ 追加
 
 
     [Header("53: 消える女イベント")] // ★ 追加
     [SerializeField]
     private VanishingWomanEvent vanishingWomanEventTarget;
+    [SerializeField]
+    private GameObject vanishingWomanRootObject; // ★ 追加
 
     [Header("15: ゾンビ追跡イベント")] // ★ 追加
     [SerializeField]
@@ -97,6 +123,8 @@ public class HorrorEventManager : MonoBehaviour
     [Header("35: 壁の集合体イベント")] // ★ 追加
     [SerializeField]
     private ClusterWallEvent clusterWallEvent;
+    [SerializeField]
+    private GameObject clusterWallRootObject; // ★ 追加: 集合体の親オブジェクト
 
     [Header("51: 通行人イベント")] // ★ 追加
     [SerializeField]
@@ -123,8 +151,8 @@ public class HorrorEventManager : MonoBehaviour
     [SerializeField] private List<int> cycleEventTypes = new List<int>();
 
     // イベントタイプ → 実行アクション のマップ
-    // アンケート結果を保持する変数
-    private int currentSurveyResult = -1;
+    // アンケート結果を保持する変数 (上部へ移動済み)
+    // private int currentSurveyResult = -1;
 
     // ログ保存用
     private StreamWriter eventLogWriter;
@@ -161,6 +189,9 @@ public class HorrorEventManager : MonoBehaviour
     // 現在のスケジュールのリスト
     private List<StageLoopData> currentStageSchedule = new List<StageLoopData>();
 
+    // ★ インスタンス化された一時的なオブジェクト（ゾンビ、ボールなど）の追跡リスト
+    private List<GameObject> spawnedObjects = new List<GameObject>();
+
     // 初期照明設定の保存用
     private Color initAmbientLight;
     private float initFogDensity;
@@ -186,19 +217,7 @@ public class HorrorEventManager : MonoBehaviour
     [Header("56: ポールポンポン")]
     [SerializeField] private GameObject polePonPonTarget;
 
-    // ==========================================
-    // ★ デバッグ機能
-    // ==========================================
-    [Header("Debug Settings")]
-    [Tooltip("有効にすると、以下の設定でゲームを開始します")]
-    [SerializeField] private bool debugMode = false;
-    
-    [Tooltip("デバッグ用：強制的にこのアンケート結果（ステージ）にする (1～5)")]
-    [Range(1, 5)]
-    [SerializeField] private int debugSurveyResult = 1;
 
-    [Tooltip("デバッグ用：開始時の周回数 (0始まり。例: 3なら4周目から)")]
-    [SerializeField] private int debugStartCycle = 0;
 
     // 12と22は現在不明のためプレースホルダ
     // 22: クマ移動2?
@@ -222,6 +241,14 @@ public class HorrorEventManager : MonoBehaviour
             cycleCount = debugStartCycle;
             Debug.Log($"🔧 [HorrorEventManager] Debug Mode ENABLED. Result: {currentSurveyResult}, Cycle: {cycleCount}");
         }
+        else
+        {
+            // デバッグでない通常時、スタートは1周目
+            cycleCount = 1;
+        }
+
+        // ★ 安全策: 0以下になっていたら1にする（インデックスズレ防止）
+        if (cycleCount < 1) cycleCount = 1;
 
         if (currentSurveyResult == -1)
         {
@@ -245,15 +272,10 @@ public class HorrorEventManager : MonoBehaviour
         // スケジュール設定
         SetupStageSchedule(currentSurveyResult);
 
-        // ★ 使わないイベントトリガーを無効化（軽量化・バグ防止）
-        PruneUnusedTriggers();
-
-        // ★ 使わないイベントオブジェクトそのものを無効化（表示物対策）
-        PruneUnusedObjects();
-
         // ★ 初期状態の設定（該当イベントがあっても、最初は隠しておくものなど）
         InitializeObjectStates();
 
+        // ★ 不要なトリガー・オブジェクトの削除は ApplyLoopSetting で行われるため、ここでの呼び出しは削除
         // 指定周回数の設定を適用
         ApplyLoopSetting(cycleCount);
     }
@@ -261,38 +283,55 @@ public class HorrorEventManager : MonoBehaviour
     /// <summary>
     /// 現在のスケジュールに含まれないイベントのトリガーをシーンから削除（無効化）する
     /// </summary>
-    private void PruneUnusedTriggers()
+    /// <summary>
+    /// 現在のループで有効なイベント(activeEventID)以外のトリガーをすべて無効化する
+    /// トリガーが見つかった場合は true を返す
+    /// </summary>
+    private bool PruneUnusedTriggers(int activeEventID)
     {
-        // スケジュールにあるイベントIDのリストを作成
-        HashSet<int> allowedEvents = new HashSet<int>(currentStageSchedule.Select(x => x.eventID));
-
-        // シーン上のすべての HorrorEventTrigger を取得
-        HorrorEventTrigger[] allTriggers = FindObjectsByType<HorrorEventTrigger>(FindObjectsSortMode.None);
+        // シーン上のすべての HorrorEventTrigger を取得 (非アクティブも含める)
+        HorrorEventTrigger[] allTriggers = FindObjectsByType<HorrorEventTrigger>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        
+        Debug.Log($"👀 [Prune] Searching triggers for ActiveID: {activeEventID}. Found total: {allTriggers.Length} triggers.");
         
         int disabledCount = 0;
+        bool foundActive = false;
 
         foreach (var trigger in allTriggers)
         {
-            // トリガーが担当するイベントIDが含まれていなければ無効化
-            if (!allowedEvents.Contains(trigger.eventType))
+            // トリガーが担当するイベントIDが、現在のアクティブIDと一致しなければ無効化
+            if (trigger.eventType != activeEventID)
             {
-                trigger.gameObject.SetActive(false);
-                disabledCount++;
+                if (trigger.gameObject.activeSelf)
+                {
+                    trigger.gameObject.SetActive(false);
+                    disabledCount++;
+                }
+            }
+            else
+            {
+                // 一致する場合は有効化
+                trigger.gameObject.SetActive(true);
+                trigger.ResetTrigger(); // ★ リセットして再利用可能にする
+                foundActive = true;
+                Debug.Log($"✅ [Prune] ACTIVATED Trigger for Event {activeEventID} (Obj: {trigger.gameObject.name})");
             }
         }
 
-        Debug.Log($"🗑 [HorrorEventManager] 不要なトリガーを {disabledCount} 個 無効化しました。");
+        Debug.Log($"🗑 [HorrorEventManager] 現在のイベント({activeEventID})以外のトリガー {disabledCount} 個を無効化しました。");
+        return foundActive;
     }
 
     /// <summary>
     /// 現在のスケジュールに含まれないイベントのオブジェクトを非表示/無効化する
     /// </summary>
-    private void PruneUnusedObjects()
+    /// <summary>
+    /// 現在のループで有効なイベント(activeEventID)以外のオブジェクトを非表示/無効化する
+    /// </summary>
+    private void PruneUnusedObjects(int activeEventID)
     {
-        HashSet<int> allowedEvents = new HashSet<int>(currentStageSchedule.Select(x => x.eventID));
-
         // イベントID と 管理オブジェクト のペアをリスト化
-        // ここに登録されたオブジェクトは、スケジュールになければ Disable される
+        // ここに登録されたオブジェクトは、activeEventIDでなければ Disable される
         var managedObjects = new List<(int id, Component comp, GameObject obj)>
         {
             (11, cockroachSwarmTarget, null),
@@ -303,18 +342,17 @@ public class HorrorEventManager : MonoBehaviour
             (54, objectToFallTarget, null),
             (55, null, normalWindowObject), 
             (55, null, brokenWindowObject), 
-
             (56, null, polePonPonTarget),
             (24, handprintEventTarget, null),
-            (25, wallEyesEventTarget, null),
-            (21, bearMoveEventTarget, null),
-            (53, vanishingWomanEventTarget, null),
+            (25, wallEyesEventTarget, wallEyesRootObject),
+            (21, bearMoveEventTarget, bearMoveRootObject), // updated
+            (53, vanishingWomanEventTarget, vanishingWomanRootObject), // updated
             (15, zombieChaseEventTarget, null),
             (46, thunderAudioSource, null),
             (42, laughAudioSource, null),
             (34, soundFromLocationSource, null),
             (44, approachingPersonEvent, null),
-            (35, clusterWallEvent, null),
+            (35, clusterWallEvent, clusterWallRootObject),
             (51, walkingPersonEvent, null),
             (52, doorGapEvent, null),
             (43, mirrorGhostEvent, null),
@@ -329,10 +367,18 @@ public class HorrorEventManager : MonoBehaviour
 
         foreach (var item in managedObjects)
         {
-            // スケジュールに含まれているか？
-            if (allowedEvents.Contains(item.id)) continue;
+            // 現在のアクティブIDと一致するか？
+            if (item.id == activeEventID) 
+            {
+                 // ★ アクティブなイベントのオブジェクトは、ループ開始時から表示しておく（ユーザー要望）
+                 // Triggerで「出現」させるタイプ（15や13など）の場合、ここで出すと早すぎる可能性があるが、
+                 // 今回の 21(人形) や 22(マネキン) は「最初からそこにいる」ことが期待されているため有効化する。
+                 if (item.comp != null) item.comp.gameObject.SetActive(true);
+                 if (item.obj != null) item.obj.SetActive(true);
+                 continue;
+            }
 
-            // 含まれていない場合、無効化する
+            // 一致しない場合、無効化する
             if (item.comp != null)
             {
                 if (item.comp.gameObject.activeSelf)
@@ -351,7 +397,7 @@ public class HorrorEventManager : MonoBehaviour
             }
         }
 
-        Debug.Log($"👻 [HorrorEventManager] スケジュール外のイベントオブジェクト {disabledCount} 個を非表示にしました。");
+        Debug.Log($"👻 [HorrorEventManager] イベント({activeEventID}) 以外のオブジェクト {disabledCount} 個を非表示にし、アクティブ対象を表示しました。");
     }
 
     /// <summary>
@@ -366,6 +412,11 @@ public class HorrorEventManager : MonoBehaviour
         // 窓: 割れる前は表示、割れた後は非表示
         if (normalWindowObject != null) normalWindowObject.SetActive(true);
         if (brokenWindowObject != null) brokenWindowObject.SetActive(false);
+
+        if (wallEyesRootObject != null) wallEyesRootObject.SetActive(false);
+        if (clusterWallRootObject != null) clusterWallRootObject.SetActive(false);
+        if (bearMoveRootObject != null) bearMoveRootObject.SetActive(false);
+        if (vanishingWomanRootObject != null) vanishingWomanRootObject.SetActive(false);
 
         // 死体腐敗: 最初はいない
         if (decayingCorpseEvent != null) decayingCorpseEvent.gameObject.SetActive(false);
@@ -383,8 +434,12 @@ public class HorrorEventManager : MonoBehaviour
         // 壁の集合体: 最初はいない
         if (clusterWallEvent != null) clusterWallEvent.gameObject.SetActive(false);
         
-        // 人形移動: 最初は非表示
-        if (bearMoveEventTarget != null) bearMoveEventTarget.gameObject.SetActive(false);
+        // 人形移動: 最初は非表示 & リセット
+        if (bearMoveEventTarget != null) 
+        {
+            bearMoveEventTarget.gameObject.SetActive(false);
+            bearMoveEventTarget.ResetEvent(); // ★ インデックスリセット
+        }
 
         // 接近する人影
         if (approachingPersonEvent != null) approachingPersonEvent.gameObject.SetActive(false);
@@ -394,6 +449,9 @@ public class HorrorEventManager : MonoBehaviour
         if (hairTarget != null) hairTarget.SetActive(false);
         if (bloodAndGlassTarget != null) bloodAndGlassTarget.SetActive(false);
         if (polePonPonTarget != null) polePonPonTarget.SetActive(false);
+
+        // 15: ゾンビ追跡 (これが抜けていたため毎周回残っていた可能性大)
+        if (zombieChaseEventTarget != null) zombieChaseEventTarget.gameObject.SetActive(false);
 
         // ラジオなども最初は止めておく？（AutoPlayかどうかによるが念のため）
         if (radioController != null) radioController.gameObject.SetActive(false); 
@@ -432,9 +490,38 @@ public class HorrorEventManager : MonoBehaviour
         
         // ★ 新規追加
         eventActionMap[13] = TriggerDecayingCorpse;
-        eventActionMap[12] = () => Debug.Log("🎃 [Event 12] Placeholder (Corpse Drag?) triggered.");
-        eventActionMap[22] = () => Debug.Log("🎃 [Event 22] Placeholder (Bear Move 2?) triggered.");
+        eventActionMap[12] = TriggerCorpseRot;
+        eventActionMap[22] = TriggerMannequin; // ★ 実装
     }
+
+    // 22: マネキン
+    public void TriggerMannequin()
+    {
+        Debug.Log("🎃 [HorrorEventManager] TriggerMannequin (22) が呼ばれました");
+        if (mannequinTarget != null)
+        {
+            mannequinTarget.SetActive(true);
+        }
+        else
+        {
+            Debug.LogError("❌ [HorrorEventManager] mannequinTarget (Event 22) is not assigned!");
+        }
+    }
+
+    // ★ アンケート結果ごとのイベント設定用クラス
+    [System.Serializable]
+    public class SurveyScenarioData
+    {
+        [Tooltip("アンケート結果の値 (例: 1, 2, 3...)")]
+        public int surveyResultID;
+        [Tooltip("このアンケート結果の場合に発生させる各周回のイベント設定")]
+        public List<StageLoopData> loopSettings = new List<StageLoopData>();
+    }
+
+    [Header("アンケート結果別イベント設定")]
+    [SerializeField]
+    [Tooltip("アンケート結果ごとのイベントスケジュールをここで設定してください")]
+    private List<SurveyScenarioData> scenarioSettings = new List<SurveyScenarioData>();
 
     /// <summary>
     /// アンケート結果に基づいてステージのイベントスケジュールを構築する
@@ -443,63 +530,80 @@ public class HorrorEventManager : MonoBehaviour
     {
         currentStageSchedule.Clear();
 
-        // 1=2-1, 2=2-2, 3=2-3, 4=2-4, 5=2-5
-        
-        switch (result)
+        // Inspectorで設定されたリストから、該当するアンケート結果の設定を検索
+        var scenario = scenarioSettings.FirstOrDefault(x => x.surveyResultID == result);
+
+        if (scenario != null && scenario.loopSettings != null && scenario.loopSettings.Count > 0)
         {
-            case 1: // Stage 2-1
-                currentStageSchedule.Add(new StageLoopData(13, LightingType.Default)); // Loop1: 虫が手を上ってくる
-                currentStageSchedule.Add(new StageLoopData(14, LightingType.Default)); // Loop2: 死体落下
-                currentStageSchedule.Add(new StageLoopData(12, LightingType.Default)); // Loop3: 死体の腐敗
-                currentStageSchedule.Add(new StageLoopData(15, LightingType.PitchBlack)); // Loop4: ゾンビ追跡
-                currentStageSchedule.Add(new StageLoopData(44, LightingType.FaintLight)); // Loop5: ラスト
-                break;
+            currentStageSchedule.AddRange(scenario.loopSettings);
+            Debug.Log($"📅 [HorrorEventManager] アンケート結果 {result} に基づく設定をロードしました。設定数: {currentStageSchedule.Count}");
+        }
+        else
+        {
+            Debug.LogWarning($"⚠️ [HorrorEventManager] アンケート結果 {result} に対応するイベント設定がInspectorで見つかりません。" +
+                             "デフォルトのハードコード設定を使用します（設定されている場合）。" +
+                             "UnityエディタのInspectorで 'Scenario Settings' を設定してください。");
 
-            case 2: // Stage 2-2
-                currentStageSchedule.Add(new StageLoopData(21, LightingType.Default)); // Loop1: 人形移動
-                currentStageSchedule.Add(new StageLoopData(22, LightingType.Default)); // Loop2: マネキン
-                currentStageSchedule.Add(new StageLoopData(24, LightingType.Default)); // Loop3: 窓手形
-                currentStageSchedule.Add(new StageLoopData(25, LightingType.RedSpace)); // Loop4: 壁に目
-                currentStageSchedule.Add(new StageLoopData(44, LightingType.FaintLight)); // Loop5: ラスト
-                break;
-
-            case 3: // Stage 2-3
-                currentStageSchedule.Add(new StageLoopData(31, LightingType.Default)); // Loop1: 滴る血
-                currentStageSchedule.Add(new StageLoopData(34, LightingType.Default)); // Loop2: 肉裂き音
-                currentStageSchedule.Add(new StageLoopData(32, LightingType.Default)); // Loop3: 血痕
-                currentStageSchedule.Add(new StageLoopData(35, LightingType.RedSpace)); // Loop4: 集合体
-                currentStageSchedule.Add(new StageLoopData(44, LightingType.FaintLight)); // Loop5: ラスト
-                break;
-
-            case 4: // Stage 2-4
-                currentStageSchedule.Add(new StageLoopData(43, LightingType.HallwayDark)); // Loop1: 鏡幽霊
-                currentStageSchedule.Add(new StageLoopData(41, LightingType.SlightlyDark)); // Loop2: 背後足音
-                currentStageSchedule.Add(new StageLoopData(42, LightingType.Default)); // Loop3: 笑い声
-                currentStageSchedule.Add(new StageLoopData(46, LightingType.ThunderBlack)); // Loop4: 雷
-                currentStageSchedule.Add(new StageLoopData(44, LightingType.FaintLight)); // Loop5: ラスト
-                break;
-
-            case 5: // Stage 2-5
-                currentStageSchedule.Add(new StageLoopData(51, LightingType.SlightlyDark)); // Loop1: 人影
-                currentStageSchedule.Add(new StageLoopData(52, LightingType.Default)); // Loop2: 隙間女
-                currentStageSchedule.Add(new StageLoopData(56, LightingType.Default)); // Loop3: ポールポンポン
-                currentStageSchedule.Add(new StageLoopData(53, LightingType.SlightlyDark)); // Loop4: 消える女
-                currentStageSchedule.Add(new StageLoopData(44, LightingType.FaintLight)); // Loop5: ラスト
-                break;
-
-            default:
-                Debug.LogWarning("Unknown survey result: " + result + ". Using fallback (Stage 2-1).");
-                currentStageSchedule.Add(new StageLoopData(13, LightingType.Default));
-                break;
+            // フォールバック（既存のハードコード設定を念のため残すか、完全に空にするか）
+            // ユーザーのリクエストは「Unity上で指定したい」なので、基本はInspector優先。
+            // 移行期のために一時的に古いswitch文をフォールバックとして残しておきますが、
+            // 設定を行えばそちらが優先されます。
+            SwitchFallbackSchedule(result);
         }
 
         StringBuilder sb = new StringBuilder();
-        sb.AppendLine($"📅 [HorrorEventManager] Schedule Setup Complete based on Result {result}. Steps: {currentStageSchedule.Count}");
+        sb.AppendLine($"📅 [HorrorEventManager] Schedule Setup Finalized. Result: {result}, Steps: {currentStageSchedule.Count}");
         for(int i=0; i<currentStageSchedule.Count; i++)
         {
             sb.AppendLine($"  Loop {i+1}: Event {currentStageSchedule[i].eventID}, Light {currentStageSchedule[i].lighting}");
         }
         Debug.Log(sb.ToString());
+    }
+
+    private void SwitchFallbackSchedule(int result)
+    {
+        switch (result)
+        {
+            case 1: // Stage 2-1
+                currentStageSchedule.Add(new StageLoopData(13, LightingType.Default));
+                currentStageSchedule.Add(new StageLoopData(14, LightingType.Default));
+                currentStageSchedule.Add(new StageLoopData(12, LightingType.Default));
+                currentStageSchedule.Add(new StageLoopData(15, LightingType.PitchBlack));
+                currentStageSchedule.Add(new StageLoopData(44, LightingType.FaintLight));
+                break;
+            case 2: // Stage 2-2
+                currentStageSchedule.Add(new StageLoopData(21, LightingType.Default));
+                currentStageSchedule.Add(new StageLoopData(22, LightingType.Default));
+                currentStageSchedule.Add(new StageLoopData(24, LightingType.Default));
+                currentStageSchedule.Add(new StageLoopData(25, LightingType.RedSpace));
+                currentStageSchedule.Add(new StageLoopData(44, LightingType.FaintLight));
+                break;
+            case 3: // Stage 2-3
+                currentStageSchedule.Add(new StageLoopData(31, LightingType.Default));
+                currentStageSchedule.Add(new StageLoopData(34, LightingType.Default));
+                currentStageSchedule.Add(new StageLoopData(32, LightingType.Default));
+                currentStageSchedule.Add(new StageLoopData(35, LightingType.RedSpace));
+                currentStageSchedule.Add(new StageLoopData(44, LightingType.FaintLight));
+                break;
+            case 4: // Stage 2-4
+                currentStageSchedule.Add(new StageLoopData(43, LightingType.HallwayDark));
+                currentStageSchedule.Add(new StageLoopData(41, LightingType.SlightlyDark));
+                currentStageSchedule.Add(new StageLoopData(42, LightingType.Default));
+                currentStageSchedule.Add(new StageLoopData(46, LightingType.ThunderBlack));
+                currentStageSchedule.Add(new StageLoopData(44, LightingType.FaintLight));
+                break;
+            case 5: // Stage 2-5
+                currentStageSchedule.Add(new StageLoopData(51, LightingType.SlightlyDark));
+                currentStageSchedule.Add(new StageLoopData(52, LightingType.Default));
+                currentStageSchedule.Add(new StageLoopData(56, LightingType.Default));
+                currentStageSchedule.Add(new StageLoopData(53, LightingType.SlightlyDark));
+                currentStageSchedule.Add(new StageLoopData(44, LightingType.FaintLight));
+                break;
+            default:
+                // デフォルト
+                currentStageSchedule.Add(new StageLoopData(13, LightingType.Default));
+                break;
+        }
     }
 
     /// <summary>
@@ -509,10 +613,11 @@ public class HorrorEventManager : MonoBehaviour
     {
         if (currentStageSchedule.Count == 0) return;
 
-        // インデックス範囲チェック
-        if (loopIndex < 0) loopIndex = 0;
+        // インデックス範囲チェック: ゲーム開始がCycle 1なので、Indexは Cycle-1
+        int index = loopIndex - 1;
+
+        if (index < 0) index = 0;
         
-        int index = loopIndex;
         // 5周目以降はどうするか？ 仕様では「Loop 5」までしかない。
         // とりあえず最後の要素を使い続ける（Loop 5のまま）
         if (index >= currentStageSchedule.Count)
@@ -522,13 +627,40 @@ public class HorrorEventManager : MonoBehaviour
 
         StageLoopData data = currentStageSchedule[index];
 
-        Debug.Log($"🔄 [HorrorEventManager] Applying Loop {loopIndex + 1} Setting (Index {index}). Event: {data.eventID}, Light: {data.lighting}");
+        Debug.Log($"🔄 [HorrorEventManager] Applying Loop {loopIndex} Setting (AryIndex {index}). Event: {data.eventID}, Light: {data.lighting}");
 
-        // 1. 照明設定
+        // ★ ループ切り替え時にステージ状態をリセットする
+        
+        // 0. 前のループで生成された一時オブジェクト（ゾンビ、ボール）を削除
+        foreach (var obj in spawnedObjects)
+        {
+            if (obj != null) Destroy(obj);
+        }
+        spawnedObjects.Clear();
+
+        // 1. 全イベントオブジェクトを初期状態（基本非表示）に戻す
+        InitializeObjectStates();
+        // 2. 現在のループのイベント(data.eventID)以外を無効化する
+        bool triggerFound = PruneUnusedTriggers(data.eventID);
+        PruneUnusedObjects(data.eventID);
+
+        // ★ トリガーが見つからない（配置していない）場合、ループ開始と同時にイベントを即時実行する
+        if (!triggerFound)
+        {
+             Debug.Log($"⚡ [HorrorEventManager] イベント {data.eventID} のトリガーが見つからないため、即時実行します。");
+             if (eventActionMap.ContainsKey(data.eventID))
+             {
+                 eventActionMap[data.eventID]?.Invoke();
+             }
+             else
+             {
+                 Debug.LogWarning($"⚠ イベント {data.eventID} のアクションが登録されていません。");
+             }
+        }
+
+        // 3. 照明設定
         SetLighting(data.lighting);
 
-        // 2. イベント発生
-        TriggerHorrorEvent(data.eventID);
     }
 
     private void SetLighting(LightingType type)
@@ -631,7 +763,9 @@ public class HorrorEventManager : MonoBehaviour
         }
 
         Debug.Log("😱 ゾンビが降ってきます！");
+        // 14はプレハブ生成なのでSetActive不要
         GameObject zombie = Instantiate(zombiePrefab, zombieSpawnPoint.position, zombieSpawnPoint.rotation);
+        spawnedObjects.Add(zombie); // 追跡リストに追加
         
         // スクリプトを取得して落下開始メソッドを呼ぶ
         FallingCorpse corpseScript = zombie.GetComponent<FallingCorpse>();
@@ -699,7 +833,7 @@ public class HorrorEventManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError("32: 血痕オブジェクト(bloodSplashObject)が設定されていません。");
+            Debug.LogError("32: 血痕オブジェクト(bloodSplashObject)が設定されていません。Inspectorを確認してください。");
         }
     }
 
@@ -708,6 +842,7 @@ public class HorrorEventManager : MonoBehaviour
     {
         if (radioController != null)
         {
+            radioController.gameObject.SetActive(true); // 初期状態でFalseにされているため有効化
             radioController.PlayRadioSequence();
         }
         else
@@ -715,12 +850,13 @@ public class HorrorEventManager : MonoBehaviour
             Debug.LogError("45: ラジオコントローラーが設定されていません。");
         }
     }
-
-    // 54: 物が落ちる
+    
+    // 54: 物が落ちる (AudioSource/Object制御)
     public void TriggerFallEvent()
     {
         if (objectToFallTarget != null)
         {
+            objectToFallTarget.gameObject.SetActive(true); // 念のためActive化
             objectToFallTarget.StartFall();
         }
         else
@@ -751,6 +887,7 @@ public class HorrorEventManager : MonoBehaviour
         {
             Debug.Log("⚽ ボールが転がってきます！");
             GameObject ball = Instantiate(ballPrefab, ballSpawnPoint.position, ballSpawnPoint.rotation);
+            spawnedObjects.Add(ball); // 追跡リストに追加
             
             // RollingBallコンポーネントを取得して転がす
             RollingBall rbScript = ball.GetComponent<RollingBall>();
@@ -770,6 +907,7 @@ public class HorrorEventManager : MonoBehaviour
     {
         if (handprintEventTarget != null)
         {
+            handprintEventTarget.gameObject.SetActive(true);
             handprintEventTarget.ActivateEvent();
         }
         else
@@ -781,8 +919,11 @@ public class HorrorEventManager : MonoBehaviour
     // 25: 壁に目
     public void TriggerWallEyes()
     {
+        if (wallEyesRootObject != null) wallEyesRootObject.SetActive(true); // Rootを表示
+
         if (wallEyesEventTarget != null)
         {
+            wallEyesEventTarget.gameObject.SetActive(true);
             wallEyesEventTarget.ActivateEvent();
         }
         else
@@ -794,8 +935,11 @@ public class HorrorEventManager : MonoBehaviour
     // 21: 人形移動
     public void TriggerBearMove()
     {
+        if (bearMoveRootObject != null) bearMoveRootObject.SetActive(true); // Rootを表示
+
         if (bearMoveEventTarget != null)
         {
+            bearMoveEventTarget.gameObject.SetActive(true);
             bearMoveEventTarget.MoveToNextPosition();
         }
         else
@@ -807,8 +951,11 @@ public class HorrorEventManager : MonoBehaviour
     // 53: 消える女
     public void TriggerVanishingWoman()
     {
+        if (vanishingWomanRootObject != null) vanishingWomanRootObject.SetActive(true); // Rootを表示
+
         if (vanishingWomanEventTarget != null)
         {
+            vanishingWomanEventTarget.gameObject.SetActive(true);
             vanishingWomanEventTarget.ActivateEvent();
         }
         else
@@ -822,6 +969,7 @@ public class HorrorEventManager : MonoBehaviour
     {
         if (zombieChaseEventTarget != null)
         {
+            zombieChaseEventTarget.gameObject.SetActive(true);
             zombieChaseEventTarget.ActivateEvent();
         }
         else
@@ -836,6 +984,8 @@ public class HorrorEventManager : MonoBehaviour
         if (thunderAudioSource != null && thunderSound != null)
         {
             Debug.Log("⚡ 雷が鳴りました！");
+             // AudioSourceはComponentなのでGameObjectをActiveにする
+            thunderAudioSource.gameObject.SetActive(true);
             thunderAudioSource.PlayOneShot(thunderSound);
         }
         else
@@ -850,6 +1000,7 @@ public class HorrorEventManager : MonoBehaviour
         if (laughAudioSource != null && laughSound != null)
         {
             Debug.Log("😈 笑い声が聞こえます...");
+            laughAudioSource.gameObject.SetActive(true);
             laughAudioSource.PlayOneShot(laughSound);
         }
         else
@@ -878,8 +1029,11 @@ public class HorrorEventManager : MonoBehaviour
     public void TriggerClusterWall()
     {
         Debug.Log("🌑 [HorrorEventManager] TriggerClusterWall が呼ばれました");
+        if (clusterWallRootObject != null) clusterWallRootObject.SetActive(true); // Rootを表示
+
         if (clusterWallEvent != null)
         {
+            clusterWallEvent.gameObject.SetActive(true);
             clusterWallEvent.TriggerEvent();
         }
     }
@@ -890,6 +1044,7 @@ public class HorrorEventManager : MonoBehaviour
         Debug.Log("🎃 [HorrorEventManager] TriggerApproachingPerson が呼ばれました");
         if (approachingPersonEvent != null)
         {
+            approachingPersonEvent.gameObject.SetActive(true);
             approachingPersonEvent.TriggerEvent();
         }
         else
@@ -909,6 +1064,7 @@ public class HorrorEventManager : MonoBehaviour
 
             if (!soundFromLocationSource.isPlaying)
             {
+                soundFromLocationSource.gameObject.SetActive(true);
                 soundFromLocationSource.Play();
                 Debug.Log("🔊 特定の場所からの音(34)を再生開始しました。");
             }
@@ -922,6 +1078,7 @@ public class HorrorEventManager : MonoBehaviour
         Debug.Log("🌑 [HorrorEventManager] TriggerWalkingPerson が呼ばれました");
         if (walkingPersonEvent != null)
         {
+            walkingPersonEvent.gameObject.SetActive(true);
             walkingPersonEvent.TriggerEvent();
         }
         else
@@ -936,6 +1093,7 @@ public class HorrorEventManager : MonoBehaviour
         Debug.Log("🌑 [HorrorEventManager] TriggerDoorGap が呼ばれました");
         if (doorGapEvent != null)
         {
+            doorGapEvent.gameObject.SetActive(true);
             doorGapEvent.TriggerEvent();
         }
         else
@@ -950,6 +1108,7 @@ public class HorrorEventManager : MonoBehaviour
         Debug.Log("🌑 [HorrorEventManager] TriggerMirrorGhost が呼ばれました");
         if (mirrorGhostEvent != null)
         {
+            mirrorGhostEvent.gameObject.SetActive(true);
             mirrorGhostEvent.TriggerEvent();
         }
         else
@@ -968,11 +1127,26 @@ public class HorrorEventManager : MonoBehaviour
         Debug.Log("🌑 [HorrorEventManager] TriggerDecayingCorpse が呼ばれました");
         if (decayingCorpseEvent != null)
         {
+            decayingCorpseEvent.gameObject.SetActive(true);
             decayingCorpseEvent.ActivateEvent();
         }
         else
         {
             Debug.LogError("❌ [HorrorEventManager] decayingCorpseEvent is not assigned!");
+        }
+    }
+
+    // 12: 死体の腐敗（別バージョン）
+    public void TriggerCorpseRot()
+    {
+        Debug.Log("🌑 [HorrorEventManager] TriggerCorpseRot (12) が呼ばれました");
+        if (corpseRotTarget != null)
+        {
+            corpseRotTarget.SetActive(true);
+        }
+        else
+        {
+             Debug.LogError("❌ [HorrorEventManager] corpseRotTarget (Event 12) is not assigned!");
         }
     }
 

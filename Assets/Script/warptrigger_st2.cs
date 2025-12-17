@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;   // ★ 新Input System用
 
-public class st2_warptrigger : MonoBehaviour
+public class warptrigger_st2 : MonoBehaviour
 {
     [Header("ワープ設定")]
     public Transform player;           // プレイヤー
@@ -14,7 +14,7 @@ public class st2_warptrigger : MonoBehaviour
     public float doorOpenSpeed = 3f;   // 開閉の速さ
 
     [Header("ステージ2用ホラーイベント連携")]
-    [SerializeField] private HorrorEventManager stage2EventManager;
+    [SerializeField] private HorrorEventManager stage2EventManager; // ★ 型修正: 本来のマネージャを参照
 
     public static int teleportCount = 0;
 
@@ -24,29 +24,29 @@ public class st2_warptrigger : MonoBehaviour
     private Quaternion doorOpenRot;
     private bool isMoving = false;
 
-    // ★ 全ての st2_warptrigger を管理するリスト
-    private static List<st2_warptrigger> allStage2Doors = new List<st2_warptrigger>();
+    // ★ 全ての warptrigger_st2 を管理するリスト
+    private static List<warptrigger_st2> allStage2Doors = new List<warptrigger_st2>();
 
     private void Awake()
     {
-        // シーンにある st2_warptrigger をリストに登録
+        // シーンにある warptrigger_st2 をリストに登録
         if (!allStage2Doors.Contains(this))
             allStage2Doors.Add(this);
     }
 
     private void Start()
     {
-        // ★ 自動取得ロジック追加
+        // ★ 自動取得ロジック追加: 設定し忘れ防止
         if (stage2EventManager == null)
         {
             stage2EventManager = FindFirstObjectByType<HorrorEventManager>();
             if (stage2EventManager != null)
             {
-                Debug.Log("[st2_warptrigger] HorrorEventManager was automatically found and assigned.");
+                Debug.Log("[warptrigger_st2] HorrorEventManager was automatically found and assigned.");
             }
             else
             {
-                Debug.LogError("[st2_warptrigger] Critical: HorrorEventManager not found in scene!");
+                Debug.LogError("[warptrigger_st2] Critical: HorrorEventManager not found in scene!");
             }
         }
 
@@ -57,7 +57,7 @@ public class st2_warptrigger : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("[Stage2][WarpTrigger] targetDoor が設定されていません。");
+            Debug.LogWarning("[warptrigger_st2] targetDoor が設定されていません。");
         }
     }
 
@@ -93,45 +93,46 @@ public class st2_warptrigger : MonoBehaviour
 
         if (stage2EventManager != null)
         {
+            // ★ 新しいマネージャーのメソッドを呼び出し: ここでループが進み、イベントが適用される
             stage2EventManager.OnDoorClicked();
         }
         else
         {
-            Debug.LogWarning("[Stage2][WarpTrigger] stage2EventManager がアサインされていません。");
+            Debug.LogWarning("[warptrigger_st2] stage2EventManager がアサインされていません。");
         }
     }
 
     private void TeleportPlayer()
-{
-    if (player == null)
     {
-        Debug.LogWarning("[Stage2][WarpTrigger] player が設定されていません。");
-        return;
+        if (player == null)
+        {
+            Debug.LogWarning("[warptrigger_st2] player が設定されていません。");
+            return;
+        }
+
+        Vector3 before = player.position;
+
+        // CharacterController が付いている場合は一旦無効化してから動かす
+        var cc = player.GetComponent<CharacterController>();
+        if (cc != null)
+        {
+            cc.enabled = false;
+        }
+
+        player.position = teleportPosition;
+
+        if (cc != null)
+        {
+            cc.enabled = true;
+        }
+
     }
-
-    Vector3 before = player.position;
-
-    // CharacterController が付いている場合は一旦無効化してから動かす
-    var cc = player.GetComponent<CharacterController>();
-    if (cc != null)
-    {
-        cc.enabled = false;
-    }
-
-    player.position = teleportPosition;
-
-    if (cc != null)
-    {
-        cc.enabled = true;
-    }
-
-}
 
     private void OpenDoor()
     {
         if (targetDoor == null)
         {
-            Debug.LogWarning("[Stage2][WarpTrigger] targetDoor が設定されていません。");
+            Debug.LogWarning("[warptrigger_st2] targetDoor が設定されていません。");
             return;
         }
 
@@ -167,7 +168,5 @@ public class st2_warptrigger : MonoBehaviour
                 door.isDoorOpen = false;
             }
         }
-
-        
     }
 }
