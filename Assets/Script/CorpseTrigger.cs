@@ -6,61 +6,46 @@ public class FallingCorpseTrigger : MonoBehaviour
     [SerializeField] private FallingCorpse corpse;
 
     [Header("○周目以降で落下させる")]
-    [SerializeField] private int requiredCycle = 2;   // 例：2周目から有効
+    [SerializeField] private int requiredCycle = 2;
 
     private bool used = false;
 
     private void Awake()
     {
         if (eventManager == null)
-        {
             eventManager = FindObjectOfType<st1_HorrorEventManager>();
-        }
     }
 
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log($"[CorpseTrigger] OnTriggerEnter hit: {other.name} tag={other.tag}");
+
         if (!other.CompareTag("Player")) return;
         if (used) return;
 
         if (eventManager == null)
         {
-            Debug.LogError("[CorpseTrigger] EventManager が見つかりません");
+            Debug.LogError("[CorpseTrigger] st1_HorrorEventManager が見つかりません");
             return;
         }
 
         int current = eventManager.CycleCount;
-        Debug.Log($"[CorpseTrigger] 周回 {current} でトリガーに侵入");
+        Debug.Log($"[CorpseTrigger] CycleCount={current}, required={requiredCycle}");
 
-        // ★ 本来のスケジュールに含まれているか確認
-        // Stage2用のマネージャーがあれば、そちらのスケジュールを優先
-        HorrorEventManager hm = FindFirstObjectByType<HorrorEventManager>();
-        if (hm != null)
-        {
-            if (!hm.IsEventScheduled(14))
-            {
-                Debug.Log("[CorpseTrigger] スケジュールに含まれていないためスキップ (Event 14)");
-                return;
-            }
-        }
-
-        // ★ 周回条件チェック（requiredCycle 未満なら何もしない）
         if (current < requiredCycle)
         {
-            Debug.Log($"[CorpseTrigger] まだ {requiredCycle} 周目に達していないので落下させない");
+            Debug.Log("[CorpseTrigger] 周回不足でスキップ");
             return;
         }
 
-        // ★ 条件を満たしたので、このトリガー専用の落下イベントだけ実行
-        if (corpse != null)
+        if (corpse == null)
         {
-            Debug.Log("[CorpseTrigger] 周回条件OK → 死体落下開始");
-            corpse.StartFalling();
-            used = true;   // 1回だけ落下
+            Debug.LogError("[CorpseTrigger] FallingCorpse が未設定");
+            return;
         }
-        else
-        {
-            Debug.LogError("[CorpseTrigger] FallingCorpse が設定されていません");
-        }
+
+        Debug.Log("[CorpseTrigger] 条件OK → StartFalling()");
+        corpse.StartFalling();
+        used = true;
     }
 }
