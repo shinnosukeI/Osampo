@@ -32,7 +32,10 @@ public class HorrorEventTrigger : MonoBehaviour
         // プレイヤーが接触したか判定 (タグ判定またはコンポーネント判定)
         if (other.CompareTag("Player") || other.GetComponent<CharacterController>() != null)
         {
-            Debug.Log($"[HorrorEventTrigger] Player detected! Triggering Event {eventType}");
+            float dist = Vector3.Distance(other.transform.position, transform.position);
+            Debug.Log($"[HorrorEventTrigger] Player detected! EventID: {eventType}");
+            Debug.Log($"   Type: {eventType} | PlayerPos: {other.transform.position} | TriggerPos: {transform.position} | Dist: {dist}");
+            
             if (eventManager != null)
             {
                 eventManager.TriggerHorrorEvent(eventType);
@@ -43,5 +46,11 @@ public class HorrorEventTrigger : MonoBehaviour
                 Debug.LogError("HorrorEventTrigger: EventManager is null!");
             }
         }
+    }
+
+    public void ResetTrigger()
+    {
+        hasTriggered = false;
+        // Debug.Log($"[HorrorEventTrigger] Reset state for Event {eventType}");
     }
 }
