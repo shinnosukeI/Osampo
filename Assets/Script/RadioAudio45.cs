@@ -1,40 +1,43 @@
 using UnityEngine;
+using UnityEngine.Audio;
 
-// AudioSourceが必須であることを示す
-[RequireComponent(typeof(AudioSource))] 
 public class RadioAudio45 : MonoBehaviour
 {
-    [SerializeField]
-    private AudioClip radioSoundClip; // インスペクターで設定するラジオの音 (ザザ...など)
-
+    [SerializeField] private AudioClip radioSoundClip;
+    [SerializeField] private AudioMixer audioMixer; // ★ ミキサーを受け取る
     private AudioSource audioSource;
+
+    private float bgmBefore;
+    private float sfxBefore;
 
     void Awake()
     {
-        audioSource = GetComponent<AudioSource>();
-        
-        // 3Dサウンド（音がその場所から聞こえるようにする）
-        // 0.0 = 2D (どこでも同じ音量), 1.0 = 3D (その場から聞こえる)
-        audioSource.spatialBlend = 1.0f; 
-        
-        // 起動時には再生しない
-        audioSource.playOnAwake = false;
-        
-        // 音をループさせる (ラジオの音はループすることが多いため)
-        audioSource.loop = true;
+    audioSource = GetComponent<AudioSource>();
+
+    audioSource.spatialBlend = 1.0f;
+    audioSource.playOnAwake = false;
+    audioSource.loop = true;
+
+    // ★ 最初は絶対鳴らさないようにクリップを外す
+    audioSource.clip = null;
     }
 
-    // EventManagerから呼び出される公開メソッド
     public void PlayRadio()
     {
-        // 既に再生中なら何もしない
         if (audioSource.isPlaying) return;
 
         if (radioSoundClip != null)
         {
             audioSource.clip = radioSoundClip;
             audioSource.Play();
-            Debug.Log("📻 ラジオの再生を開始します。");
+
+            // ★ BGM/SFX の音量を下げる（ミュート）
+            audioMixer.GetFloat("BGMVolume", out bgmBefore);
+            audioMixer.GetFloat("SFXVolume", out sfxBefore);
+
+            audioMixer.SetFloat("BGMVolume", -80f); // ミュート
+            audioMixer.SetFloat("SFXVolume", -80f);
+
         }
         else
         {
@@ -42,13 +45,17 @@ public class RadioAudio45 : MonoBehaviour
         }
     }
 
-    // (おまけ) イベントで音を止めたくなった時用のメソッド
     public void StopRadio()
     {
         if (audioSource.isPlaying)
         {
             audioSource.Stop();
-            Debug.Log("🔇 ラジオの再生を停止します。");
+
+            // ★ 元の音量に戻す
+            audioMixer.SetFloat("BGMVolume", bgmBefore);
+            audioMixer.SetFloat("SFXVolume", sfxBefore);
+
+            
         }
     }
 }

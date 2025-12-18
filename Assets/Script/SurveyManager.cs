@@ -1,40 +1,23 @@
 using UnityEngine;
-using UnityEngine.UI; // ToggleGroup や Button を使うために必要
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using TMPro;
 
-/// <summary>
-/// アンケート画面の選択(1～5)を管理し、GameManagerに送信するクラス
-/// </summary>
 public class SurveyManager : MonoBehaviour
 {
-    // ▼▼▼ 【名前の確認ポイント 1】 ▼▼▼
-    // UnityのHierarchy上にある「Toggle Group」コンポーネントが
-    // 付いているオブジェクト（例: OptionsGroup）をインスペクタから設定します。
-    [SerializeField]
-    private ToggleGroup optionsToggleGroup;
+    [SerializeField] private ToggleGroup optionsToggleGroup;
+    [SerializeField] private Button submitButton;
+    [SerializeField] private GameManager gameManager;
+    [SerializeField] private GameObject warningMessageObj;
+    [SerializeField] private AudioClip surveyBGM;
 
-    // ▼▼▼ 【名前の確認ポイント 2】 ▼▼▼
-    // Hierarchy上にある「Next」ボタン（例: NextButton）を
-    // インスペクタから設定します。
-    [SerializeField]
-    private Button submitButton;
-
-    // ▼▼▼ 【名前の確認ポイント 3】 ▼▼▼
-    // Hierarchy上にある「GameManager」オブジェクトを
-    // インスペクタから設定します。
-    [SerializeField]
-    private GameManager gameManager;
-
-    // 選択された選択肢のID (1～5) を保持する変数
-    // 初期値は -1 (または 0) にして「未選択」状態とします。
     private int selectedOptionId = -1;
 
     private void Start()
     {
-        // GameManager がインスペクタで設定されていなければ探す
-        if (gameManager == null)
+        if (warningMessageObj != null)
         {
-            gameManager = FindFirstObjectByType<GameManager>();
+            warningMessageObj.SetActive(false);
         }
 
         if (gameManager == null)
@@ -43,42 +26,108 @@ public class SurveyManager : MonoBehaviour
             return;
         }
 
-        // submitButton (Nextボタン) が押されたら SubmitSurvey() 関数を呼ぶように登録
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayBGM(surveyBGM);
+        }
+
         if (submitButton != null)
         {
             submitButton.onClick.AddListener(SubmitSurvey);
         }
         else
         {
-            // 【名前の確認ポイント 2】で設定したボタンが見つからない場合
             Debug.LogError("SubmitButton が SurveyManager に設定されていません！");
+        }
+
+        // ラベルをクリック可能にする処理
+        if (optionsToggleGroup != null)
+        {
+            // ToggleGroupに所属するすべてのToggleを取得
+            Toggle[] toggles = optionsToggleGroup.GetComponentsInChildren<Toggle>();
+            
+            foreach (var toggle in toggles)
+            {
+                // Toggleの子要素にあるTextを探す (uGUI Text)
+                Text labelText = toggle.GetComponentInChildren<Text>();
+                if (labelText != null)
+                {
+                    CreateClickableOverlay(labelText.gameObject, toggle);
+                }
+                else
+                {
+                    // TextMeshProの場合も考慮
+                    TMP_Text tmpText = toggle.GetComponentInChildren<TMP_Text>();
+                    if (tmpText != null)
+                    {
+                        CreateClickableOverlay(tmpText.gameObject, toggle);
+                    }
+                }
+            }
         }
     }
 
-    /// <summary>
-    /// Toggleから呼び出される関数。選択されたID(1～5)を保持する。
-    /// </summary>
-    /// <param name="optionId">選択肢のID (1～5)</param>
+    private void CreateClickableOverlay(GameObject parent, Toggle toggle)
+    {
+        // クリック判定用の透明なImageを持つ子オブジェクトを作成
+        GameObject overlay = new GameObject("ClickableOverlay");
+        overlay.transform.SetParent(parent.transform, false);
+
+        // RectTransformを親いっぱいに広げる
+        RectTransform rect = overlay.AddComponent<RectTransform>();
+        rect.anchorMin = Vector2.zero;
+        rect.anchorMax = Vector2.one;
+        rect.offsetMin = Vector2.zero;
+        rect.offsetMax = Vector2.zero;
+
+        // 透明なImageを追加 (Raycast Targetになる)
+        Image image = overlay.AddComponent<Image>();
+        image.color = Color.clear;
+
+        // ClickableLabelを追加
+        ClickableLabel clickable = overlay.AddComponent<ClickableLabel>();
+        clickable.Setup(toggle);
+    }
+
     public void SelectOption(int optionId)
     {
         selectedOptionId = optionId;
         Debug.Log($"選択肢 {selectedOptionId} が選ばれました。");
+
+        // 一度でも選択したら、もう「未選択(Switch Off)」にはできないようにする
+        if (optionsToggleGroup != null)
+        {
+            optionsToggleGroup.allowSwitchOff = false;
+        }
+
+        // 選択肢を選んだら、警告メッセージが出ていれば消す 
+        if (warningMessageObj != null)
+        {
+            warningMessageObj.SetActive(false);
+        }
     }
 
-    /// <summary>
-    /// ボタンから呼び出される関数。GameManagerに値(1～5)を送信する。
-    /// </summary>
     public void SubmitSurvey()
     {
-        // 未選択（-1）の場合は送信しない
+        // 未選択（-1）の場合
         if (selectedOptionId == -1)
         {
             Debug.LogWarning("まだ選択肢が選ばれていません。");
-            // ここで「選択してください」などのUIを出すこともできます
+
+            // 警告メッセージを表示
+            if (warningMessageObj != null)
+            {
+                warningMessageObj.SetActive(true);
+            }
             return;
         }
 
-        // GameManager に 1～5 の値を送信
+        // 成功時のSE再生 (SoundManagerがあれば)
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayCommonButtonSE();
+        }
+
         if (gameManager != null)
         {
             gameManager.ReceiveSurveyResult(selectedOptionId);
@@ -86,14 +135,17 @@ public class SurveyManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError("GameManager が見つかりません！");
+            // Startで取得失敗した場合の保険
+            gameManager = FindFirstObjectByType<GameManager>();
+            if (gameManager != null)
+            {
+                gameManager.ReceiveSurveyResult(selectedOptionId);
+                Debug.Log($"再取得したGameManager に {selectedOptionId} を送信しました。");
+            }
+            else
+            {
+                Debug.LogError("GameManagerが存在しないため、遷移できません。");
+            }
         }
-
-        // （任意）送信後にこのアンケート画面のCanvasを非表示にするなど
-        // this.gameObject.SetActive(false);
-    }
-    public void OnstartButton()
-    {
-        SceneManager.LoadScene("Stag1");
     }
 }

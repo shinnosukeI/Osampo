@@ -2,51 +2,250 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.SceneManagement;
+
 using System;
+using System.Diagnostics;
+using System.IO;
+using Debug = UnityEngine.Debug;
 
-public class GameManager : MonoBehaviour{
-    /// SurveyManagerからアンケート結果 (1～5) を受け取る関数
-    /// </summary>
-    /// <param name="surveyResult">受け取った選択肢ID (1, 2, 3, 4, 5 のいずれか)</param>
-    public void ReceiveSurveyResult(int surveyResult)
+public class GameManager : MonoBehaviour
+{
+    [Header("Fade System")]
+    [SerializeField]
+    private ScreenFader screenFader;
+
+    // シーン遷移時のフェードタイプを保持
+    private static FadeType nextFadeType = FadeType.Simple;
+
+    // シーン名の定数定義
+    public static class SceneNames
     {
-        Debug.Log($"アンケート結果 {surveyResult} を受け取りました。");
+        public const string Title = "ConfinementWalk";
+        public const string Survey = "SurveyScene";
+        public const string Rest1 = "RestScene1";
+        public const string Rest2 = "RestScene2";
+        public const string Stage1 = "Stage1";
+        public const string Stage2 = "Stage2";
+        public const string BPMTest1 = "99_BPMTestScene1";
+        public const string BPMTest2 = "99_BPMTestScene2";
+        public const string Result = "ResultScene"; 
+    }
 
-        switch (surveyResult)
+
+    void Awake()
+    {
+        if (screenFader == null)
         {
-            case 1:
-                // 異形・クリーチャー的恐怖
-                break;
-            case 2:
-                // 人体・人形的恐怖
-                break;
-            case 3:
-                // 生理的嫌悪・外傷的恐怖
-                break;
-            case 4:
-                // 心理的・行動的恐怖
-                break;
-            case 5:
-                // 超常的な恐怖
-                break;
-            default:
-                Debug.LogWarning("不明なIDが送信されました。");
-                break;
+            screenFader = FindFirstObjectByType<ScreenFader>();
+        }
+        InitializeSubjectID();
+        LaunchHeartRateApp();
+    }
+
+    void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // シーンが切り替わったら、そのシーンにある新しいScreenFaderを探し直す
+        screenFader = FindFirstObjectByType<ScreenFader>();
+
+        if (screenFader != null)
+        {
+            // 記憶しておいたタイプでフェードイン開始
+            screenFader.FadeIn(nextFadeType);
+        }
+    }
+
+    /// <summary>
+    /// フェードタイプを指定してシーン遷移 (Core Method)
+    /// </summary>
+    private void LoadSceneWithFade(string sceneName, FadeType type)
+    {
+        // 次のシーンのフェードインでも同じタイプを使うため記憶
+        nextFadeType = type;
+
+        if (screenFader != null)
+        {
+            screenFader.FadeOut(type, () =>
+            {
+                SceneManager.LoadScene(sceneName);
+            });
+        }
+        else
+        {
+            SceneManager.LoadScene(sceneName);
+        }
+    }
+
+    // ========================================================================
+    // ▼▼▼ Data Persistence (ResultScene用) ▼▼▼
+    // ========================================================================
+    // 平常時心拍数 (RestScene1で計測)
+    public static float SavedRestBPM = 0f;
+    
+    // Stage1 (99_BPMTestScene1) の心拍数リスト
+    public static List<int> SavedStage1BPMList = new List<int>();
+
+    // Stage2 (99_BPMTestScene2) の心拍数リスト
+    public static List<int> SavedStage2BPMList = new List<int>();
+
+    // 被験者ID (P001, P002...)
+    public static string SubjectID = "";
+
+    // アンケート結果 (選択された恐怖ID)
+    public static int SavedSurveyResult = -1;
+
+    // ========================================================================
+
+    // 平常時心拍数 (Instance property - keep for compatibility if needed, or sync with static)
+    public float BaseHeartRate { get; private set; }
+
+    public void SetBaseHeartRate(float bpm)
+    {
+        BaseHeartRate = bpm;
+        SavedRestBPM = bpm; // Static変数にも保存
+        Debug.Log($"GameManager: 平常時心拍数を {BaseHeartRate} に設定しました。");
+    }
+
+    private void InitializeSubjectID()
+    {
+        if (!string.IsNullOrEmpty(SubjectID)) return;
+
+        string directoryPath = Path.Combine(Application.persistentDataPath, "CSV");
+        if (!Directory.Exists(directoryPath))
+        {
+            Directory.CreateDirectory(directoryPath);
         }
 
-        // ロード画面１に移動する
-        UnityEngine.SceneManagement.SceneManager.LoadScene("RestScene1");
+        SubjectID = GetNextSubjectId(directoryPath);
+        Debug.Log($"GameManager: SubjectID initialized to {SubjectID}");
     }
 
-    //stage1に移動
-    public void LoadStage1()
+    private string GetNextSubjectId(string directoryPath)
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene("Stage1");
+        int maxId = 0;
+        try
+        {
+            // 全てのログファイルから最大IDを探す
+            string[] files = Directory.GetFiles(directoryPath, "P*_*.csv");
+            foreach (string file in files)
+            {
+                string fileName = Path.GetFileName(file);
+                string[] parts = fileName.Split('_');
+                if (parts.Length > 0 && parts[0].StartsWith("P") && parts[0].Length == 4)
+                {
+                    if (int.TryParse(parts[0].Substring(1), out int id))
+                    {
+                        if (id > maxId) maxId = id;
+                    }
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"ID検索エラー: {e.Message}");
+        }
+        return $"P{(maxId + 1):D3}";
     }
 
-    //stage2に移動
-    public void LoadStage2()
+    /// <summary>
+    /// データをリセットする (ゲーム開始時に呼ぶ)
+    /// </summary>
+    public void ResetData()
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene("Stage2");
+        SavedRestBPM = 0f;
+        SavedStage1BPMList.Clear();
+        SavedStage2BPMList.Clear();
+        SavedSurveyResult = -1;
+        Debug.Log("GameManager: Data reset for new game.");
+    }
+
+    /// <summary>
+    /// SurveyManagerからアンケート結果を受け取る関数
+    /// </summary>
+    public void ReceiveSurveyResult(int surveyResult)
+    {
+        SavedSurveyResult = surveyResult;
+        Debug.Log($"アンケート結果 {surveyResult} を受け取りました。");
+        LoadRestScene1();
+    }
+
+    // ========================================================================
+    // ▼▼▼ Scene Loading Wrappers (Inspector / Public API) ▼▼▼
+    // ========================================================================
+
+    public void LoadStage1() => LoadSceneWithFade(SceneNames.Stage1, FadeType.Noise);
+    public void LoadStage2() => LoadSceneWithFade(SceneNames.Stage2, FadeType.Noise);
+    public void LoadSurveyScene() => LoadSceneWithFade(SceneNames.Survey, FadeType.Noise);
+    public void LoadRestScene1() => LoadSceneWithFade(SceneNames.Rest1, FadeType.Simple);
+    public void LoadRestScene2() => LoadSceneWithFade(SceneNames.Rest2, FadeType.Simple);
+    public void LoadConfinementWalk() => LoadSceneWithFade(SceneNames.Title, FadeType.Noise);
+    public void LoadResultScene() => LoadSceneWithFade(SceneNames.Result, FadeType.Simple); // 追加
+    
+    // Stage1の変わり身
+    public void LoadBPMtest1() => LoadSceneWithFade(SceneNames.BPMTest1, FadeType.Noise);
+    // Stage2の変わり身
+    public void LoadBPMtest2() => LoadSceneWithFade(SceneNames.BPMTest2, FadeType.Noise);
+    
+    // 文字列でシーン名を指定して遷移する汎用メソッド
+    public void LoadTargetScene(string sceneName)
+    {
+        LoadSceneWithFade(sceneName, FadeType.Noise);
+    }
+
+    // 現在のシーンをリロードするメソッド
+    public void ReloadCurrentScene()
+    {
+        string currentScene = SceneManager.GetActiveScene().name;
+        LoadSceneWithFade(currentScene, FadeType.Simple);
+    }
+
+
+    /// <summary>
+    /// HeartRate.exeを自動起動する
+    /// </summary>
+    private void LaunchHeartRateApp()
+    {
+        string processName = "HeartRate";
+        // 拡張子なしのプロセス名でチェック
+        if (Process.GetProcessesByName(processName).Length > 0)
+        {
+            Debug.Log("HeartRate.exe is already running.");
+            return;
+        }
+
+        // 実行ファイルのパスを特定
+        // エディタ: プロジェクトルート/HeartRate.exe
+        // ビルド: .exeと同じ階層/HeartRate.exe
+#if UNITY_EDITOR
+        string path = Path.Combine(Directory.GetParent(Application.dataPath).FullName, "HeartRate", "HeartRate.exe");
+#else
+        string path = Path.Combine(Application.dataPath, "../HeartRate", "HeartRate.exe");
+#endif
+
+        if (File.Exists(path))
+        {
+            try
+            {
+                Process.Start(path);
+                Debug.Log($"Launched HeartRate.exe from: {path}");
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Failed to launch HeartRate.exe: {e.Message}");
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"HeartRate.exe not found at: {path}");
+        }
     }
 }
