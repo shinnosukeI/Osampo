@@ -16,6 +16,8 @@ public class DecayingCorpseEvent : MonoBehaviour, IFocusable
     [Header("音設定")]
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private AudioClip decaySound;
+    [Tooltip("自動取得がうまくいかない場合、ここで音の長さ（秒）を指定してください。0なら自動取得を試みます。")]
+    [SerializeField] private float overrideSoundDuration = 0f; 
 
     [Header("イベント連携")]
     [SerializeField] private int eventID = 12;
@@ -46,6 +48,14 @@ public class DecayingCorpseEvent : MonoBehaviour, IFocusable
                 audioSource = gameObject.AddComponent<AudioSource>();
             }
         }
+        
+        // ★ 音声設定の強制適用
+        if (audioSource != null)
+        {
+            audioSource.playOnAwake = false;
+            audioSource.spatialBlend = 0.0f; // 2Dサウンド（どこにいても聞こえる）
+            audioSource.volume = 1.0f;       // 最大音量
+        }
 
         if (useSpeedControl && animator != null)
         {
@@ -53,6 +63,38 @@ public class DecayingCorpseEvent : MonoBehaviour, IFocusable
         }
 
         eventManager = FindFirstObjectByType<HorrorEventManager>();
+
+        // ★ 判定を残しつつ（Raycast用）、プレイヤーとの衝突だけ無視する（浮き防止）
+        Collider myCol = GetComponent<Collider>();
+        if (myCol != null)
+        {
+            // Triggerにはしない (TriggerだとFocusControllerが無視してしまうため)
+            myCol.isTrigger = false; 
+
+            // プレイヤーを探して衝突無視を設定
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            if (player != null)
+            {
+                Collider pCol = player.GetComponent<Collider>();
+                if (pCol != null) Physics.IgnoreCollision(pCol, myCol, true);
+
+                CharacterController pChar = player.GetComponent<CharacterController>();
+                if (pChar != null) Physics.IgnoreCollision(pChar, myCol, true);
+            }
+            else
+            {
+                // タグで見つからない場合、PlayerFocusController経由で探す
+                var pCtrl = FindFirstObjectByType<PlayerFocusController>();
+                if (pCtrl != null)
+                {
+                    Collider pCol = pCtrl.GetComponent<Collider>();
+                    if (pCol != null) Physics.IgnoreCollision(pCol, myCol, true);
+
+                    CharacterController pChar = pCtrl.GetComponent<CharacterController>();
+                    if (pChar != null) Physics.IgnoreCollision(pChar, myCol, true);
+                }
+            }
+        }
     }
 
     // IFocusableの実装
@@ -106,10 +148,28 @@ public class DecayingCorpseEvent : MonoBehaviour, IFocusable
             }
         }
 
-        // 音再生
-        if (decaySound != null)
+        // 音再生（アニメーション終了に合わせて止める）
+        if (decaySound != null && audioSource != null)
         {
-            audioSource.PlayOneShot(decaySound);
+            Debug.Log($"🔊 [DecayingCorpseEvent] Play: {decaySound.name} on {gameObject.name}");
+            
+            audioSource.clip = decaySound;
+            audioSource.loop = false; // ★ ループしないように明示的に設定
+            audioSource.Play(); 
+
+            // 停止用コルーチン開始
+            StartCoroutine(StopSoundAfterAnimation(audioSource));
+        }
+        else
+        {
+             if (decaySound == null) Debug.LogError($"❌ [DecayingCorpseEvent] decaySound is NULL on {gameObject.name}!");
+             if (audioSource == null) Debug.LogError($"❌ [DecayingCorpseEvent] AudioSource is NULL on {gameObject.name}!");
+        }
+
+        // ScriptToEnableの状態もログに出して、インスタンスの不一致を確認しやすくする
+        if (scriptToEnable == null)
+        {
+             Debug.Log($"ℹ [DecayingCorpseEvent] ScriptToEnable is NULL on {gameObject.name}");
         }
 
         // イベントマネージャーに通知（ログ保存など）
@@ -119,6 +179,47 @@ public class DecayingCorpseEvent : MonoBehaviour, IFocusable
         {
            // eventManager.TriggerHorrorEvent(eventID); // ログ保存したいだけならOKだが、再帰呼び出しに注意
            eventManager.LogEvent(eventID);
+        }
+    }
+
+    private System.Collections.IEnumerator StopSoundAfterAnimation(AudioSource source)
+    {
+        // 1フレーム待ってステート遷移を開始させる
+        yield return null;
+
+        float length = 0f;
+
+        // 1. オーバーライド設定を確認
+        if (overrideSoundDuration > 0)
+        {
+            length = overrideSoundDuration;
+            Debug.Log($"⏳ [DecayingCorpseEvent] Sound Duration Overridden to: {length}s");
+        }
+        else if (animator != null) // 2. Animatorから取得
+        {
+            AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+            length = stateInfo.length;
+
+            if (animator.speed > 0)
+            {
+                 length /= animator.speed;
+            }
+            Debug.Log($"⏳ [DecayingCorpseEvent] Auto-Detected Animation Length: {length}s");
+        }
+        else
+        {
+            Debug.LogWarning("⚠ [DecayingCorpseEvent] No Animator and No Override Duration. Sound will play until end (default).");
+            // クリップの長さを採用する手もある
+            if (source.clip != null) length = source.clip.length;
+        }
+
+        if (length > 0)
+        {
+            // 時間分待つ
+            yield return new WaitForSeconds(length);
+            
+            source.Stop();
+            Debug.Log("🔇 [DecayingCorpseEvent] Sound Stopped.");
         }
     }
 }

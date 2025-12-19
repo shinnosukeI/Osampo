@@ -375,6 +375,13 @@ public class HorrorEventManager : MonoBehaviour
                  // 今回の 21(人形) や 22(マネキン) は「最初からそこにいる」ことが期待されているため有効化する。
                  if (item.comp != null) item.comp.gameObject.SetActive(true);
                  if (item.obj != null) item.obj.SetActive(true);
+
+                 // ★ Event 25 (WallEyes) の場合は準備処理（オブジェクト削除）を呼ぶ
+                 if (item.id == 25 && wallEyesEventTarget != null)
+                 {
+                     wallEyesEventTarget.PrepareEvent();
+                 }
+
                  continue;
             }
 
