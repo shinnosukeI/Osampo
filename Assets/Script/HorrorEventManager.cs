@@ -1062,11 +1062,16 @@ public class HorrorEventManager : MonoBehaviour
             soundFromLocationSource.spatialBlend = 1.0f; // 1.0 = 完全3D
             soundFromLocationSource.loop = true;
 
+            // ★ 範囲を狭くする設定 (ユーザー要望: 0.5m以内)
+            soundFromLocationSource.minDistance = 0.1f;   // 0.1m以内なら最大音量
+            soundFromLocationSource.maxDistance = 0.5f;   // 0.5m離れると聞こえなくなる
+            soundFromLocationSource.rolloffMode = AudioRolloffMode.Logarithmic; // 自然な減衰
+
             if (!soundFromLocationSource.isPlaying)
             {
                 soundFromLocationSource.gameObject.SetActive(true);
                 soundFromLocationSource.Play();
-                Debug.Log("🔊 特定の場所からの音(34)を再生開始しました。");
+                Debug.Log("🔊 特定の場所からの音(34)を再生開始しました（範囲縮小版）。");
             }
         }
         // 設定されていない場合は何もしない（エラーログは出さない、必須ではないかもしれないため）
