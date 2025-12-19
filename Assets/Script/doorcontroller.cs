@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem; // ← そのまま使用
 
-public class DoorController : MonoBehaviour
+public class DoorController : MonoBehaviour, IFocusable
 {
     public float openAngle = 90f;
     public float speed = 2f;
@@ -37,6 +37,12 @@ public class DoorController : MonoBehaviour
             isOpen ? openRotation : closedRotation,
             Time.deltaTime * speed
         );
+    }
+
+    // IFocusableの実装 (右クリックなどで呼ばれる)
+    public void OnFocus()
+    {
+        ToggleDoor();
     }
 
     public void ToggleDoor()

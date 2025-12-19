@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;   // ★ 新Input System用
 
-public class st2_warptrigger : MonoBehaviour
+public class st2_warptrigger : MonoBehaviour, IFocusable
 {
     [Header("ワープ設定")]
     public Transform player;           // プレイヤー
@@ -82,6 +82,12 @@ public class st2_warptrigger : MonoBehaviour
                 }
             }
         }
+    }
+
+    // IFocusableの実装
+    public void OnFocus()
+    {
+        OnDoorClicked();
     }
 
     // ★ クリック時の一連の処理
