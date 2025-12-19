@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DoorTeleporter : MonoBehaviour
+public class DoorTeleporter : MonoBehaviour, IFocusable
 {
 
     private void OnMouseDown()
@@ -132,6 +132,12 @@ public class DoorTeleporter : MonoBehaviour
         StopAllCoroutines();                  // 開き途中でも一旦止める
         StartCoroutine(MoveDoor(doorClosedRot));
         isDoorOpen = false;
+    }
+
+    // IFocusableの実装
+    public void OnFocus()
+    {
+        TeleportAndOpenDoor();
     }
 
     private System.Collections.IEnumerator MoveDoor(Quaternion targetRot)
