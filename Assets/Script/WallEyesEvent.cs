@@ -6,6 +6,9 @@ public class WallEyesEvent : MonoBehaviour
     [Tooltip("LookAtPlayerスクリプトをアタッチして、プレイヤーを見るように設定してください")]
     [SerializeField] private GameObject[] eyeObjects;
 
+    [Header("イベント発生時に消すオブジェクト")]
+    [SerializeField] private GameObject[] objectsToHide;
+
     [Header("音響設定")]
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private AudioClip appearSound;
@@ -53,6 +56,22 @@ public class WallEyesEvent : MonoBehaviour
         if (audioSource != null && appearSound != null)
         {
             audioSource.PlayOneShot(appearSound);
+        }
+    }
+
+    // 周回開始時に呼ばれる準備メソッド
+    public void PrepareEvent()
+    {
+        // 指定したオブジェクトを非表示にする
+        if (objectsToHide != null)
+        {
+            foreach (var obj in objectsToHide)
+            {
+                if (obj != null)
+                {
+                    obj.SetActive(false);
+                }
+            }
         }
     }
 }
