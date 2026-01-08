@@ -198,9 +198,11 @@ public class HorrorEventManager : MonoBehaviour
     private Color initFogColor;
     private bool initFogEnabled;
 
-    [Header("13: 死体の腐敗イベント")] // ★ 追加
+    [Header("13: 蜘蛛イベント")] // ★ 変更
     [SerializeField]
-    private DecayingCorpseEvent decayingCorpseEvent;
+    private SpiderWallEvent spiderWallEvent;
+    [SerializeField]
+    private GameObject spiderWallRootObject; // 親オブジェクト
 
     [Header("12: 死体の腐敗（13とは別扱い?）")]
     [SerializeField] private GameObject corpseRotTarget;
@@ -356,7 +358,7 @@ public class HorrorEventManager : MonoBehaviour
             (51, walkingPersonEvent, null),
             (52, doorGapEvent, null),
             (43, mirrorGhostEvent, null),
-            (13, decayingCorpseEvent, null),
+            (13, spiderWallEvent, spiderWallRootObject), // ★ 変更
             (12, null, corpseRotTarget),
             (22, null, mannequinTarget),
             (23, null, hairTarget),
@@ -370,6 +372,13 @@ public class HorrorEventManager : MonoBehaviour
             // 現在のアクティブIDと一致するか？
             if (item.id == activeEventID) 
             {
+                 // ★ Triggerで開始するイベント(15など)は、ここでのAuto-Activeはしない（最初は隠しておく）
+                 // 13(蜘蛛)は「Event 25のようにその時だけ表示」との要望により、ここでActiveにする（Static表示）
+                 if (item.id == 15)
+                 {
+                     continue; 
+                 }
+
                  // ★ アクティブなイベントのオブジェクトは、ループ開始時から表示しておく（ユーザー要望）
                  // Triggerで「出現」させるタイプ（15や13など）の場合、ここで出すと早すぎる可能性があるが、
                  // 今回の 21(人形) や 22(マネキン) は「最初からそこにいる」ことが期待されているため有効化する。
@@ -394,7 +403,8 @@ public class HorrorEventManager : MonoBehaviour
                     disabledCount++;
                 }
             }
-            else if (item.obj != null)
+            
+            if (item.obj != null)
             {
                 if (item.obj.activeSelf)
                 {
@@ -425,8 +435,10 @@ public class HorrorEventManager : MonoBehaviour
         if (bearMoveRootObject != null) bearMoveRootObject.SetActive(false);
         if (vanishingWomanRootObject != null) vanishingWomanRootObject.SetActive(false);
 
-        // 死体腐敗: 最初はいない
-        if (decayingCorpseEvent != null) decayingCorpseEvent.gameObject.SetActive(false);
+        // 蜘蛛: 最初はいない
+        if (spiderWallEvent != null) spiderWallEvent.gameObject.SetActive(false);
+        if (spiderWallRootObject != null) spiderWallRootObject.SetActive(false);
+        
         if (corpseRotTarget != null) corpseRotTarget.SetActive(false);
 
         // ミラーゴースト: 最初はいない
@@ -496,7 +508,7 @@ public class HorrorEventManager : MonoBehaviour
         eventActionMap[43] = TriggerMirrorGhost;
         
         // ★ 新規追加
-        eventActionMap[13] = TriggerDecayingCorpse;
+        eventActionMap[13] = TriggerSpiderWall; // ★ 変更
         eventActionMap[12] = TriggerCorpseRot;
         eventActionMap[22] = TriggerMannequin; // ★ 実装
     }
@@ -514,6 +526,9 @@ public class HorrorEventManager : MonoBehaviour
             Debug.LogError("❌ [HorrorEventManager] mannequinTarget (Event 22) is not assigned!");
         }
     }
+
+
+
 
     // ★ アンケート結果ごとのイベント設定用クラス
     [System.Serializable]
@@ -757,6 +772,24 @@ public class HorrorEventManager : MonoBehaviour
         else
         {
             Debug.LogError("ゴキブリ(CockroachSwarm)が設定されていません。");
+        }
+    }
+
+    // 13: 蜘蛛イベント
+    public void TriggerSpiderWall()
+    {
+        if (spiderWallRootObject != null) spiderWallRootObject.SetActive(true); // Rootを表示
+
+        if (spiderWallEvent != null)
+        {
+            Debug.Log("🕷️ [HorrorEventManager] 蜘蛛イベント(13)発生");
+            spiderWallEvent.gameObject.SetActive(true);
+            spiderWallEvent.PrepareEvent(); // 準備（壁汚れ消しなど）
+            spiderWallEvent.ActivateEvent();
+        }
+        else
+        {
+            Debug.LogError("13: SpiderWallEventが設定されていません。");
         }
     }
 
@@ -1134,19 +1167,7 @@ public class HorrorEventManager : MonoBehaviour
     // ★ ドア（ワープ含む）で呼び出す周期カウント
     // ============================
     // 13: 死体の腐敗
-    public void TriggerDecayingCorpse()
-    {
-        Debug.Log("🌑 [HorrorEventManager] TriggerDecayingCorpse が呼ばれました");
-        if (decayingCorpseEvent != null)
-        {
-            decayingCorpseEvent.gameObject.SetActive(true);
-            decayingCorpseEvent.ActivateEvent();
-        }
-        else
-        {
-            Debug.LogError("❌ [HorrorEventManager] decayingCorpseEvent is not assigned!");
-        }
-    }
+
 
     // 12: 死体の腐敗（別バージョン）
     public void TriggerCorpseRot()
