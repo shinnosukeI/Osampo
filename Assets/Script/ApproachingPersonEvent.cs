@@ -21,6 +21,11 @@ public class ApproachingPersonEvent : MonoBehaviour
     private bool hasLookedAt = false;
     private Camera playerCamera;
 
+    // プレイヤー制御スクリプトへの参照
+    private FreeMoveInputSystem playerMove;
+    private CameraLookInputSystem playerLook;
+
+
     void Start()
     {
         if (personObject != null)
@@ -38,6 +43,19 @@ public class ApproachingPersonEvent : MonoBehaviour
         }
 
         playerCamera = Camera.main;
+
+        // プレイヤーの操作スクリプトを取得（タグ検索 -> コンポーネント取得）
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            playerMove = player.GetComponent<FreeMoveInputSystem>();
+            // CameraLookInputSystemはCameraにある場合とPlayerにある場合があるが、
+            // 今回のプロジェクトでは CameraLookInputSystem.cs を見ると playerBody を参照しているので
+            // Cameraオブジェクトか、Playerの子オブジェクトについている可能性がある。
+            // 確実なのは FindObjectOfType か、Playerから探すこと。
+            playerLook = player.GetComponentInChildren<CameraLookInputSystem>();
+            if (playerLook == null) playerLook = FindObjectOfType<CameraLookInputSystem>();
+        }
     }
 
     public void TriggerEvent()
@@ -46,21 +64,73 @@ public class ApproachingPersonEvent : MonoBehaviour
         isEventActive = true;
         hasLookedAt = false;
 
-        Debug.Log("👻 [ApproachingPersonEvent] イベント開始");
+        Debug.Log("👻 [ApproachingPersonEvent] イベント開始 - 強制振り向きシーケンス");
 
-        // 1. 音を鳴らす（背後でガラスを踏む音など）
+        // 強制振り向きコルーチン開始
+        StartCoroutine(ForceTurnSequence());
+    }
+
+    private IEnumerator ForceTurnSequence()
+    {
+        // 1. 操作不能にする
+        if (playerMove != null) playerMove.enabled = false;
+        if (playerLook != null) playerLook.enabled = false;
+
+        yield return null;
+
+        // 2. 音を鳴らす（背後でガラスを踏む音など）
         if (glassSound != null)
         {
             audioSource.PlayOneShot(glassSound);
         }
 
-        // 人を初期位置に表示（まだプレイヤーは見えていないはず）
+        // 3. 180度振り向く
+        if (playerCamera != null && playerMove != null)
+        {
+            Transform playerTransform = playerMove.transform;
+            
+            // 目標の回転（現在のY軸反対側）
+            Quaternion startRot = playerTransform.rotation;
+            Quaternion targetRot = startRot * Quaternion.Euler(0, -200, 0);
+            
+            // カメラの上下（Pitch）も0に戻す（正面を見る）
+            Transform camTransform = playerCamera.transform;
+            Quaternion startCamRot = camTransform.localRotation;
+            Quaternion targetCamRot = Quaternion.identity; // ローカル回転0 = 正面
+
+            float duration = 1.5f; // 振り向きにかかる時間
+            float elapsed = 0f;
+
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                float t = elapsed / duration;
+                // イージング（滑らかに）
+                t = Mathf.SmoothStep(0f, 1f, t);
+
+                playerTransform.rotation = Quaternion.Slerp(startRot, targetRot, t);
+                camTransform.localRotation = Quaternion.Slerp(startCamRot, targetCamRot, t);
+
+                yield return null;
+            }
+
+            // 念のため最終値をセット
+            playerTransform.rotation = targetRot;
+            camTransform.localRotation = targetCamRot;
+        }
+
+        yield return new WaitForSeconds(0.2f);
+
+        // 4. 人を初期位置に表示（ここでようやく出現）
         if (approachPositions != null && approachPositions.Length > 0)
         {
             personObject.transform.position = approachPositions[0].position;
             personObject.transform.rotation = approachPositions[0].rotation;
             personObject.SetActive(true);
         }
+
+        // 振り向き完了したので、次の検知フェーズへ
+        // （Updateでの視界判定が走るようになる）
     }
 
     void Update()
@@ -118,6 +188,11 @@ public class ApproachingPersonEvent : MonoBehaviour
 
         personObject.SetActive(false);
         isEventActive = false;
+        
+        // 操作を戻す
+        if (playerMove != null) playerMove.enabled = true;
+        if (playerLook != null) playerLook.enabled = true;
+
         Debug.Log("👻 [ApproachingPersonEvent] イベント終了");
     }
 }
