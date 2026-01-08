@@ -70,11 +70,42 @@ public class ApproachingPersonEvent : MonoBehaviour
         StartCoroutine(ForceTurnSequence());
     }
 
+    [Header("位置合わせ")]
+    [SerializeField] private Transform playerForceMoveTarget; // プレイヤーを強制移動させる位置
+
+    private GameObject crosshairCanvas;
+
     private IEnumerator ForceTurnSequence()
     {
         // 1. 操作不能にする
         if (playerMove != null) playerMove.enabled = false;
         if (playerLook != null) playerLook.enabled = false;
+
+        // ★ クロスヘアを一時的に消す
+        crosshairCanvas = GameObject.Find("CrosshairCanvas");
+        if (crosshairCanvas == null)
+        {
+            // 名前で見つからない場合、Canvas全検索で探す
+            Canvas[] allCanvases = FindObjectsByType<Canvas>(FindObjectsSortMode.None);
+            foreach (var c in allCanvases)
+            {
+                if (c.name == "CrosshairCanvas")
+                {
+                    crosshairCanvas = c.gameObject;
+                    break;
+                }
+            }
+        }
+
+        if (crosshairCanvas != null)
+        {
+            crosshairCanvas.SetActive(false);
+            Debug.Log("👁 [ApproachingPersonEvent] CrosshairCanvas deactivated.");
+        }
+        else
+        {
+            Debug.LogWarning("⚠ [ApproachingPersonEvent] CrosshairCanvas NOT FOUND! Cannot hide crosshair.");
+        }
 
         yield return null;
 
@@ -89,10 +120,39 @@ public class ApproachingPersonEvent : MonoBehaviour
         {
             Transform playerTransform = playerMove.transform;
             
-            // 目標の回転（現在のY軸反対側）
-            Quaternion startRot = playerTransform.rotation;
-            Quaternion targetRot = startRot * Quaternion.Euler(0, -200, 0);
+            // ★ 修正: 相対回転ではなく、出現位置(approachPositions[0])の方を向くように変更
+            Quaternion targetRot = playerTransform.rotation; // デフォルトは現在値
             
+            if (approachPositions != null && approachPositions.Length > 0 && approachPositions[0] != null)
+            {
+                // プレイヤーからターゲットへの方向ベクトル
+                Vector3 direction = approachPositions[0].position - playerTransform.position;
+                direction.y = 0; // 上下方向の回転はしない（水平回転のみ）
+                
+                if (direction != Vector3.zero)
+                {
+                    targetRot = Quaternion.LookRotation(direction);
+                }
+            }
+            
+            Quaternion startRot = playerTransform.rotation;
+            
+            // ★ 位置合わせの計算
+            Vector3 startPos = playerTransform.position;
+            Vector3 targetPos = startPos;
+            bool shouldMove = false;
+
+            if (playerForceMoveTarget != null)
+            {
+                targetPos = playerForceMoveTarget.position;
+                // Y軸（高さ）はプレイヤーの現在地を維持する場合
+                // targetPos.y = startPos.y; 
+                // または指定位置に合わせるか。CharacterControllerがあるなら高さはずれるとまずいが、
+                // ここでは強制移動なのでTargetの位置(床)に合わせてもよい。
+                // いったんTargetの座標をそのまま使う（空のオブジェクトを床に置く想定）
+                shouldMove = true;
+            }
+
             // カメラの上下（Pitch）も0に戻す（正面を見る）
             Transform camTransform = playerCamera.transform;
             Quaternion startCamRot = camTransform.localRotation;
@@ -110,6 +170,11 @@ public class ApproachingPersonEvent : MonoBehaviour
 
                 playerTransform.rotation = Quaternion.Slerp(startRot, targetRot, t);
                 camTransform.localRotation = Quaternion.Slerp(startCamRot, targetCamRot, t);
+                
+                if (shouldMove)
+                {
+                    playerTransform.position = Vector3.Lerp(startPos, targetPos, t);
+                }
 
                 yield return null;
             }
@@ -117,6 +182,10 @@ public class ApproachingPersonEvent : MonoBehaviour
             // 念のため最終値をセット
             playerTransform.rotation = targetRot;
             camTransform.localRotation = targetCamRot;
+            if (shouldMove)
+            {
+                playerTransform.position = targetPos;
+            }
         }
 
         yield return new WaitForSeconds(0.2f);
@@ -192,6 +261,12 @@ public class ApproachingPersonEvent : MonoBehaviour
         // 操作を戻す
         if (playerMove != null) playerMove.enabled = true;
         if (playerLook != null) playerLook.enabled = true;
+
+        // ★ クロスヘアを戻す
+        if (crosshairCanvas != null)
+        {
+            crosshairCanvas.SetActive(true);
+        }
 
         Debug.Log("👻 [ApproachingPersonEvent] イベント終了");
     }
