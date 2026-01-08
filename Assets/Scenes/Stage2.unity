@@ -299,6 +299,74 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1881580877}
   m_LocalEulerAnglesHint: {x: 90, y: -90, z: 0}
+--- !u!1 &68310454
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 68310457}
+  - component: {fileID: 68310456}
+  - component: {fileID: 68310455}
+  m_Layer: 0
+  m_Name: "41.\u30D7\u30EC\u30A4\u30E4\u30FC\u79FB\u52D5\u5148"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!65 &68310455
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 68310454}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Size: {x: 0.1102091, y: 0.4449175, z: 0.095133066}
+  m_Center: {x: 0.059399325, y: 0.1724587, z: -0.08983018}
+--- !u!114 &68310456
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 68310454}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d06a5cdb9056c64a80338e42484bbf4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HorrorEventTrigger
+  eventType: 41
+  triggerOnce: 1
+--- !u!4 &68310457
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 68310454}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.112, y: 1.284, z: 16.283}
+  m_LocalScale: {x: 10, y: 10, z: 10}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &72546081
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7458,6 +7526,7 @@ MonoBehaviour:
   lookThreshold: 0.7
   stepDelay: 0.5
   jumpScareDuration: 1
+  playerForceMoveTarget: {fileID: 68310457}
 --- !u!114 &700739171
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17660,7 +17729,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HorrorEventManager
   debugMode: 1
   debugSurveyResult: 1
-  debugStartCycle: 1
+  debugStartCycle: 5
   currentSurveyResult: -1
   eventDatabase: {fileID: 11400000, guid: cd95c981533df444aaccb542fbea63e9, type: 2}
   objectToFallTarget: {fileID: 0}
@@ -21848,10 +21917,11 @@ SceneRoots:
   - {fileID: 827034473}
   - {fileID: 1222705937}
   - {fileID: 952473257}
-  - {fileID: 1360559660}
   - {fileID: 1201711939}
   - {fileID: 1697327540}
   - {fileID: 1759899499}
+  - {fileID: 1360559660}
+  - {fileID: 1528974615}
   - {fileID: 543631643}
   - {fileID: 763557765}
   - {fileID: 400829274}
@@ -21893,6 +21963,7 @@ SceneRoots:
   - {fileID: 1547662592}
   - {fileID: 1566623728}
   - {fileID: 585576986}
+  - {fileID: 68310457}
   - {fileID: 1291720597}
   - {fileID: 1143492900}
   - {fileID: 164521152}
@@ -21907,4 +21978,3 @@ SceneRoots:
   - {fileID: 2142157783}
   - {fileID: 889468708}
   - {fileID: 1491445110}
-  - {fileID: 1528974615}
