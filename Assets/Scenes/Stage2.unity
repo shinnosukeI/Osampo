@@ -6455,7 +6455,7 @@ Transform:
   m_GameObject: {fileID: 585576983}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.395, y: 0.15, z: 16.283}
+  m_LocalPosition: {x: -0.3, y: -0.57, z: 15.19}
   m_LocalScale: {x: 10, y: 10, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -18600,7 +18600,7 @@ MonoBehaviour:
   triggerName: StartDecay
   useSpeedControl: 1
   audioSource: {fileID: 0}
-  decaySound: {fileID: 8300000, guid: 154596e4d264ad147bd75c978713ca20, type: 3}
+  decaySound: {fileID: 8300000, guid: 16ac8be21a6b9db45bb3ad92e417502b, type: 3}
   overrideSoundDuration: 3
   eventID: 12
 --- !u!114 &1759899508
