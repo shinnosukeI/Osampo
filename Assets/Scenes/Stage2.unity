@@ -3248,7 +3248,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GlassStepSound
   glassSounds:
-  - {fileID: 8300000, guid: 754129370412e904e93513712795f2bf, type: 3}
+  - {fileID: 8300000, guid: 36adf7dbbf16c2247864d87fc5d13532, type: 3}
   audioSource: {fileID: 0}
   volume: 1
 --- !u!65 &410623263
@@ -7513,7 +7513,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ApproachingPersonEvent
   personObject: {fileID: 990831627}
-  glassSound: {fileID: 8300000, guid: 754129370412e904e93513712795f2bf, type: 3}
+  glassSound: {fileID: 8300000, guid: 36adf7dbbf16c2247864d87fc5d13532, type: 3}
   jumpScareSound: {fileID: 0}
   audioSource: {fileID: 0}
   approachPositions:
