@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class MirrorGhostEvent : MonoBehaviour
+public class MirrorGhostEvent : MonoBehaviour, IFocusable
 {
     [Header("設定")]
     [SerializeField]
@@ -10,6 +10,7 @@ public class MirrorGhostEvent : MonoBehaviour
     private string mirrorLayerName = "MirrorOnly"; // 鏡専用レイヤーの名前
 
     private bool hasTriggered = false;
+    private bool isReady = false; // トリガー済みで、フォーカス待機中か？
 
     private void Start()
     {
@@ -27,11 +28,32 @@ public class MirrorGhostEvent : MonoBehaviour
         }
     }
 
+    // マネージャーから呼ばれる（準備完了）
     public void TriggerEvent()
     {
-        Debug.Log("🌑 [MirrorGhostEvent] TriggerEvent called");
+        Debug.Log("🌑 [MirrorGhostEvent] TriggerEvent called (Waiting for Focus)");
+        isReady = true;
+    }
 
-        if (hasTriggered) return;
+    // プレイヤーが鏡を見たときに呼ばれる
+    public void OnFocus()
+    {
+        Debug.Log($"👁 [MirrorGhostEvent] OnFocus called. isReady: {isReady}, hasTriggered: {hasTriggered}");
+
+        if (!isReady)
+        {
+            Debug.LogWarning("⚠ [MirrorGhostEvent] OnFocus ignored because isReady is FALSE. (TriggerEvent was not called?)");
+            return;
+        }
+
+        if (hasTriggered)
+        {
+            Debug.Log("ℹ [MirrorGhostEvent] OnFocus ignored because hasTriggered is TRUE.");
+            return;
+        }
+
+        hasTriggered = true;
+        Debug.Log("👁 [MirrorGhostEvent] Activating Ghost!");
 
         if (ghostObject == null)
         {
@@ -39,12 +61,9 @@ public class MirrorGhostEvent : MonoBehaviour
             return;
         }
 
-        hasTriggered = true;
-
         // ゴーストを表示
         ghostObject.SetActive(true);
 
-        // レイヤー設定の確認と適用（念のため）
         // レイヤー設定の確認と適用（念のため）
         int layer = LayerMask.NameToLayer(mirrorLayerName);
         if (layer != -1)
