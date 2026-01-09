@@ -252,22 +252,12 @@ public class ApproachingPersonEvent : MonoBehaviour
             audioSource.PlayOneShot(jumpScareSound);
         }
 
-        // しばらく表示してから消す
-        yield return new WaitForSeconds(jumpScareDuration);
+        // ★ 最後の場所に移動した1秒後に遷移（ユーザー要望）
+        yield return new WaitForSeconds(1.0f);
 
-        personObject.SetActive(false);
-        isEventActive = false;
+        Debug.Log("👻 [ApproachingPersonEvent] イベント終了 -> ResultSceneへ遷移します");
         
-        // 操作を戻す
-        if (playerMove != null) playerMove.enabled = true;
-        if (playerLook != null) playerLook.enabled = true;
-
-        // ★ クロスヘアを戻す
-        if (crosshairCanvas != null)
-        {
-            crosshairCanvas.SetActive(true);
-        }
-
-        Debug.Log("👻 [ApproachingPersonEvent] イベント終了");
+        // ★ ResultSceneへ遷移
+        UnityEngine.SceneManagement.SceneManager.LoadScene("ResultScene");
     }
 }
