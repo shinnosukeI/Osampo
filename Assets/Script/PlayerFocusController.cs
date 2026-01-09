@@ -8,6 +8,7 @@ public class PlayerFocusController : MonoBehaviour
     [Header("設定")]
     [SerializeField] private float focusDistance = 3.0f; // フォーカス可能な距離
     [SerializeField] private LayerMask focusLayer = ~0;  // 対象レイヤー（すべて）
+    [SerializeField] private GameObject actionGuideUI; // カステムアクションガイドUI
 
     private Camera playerCamera;
 
@@ -32,15 +33,7 @@ public class PlayerFocusController : MonoBehaviour
         SetupCrosshair();
     }
 
-    void Update()
-    {
-        // マウスの右クリック（Input System）
-        if (Mouse.current != null && Mouse.current.rightButton.wasPressedThisFrame)
-        {
-            Debug.Log("🖱 [PlayerFocusController] Right Click Detected");
-            TryFocus();
-        }
-    }
+
 
     private void TryFocus()
     {
@@ -154,5 +147,112 @@ public class PlayerFocusController : MonoBehaviour
         CreateLine("H_Line", new Vector2(20f, 2f));
         // 縦線 (幅2, 高さ20)
         CreateLine("V_Line", new Vector2(2f, 20f));
+
+        // キャッシュ
+        crosshairRect = crosshairObj.GetComponent<RectTransform>();
+        crosshairImages = crosshairObj.GetComponentsInChildren<UnityEngine.UI.Image>();
+
+        // ガイドUIのセットアップ
+        if (actionGuideUI != null)
+        {
+            activeActionUIObject = actionGuideUI;
+            activeActionUIObject.SetActive(false);
+        }
+        else
+        {
+            // デフォルトのテキスト作成（フォールバック）
+            GameObject textObj = new GameObject("ActionText");
+            textObj.transform.SetParent(crosshairObj.transform, false);
+            UnityEngine.UI.Text actionText = textObj.AddComponent<UnityEngine.UI.Text>();
+            actionText.text = "左クリックでアクション";
+            actionText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            if (actionText.font == null) actionText.font = Font.CreateDynamicFontFromOSFont("Arial", 24);
+            actionText.fontSize = 24;
+            // テキストの色も少しマイルドな赤に
+            actionText.color = new Color(1f, 0.4f, 0.4f); 
+            actionText.alignment = TextAnchor.MiddleCenter;
+            actionText.horizontalOverflow = HorizontalWrapMode.Overflow;
+            actionText.verticalOverflow = VerticalWrapMode.Overflow;
+
+            // テキストにもアウトラインを追加して視認性向上
+            UnityEngine.UI.Outline textOutline = textObj.AddComponent<UnityEngine.UI.Outline>();
+            textOutline.effectColor = Color.black;
+            textOutline.effectDistance = new Vector2(1f, -1f);
+            
+            RectTransform textRect = textObj.GetComponent<RectTransform>();
+            textRect.anchoredPosition = new Vector2(0f, -40f);
+            textRect.sizeDelta = new Vector2(300f, 50f);
+            
+            activeActionUIObject = textObj;
+            activeActionUIObject.SetActive(false);
+        }
+    }
+
+    // UI参照用キャッシュ
+    private RectTransform crosshairRect;
+    private UnityEngine.UI.Image[] crosshairImages;
+    private GameObject activeActionUIObject; // 表示切り替え用オブジェクト
+    private bool isHoveringFocusable = false;
+
+    void Update()
+    {
+        // マウスの右クリック（Input System）
+        if (Mouse.current != null && Mouse.current.rightButton.wasPressedThisFrame)
+        {
+            Debug.Log("🖱 [PlayerFocusController] Right Click Detected");
+            TryFocus();
+        }
+
+        CheckFocusableHover();
+    }
+
+    private void CheckFocusableHover()
+    {
+        if (playerCamera == null) return;
+        if (crosshairRect == null) return; 
+
+        Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+        bool hitFocusable = false;
+
+        if (Physics.Raycast(ray, out RaycastHit hit, focusDistance, focusLayer, QueryTriggerInteraction.Ignore))
+        {
+            IFocusable focusable = hit.collider.GetComponent<IFocusable>();
+            if (focusable == null) focusable = hit.collider.GetComponentInParent<IFocusable>();
+
+            if (focusable != null)
+            {
+                hitFocusable = true;
+            }
+        }
+
+        UpdateCrosshairState(hitFocusable);
+    }
+
+    private void UpdateCrosshairState(bool isHovering)
+    {
+        if (isHovering == isHoveringFocusable) return; // 状態変化なしなら何もしない
+        isHoveringFocusable = isHovering;
+
+        if (isHovering)
+        {
+            // ハイライト状態
+            crosshairRect.localScale = Vector3.one * 1.2f; // 2倍に拡大
+            if (activeActionUIObject) activeActionUIObject.SetActive(true);
+            foreach (var img in crosshairImages)
+            {
+                // 明度を上げたマイルドな赤 (白に近い赤)
+                img.color = new Color(1f, 0.6f, 0.6f, 0.9f); 
+            }
+        }
+        else
+        {
+            // 通常状態
+            crosshairRect.localScale = Vector3.one;
+            if (activeActionUIObject) activeActionUIObject.SetActive(false);
+            foreach (var img in crosshairImages)
+            {
+                img.color = new Color(1f, 1f, 1f, 0.5f); // 半透明の白
+            }
+        }
     }
 }
