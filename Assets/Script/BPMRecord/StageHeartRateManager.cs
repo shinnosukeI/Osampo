@@ -59,13 +59,15 @@ public class StageHeartRateManager : BaseHeartRateManager
         string sceneName = SceneManager.GetActiveScene().name;
         string logFileName = "99_test_stage_unknown_log"; 
 
-        if (sceneName == "99_BPMTestScene1")
+        if (sceneName == "99_BPMTestScene1" || sceneName == "Stage1")
         {
-            logFileName = "99_test_stage1_bpm_log";
+            // ユーザー要望: Stage1は 03
+            logFileName = "03_test_Stage1_bpm_log";
         }
-        else if (sceneName == "99_BPMTestScene2")
+        else if (sceneName == "99_BPMTestScene2" || sceneName == "Stage2")
         {
-            logFileName = "99_test_stage2_bpm_log";
+            // ユーザー要望: Stage2は 05
+            logFileName = "05_test_stage2_bpm_log";
         }
         else
         {
@@ -75,6 +77,7 @@ public class StageHeartRateManager : BaseHeartRateManager
 
         if (!string.IsNullOrEmpty(GameManager.SubjectID))
         {
+            // P0XX_ + ファイル名
             logFileName = $"{GameManager.SubjectID}_{logFileName}";
         }
 
@@ -93,12 +96,12 @@ public class StageHeartRateManager : BaseHeartRateManager
         Debug.Log("ステージ心拍ログ記録終了");
 
         string sceneName = SceneManager.GetActiveScene().name;
-        if (sceneName == "99_BPMTestScene1")
+        if (sceneName == "99_BPMTestScene1" || sceneName == "Stage1")
         {
             GameManager.SavedStage1BPMList = new List<int>(currentStageBpmList);
             Debug.Log($"Stage1 BPM List Saved: Count={currentStageBpmList.Count}");
         }
-        else if (sceneName == "99_BPMTestScene2")
+        else if (sceneName == "99_BPMTestScene2" || sceneName == "Stage2")
         {
             GameManager.SavedStage2BPMList = new List<int>(currentStageBpmList);
             Debug.Log($"Stage2 BPM List Saved: Count={currentStageBpmList.Count}");
@@ -155,7 +158,7 @@ public class StageHeartRateManager : BaseHeartRateManager
         if (gameManager != null)
         {
             string sceneName = SceneManager.GetActiveScene().name;
-            if (sceneName == "99_BPMTestScene2")
+            if (sceneName == "99_BPMTestScene2" || sceneName == "Stage2")
             {
                 gameManager.LoadResultScene();
             }

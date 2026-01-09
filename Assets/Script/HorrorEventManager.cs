@@ -1207,8 +1207,8 @@ public class HorrorEventManager : MonoBehaviour
             subjectID = "TestUser"; // IDがない場合のフォールバック
         }
 
-        // ファイル名: 被験者ID_03_HorrorEvent_log.csv
-        string fileName = $"{subjectID}_03_HorrorEvent_log.csv";
+        // ファイル名: 被験者ID_04_HorrorEvent_log.csv
+        string fileName = $"{subjectID}_04_HorrorEvent_log.csv";
         string directoryPath = Path.Combine(Application.persistentDataPath, "CSV");
 
         if (!Directory.Exists(directoryPath))
