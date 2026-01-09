@@ -215,7 +215,7 @@ Transform:
   m_GameObject: {fileID: 36904334}
   serializedVersion: 2
   m_LocalRotation: {x: 0.5070829, y: 0.49281535, z: -0.5070829, w: 0.49281535}
-  m_LocalPosition: {x: 0.03526, y: -0.0478, z: -0.19572}
+  m_LocalPosition: {x: 0.03642, y: -0.04786, z: -0.19363}
   m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -17873,7 +17873,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HorrorEventManager
   debugMode: 1
   debugSurveyResult: 3
-  debugStartCycle: 1
+  debugStartCycle: 2
   currentSurveyResult: -1
   eventDatabase: {fileID: 11400000, guid: cd95c981533df444aaccb542fbea63e9, type: 2}
   objectToFallTarget: {fileID: 0}
