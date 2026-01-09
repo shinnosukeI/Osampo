@@ -144,6 +144,27 @@ public class TitleManager : MonoBehaviour
             {
                 controller.ResetBackButtonAnimation();
             }
+
+            // Configボタンのアニメーション・選択状態を強制リセットする
+            if (settingsButton != null)
+            {
+                // 1. 選択解除（Selected状態だとNormalアニメーションに戻らない場合があるため）
+                if (EventSystem.current != null)
+                {
+                    EventSystem.current.SetSelectedGameObject(null);
+                }
+
+                // 2. Animatorリセット
+                Animator btnAnimator = settingsButton.GetComponent<Animator>();
+                if (btnAnimator != null)
+                {
+                    btnAnimator.Rebind();
+                    btnAnimator.Update(0f);
+                }
+
+                // 3. スケール強制リセット（Animatorの反映待ちを防ぐ）
+                settingsButton.transform.localScale = Vector3.one;
+            }
         }
         else
         {
