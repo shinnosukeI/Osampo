@@ -4372,6 +4372,22 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: f47b34077472fde45a20e8cc2d5874a5, type: 3}
   m_PrefabInstance: {fileID: 1585284538}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &493590629
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 493590627}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1ca436bd97af5d42a9b6b69ec141ad2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ProximityLogTrigger
+  eventType: 13
+  detectionRadius: 3
+  targetTag: Player
+  logOnce: 1
 --- !u!1001 &497885591
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4479,6 +4495,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6259796263409521304, guid: d4d2a382aa0ff1b4b85558799ee9b187, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1733014534}
+    - targetCorrespondingSourceObject: {fileID: 6259796263409521304, guid: d4d2a382aa0ff1b4b85558799ee9b187, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1733014536}
   m_SourcePrefab: {fileID: 100100000, guid: d4d2a382aa0ff1b4b85558799ee9b187, type: 3}
 --- !u!1001 &531491195
 PrefabInstance:
@@ -17544,7 +17563,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f47b34077472fde45a20e8cc2d5874a5, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 493590629}
   m_SourcePrefab: {fileID: 100100000, guid: f47b34077472fde45a20e8cc2d5874a5, type: 3}
 --- !u!1 &1599477154
 GameObject:
@@ -18274,7 +18296,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HorrorEventManager
   debugMode: 1
-  debugSurveyResult: 4
+  debugSurveyResult: 2
   debugStartCycle: 1
   currentSurveyResult: -1
   eventDatabase: {fileID: 11400000, guid: cd95c981533df444aaccb542fbea63e9, type: 2}
@@ -18938,6 +18960,22 @@ CapsuleCollider:
   m_Height: 1
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1733014536
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1733014532}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1ca436bd97af5d42a9b6b69ec141ad2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ProximityLogTrigger
+  eventType: 22
+  detectionRadius: 10
+  targetTag: Player
+  logOnce: 1
 --- !u!1001 &1759899499
 PrefabInstance:
   m_ObjectHideFlags: 0

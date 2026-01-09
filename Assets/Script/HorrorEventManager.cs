@@ -156,6 +156,8 @@ public class HorrorEventManager : MonoBehaviour
 
     // ログ保存用
     private StreamWriter eventLogWriter;
+    // ★ 追加: 同一ループ内での重複ログ防止用
+    private HashSet<int> currentLoopLoggedEvents = new HashSet<int>();
 
     private Dictionary<int, Action> eventActionMap = new Dictionary<int, Action>();
 
@@ -682,6 +684,10 @@ public class HorrorEventManager : MonoBehaviour
             if (obj != null) Destroy(obj);
         }
         spawnedObjects.Clear();
+
+        // ★ ループ切替時にログ済み履歴をリセット
+        currentLoopLoggedEvents.Clear();
+        Debug.Log("🔄 [HorrorEventManager] Duplicate Log History Cleared.");
 
         // 1. 全イベントオブジェクトを初期状態（基本非表示）に戻す
         InitializeObjectStates();
@@ -1262,11 +1268,21 @@ public class HorrorEventManager : MonoBehaviour
 
     public void LogEvent(int eventType)
     {
+        // ★ 追加: 既にログ済みなら何もしない
+        if (currentLoopLoggedEvents.Contains(eventType))
+        {
+            if (debugMode) Debug.Log($"ℹ [HorrorEventManager] Event {eventType} log skipped (Duplicate).");
+            return;
+        }
+
         if (eventLogWriter != null)
         {
             string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             eventLogWriter.WriteLine($"{timestamp},{eventType}");
             eventLogWriter.Flush(); // 即時書き込み
+            
+            // ★ 履歴に追加
+            currentLoopLoggedEvents.Add(eventType);
         }
     }
 
