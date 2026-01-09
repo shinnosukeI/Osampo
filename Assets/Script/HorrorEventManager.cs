@@ -213,6 +213,9 @@ public class HorrorEventManager : MonoBehaviour
     [Header("23: 水回りの髪")]
     [SerializeField] private GameObject hairTarget;
 
+    [Header("31: 血が滴るイベント(静的表示用)")]
+    [SerializeField] private GameObject event31StaticObject; // 31の時だけ表示する
+
     [Header("33: 血とガラス片")]
     [SerializeField] private GameObject bloodAndGlassTarget;
 
@@ -362,7 +365,8 @@ public class HorrorEventManager : MonoBehaviour
             (12, null, corpseRotTarget),
             (22, null, mannequinTarget),
             (23, null, hairTarget),
-            (33, null, bloodAndGlassTarget)
+            (33, null, bloodAndGlassTarget),
+            (31, null, event31StaticObject) // ★ 追加: 31の静的オブジェクト（別枠で追加して管理）
         };
 
         int disabledCount = 0;
@@ -374,14 +378,28 @@ public class HorrorEventManager : MonoBehaviour
             {
                  // ★ Triggerで開始するイベント(15など)は、ここでのAuto-Activeはしない（最初は隠しておく）
                  // 13(蜘蛛)は「Event 25のようにその時だけ表示」との要望により、ここでActiveにする（Static表示）
-                 if (item.id == 15)
+
+                 // ★ Event 43 (MirrorGhost) の場合
+                 if (item.id == 43)
                  {
-                     continue; 
+                     // オブジェクトはここではActiveにしない（最初は隠しておく）
+                     // トリガーイベントだけ呼んで「フォーカス待機状態」にする
+                     if (mirrorGhostEvent != null)
+                     {
+                         mirrorGhostEvent.TriggerEvent();
+                     }
+                     // これで処理完了として次へ（下の共通SetActiveを通さない）
+                     continue;
                  }
 
-                 // ★ アクティブなイベントのオブジェクトは、ループ開始時から表示しておく（ユーザー要望）
-                 // Triggerで「出現」させるタイプ（15や13など）の場合、ここで出すと早すぎる可能性があるが、
-                 // 今回の 21(人形) や 22(マネキン) は「最初からそこにいる」ことが期待されているため有効化する。
+                 // ★ Event 15 (ZombieChase) の場合
+                 if (item.id == 15)
+                 {
+                     // トリガーで開始するため、ここではActiveにしない
+                     continue;
+                 }
+
+                 // ★ アクティブなイベントのオブジェクトは、ループ開始時から表示しておく
                  if (item.comp != null) item.comp.gameObject.SetActive(true);
                  if (item.obj != null) item.obj.SetActive(true);
 
@@ -395,22 +413,16 @@ public class HorrorEventManager : MonoBehaviour
             }
 
             // 一致しない場合、無効化する
-            if (item.comp != null)
+            if (item.comp != null && item.comp.gameObject.activeSelf)
             {
-                if (item.comp.gameObject.activeSelf)
-                {
-                    item.comp.gameObject.SetActive(false);
-                    disabledCount++;
-                }
+                item.comp.gameObject.SetActive(false);
+                disabledCount++;
             }
             
-            if (item.obj != null)
+            if (item.obj != null && item.obj.activeSelf)
             {
-                if (item.obj.activeSelf)
-                {
-                    item.obj.SetActive(false);
-                    disabledCount++;
-                }
+                item.obj.SetActive(false);
+                disabledCount++;
             }
         }
 
@@ -444,6 +456,7 @@ public class HorrorEventManager : MonoBehaviour
         if (clusterWallRootObject != null) clusterWallRootObject.SetActive(false);
         if (bearMoveRootObject != null) bearMoveRootObject.SetActive(false);
         if (vanishingWomanRootObject != null) vanishingWomanRootObject.SetActive(false);
+        if (event31StaticObject != null) event31StaticObject.SetActive(false); // 初期非表示
 
         // 蜘蛛: 最初はいない
         if (spiderWallEvent != null) spiderWallEvent.gameObject.SetActive(false);
@@ -1117,9 +1130,9 @@ public class HorrorEventManager : MonoBehaviour
             soundFromLocationSource.spatialBlend = 1.0f; // 1.0 = 完全3D
             soundFromLocationSource.loop = true;
 
-            // ★ 範囲設定 (ユーザー要望: Event 31と同様に 1m-10m)
-            soundFromLocationSource.minDistance = 1.0f;   // 1m以内なら最大音量
-            soundFromLocationSource.maxDistance = 10.0f;  // 10m離れると聞こえなくなる
+            // ★ 範囲設定 (ユーザー要望: さらに半減 0.25m-2.5m)
+            soundFromLocationSource.minDistance = 0.25f;  // 0.25m以内なら最大音量
+            soundFromLocationSource.maxDistance = 2.5f;   // 2.5m離れると聞こえなくなる
             soundFromLocationSource.rolloffMode = AudioRolloffMode.Logarithmic; // 自然な減衰
 
             if (!soundFromLocationSource.isPlaying)

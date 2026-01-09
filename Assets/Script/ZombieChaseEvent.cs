@@ -32,6 +32,7 @@ public class ZombieChaseEvent : MonoBehaviour
             animator.applyRootMotion = true; // ★ 基本はRootMotionをオン
         }
         if (audioSource == null) audioSource = GetComponent<AudioSource>();
+        if (audioSource == null) audioSource = gameObject.AddComponent<AudioSource>(); // ★ ない場合は自動追加
         
         // 初期状態は非表示（マネージャーから呼ばれるまで）
         // ただし、AwakeはSetActive(true)された直後にも呼ばれる可能性があるため、
@@ -68,10 +69,23 @@ public class ZombieChaseEvent : MonoBehaviour
             playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
         }
 
-        // 音再生
+        // 音再生（ループ再生）
         if (audioSource != null && screamSound != null)
         {
-            audioSource.PlayOneShot(screamSound);
+            audioSource.clip = screamSound;
+            audioSource.loop = true; // 追いかけている間はずっと鳴らす
+            audioSource.spatialBlend = 1.0f; // 3Dサウンド
+            
+            // 距離減衰設定（デフォルト）
+            // 必要に応じて調整してください
+            audioSource.minDistance = 1.0f;
+            audioSource.maxDistance = 15.0f; 
+            audioSource.rolloffMode = AudioRolloffMode.Logarithmic;
+
+            if (!audioSource.isPlaying)
+            {
+                audioSource.Play();
+            }
         }
 
         // アニメーション開始

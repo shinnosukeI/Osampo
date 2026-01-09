@@ -200,7 +200,7 @@ GameObject:
   - component: {fileID: 36904337}
   - component: {fileID: 36904336}
   m_Layer: 0
-  m_Name: "32.\u8840\u75D51"
+  m_Name: "31.\u8840\u75D51"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3355,7 +3355,7 @@ MonoBehaviour:
   animator: {fileID: 400829277}
   runAnimationName: Run
   audioSource: {fileID: 0}
-  screamSound: {fileID: 0}
+  screamSound: {fileID: 8300000, guid: bf7f05eb53b39ac49b9d28f649e2f8fc, type: 3}
 --- !u!95 &400829277
 Animator:
   serializedVersion: 7
@@ -4094,6 +4094,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 289988617}
   m_SourcePrefab: {fileID: 100100000, guid: f65c7849b930e9b418836905e666466a, type: 3}
+--- !u!4 &464734837 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 9eb8729b438e9004ea7b003b22a4d645, type: 3}
+  m_PrefabInstance: {fileID: 213475682}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &467400430
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7345,6 +7350,7 @@ GameObject:
   - component: {fileID: 653713955}
   - component: {fileID: 653713954}
   - component: {fileID: 653713953}
+  - component: {fileID: 653713958}
   m_Layer: 0
   m_Name: MirrorPlane
   m_TagString: Untagged
@@ -7461,6 +7467,20 @@ Transform:
   - {fileID: 2056831414}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 90}
+--- !u!114 &653713958
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 653713952}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b65b10a85bd0764bb0b311e9c86b419, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FocusRelay
+  targetEvent: {fileID: 0}
+  mirrorEvent: {fileID: 355610373}
 --- !u!1 &661741043
 GameObject:
   m_ObjectHideFlags: 0
@@ -7572,11 +7592,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 661741043}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!4 &665130369 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -9058838804961887535, guid: 9eb8729b438e9004ea7b003b22a4d645, type: 3}
-  m_PrefabInstance: {fileID: 213475682}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &671998688
 GameObject:
   m_ObjectHideFlags: 0
@@ -12226,6 +12241,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FocusRelay
   targetEvent: {fileID: 72546085}
+  mirrorEvent: {fileID: 0}
 --- !u!1001 &1085293748
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13864,7 +13880,7 @@ Transform:
   - {fileID: 2022634012}
   - {fileID: 213371655}
   - {fileID: 289988614}
-  - {fileID: 665130369}
+  - {fileID: 464734837}
   - {fileID: 532026031}
   - {fileID: 1371497860}
   - {fileID: 2113719675}
@@ -18258,8 +18274,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HorrorEventManager
   debugMode: 1
-  debugSurveyResult: 3
-  debugStartCycle: 2
+  debugSurveyResult: 4
+  debugStartCycle: 1
   currentSurveyResult: -1
   eventDatabase: {fileID: 11400000, guid: cd95c981533df444aaccb542fbea63e9, type: 2}
   objectToFallTarget: {fileID: 0}
@@ -18302,6 +18318,7 @@ MonoBehaviour:
   corpseRotTarget: {fileID: 1759899500}
   mannequinTarget: {fileID: 1733014532}
   hairTarget: {fileID: 0}
+  event31StaticObject: {fileID: 1343004949}
   bloodAndGlassTarget: {fileID: 0}
   polePonPonTarget: {fileID: 589607064}
   scenarioSettings:
