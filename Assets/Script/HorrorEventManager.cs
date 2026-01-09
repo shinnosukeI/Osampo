@@ -424,7 +424,17 @@ public class HorrorEventManager : MonoBehaviour
     {
         // st1_HorrorEventManagerを参考に、開始時は非表示にすべきものをここで切る
         if (bloodSplashObject != null) bloodSplashObject.SetActive(false);
-        if (bloodDripObject != null) bloodDripObject.SetActive(false);
+        if (bloodDripObject != null)
+        {
+            bloodDripObject.SetActive(false);
+            // ロード時の一瞬の再生を防ぐ（AudioSourceがすでにある場合）
+            var source = bloodDripObject.GetComponent<AudioSource>();
+            if (source != null)
+            {
+                 source.Stop();
+                 source.playOnAwake = false;
+            }
+        }
         
         // 窓: 割れる前は表示、割れた後は非表示
         if (normalWindowObject != null) normalWindowObject.SetActive(true);
@@ -846,8 +856,13 @@ public class HorrorEventManager : MonoBehaviour
         if (source == null)
         {
             source = bloodDripObject.AddComponent<AudioSource>();
-            source.spatialBlend = 1.0f; // 3Dサウンドにする
         }
+
+        // ★ 3D音響設定（距離減衰）
+        source.spatialBlend = 1.0f;
+        source.minDistance = 1.0f;  // 1m以内は最大音量
+        source.maxDistance = 10.0f; // 10m離れると聞こえなくなる（または最小）
+        source.rolloffMode = AudioRolloffMode.Logarithmic;
 
         // Clipがない場合は何もしない
         if (bloodDripSound == null) yield break;
@@ -1102,9 +1117,9 @@ public class HorrorEventManager : MonoBehaviour
             soundFromLocationSource.spatialBlend = 1.0f; // 1.0 = 完全3D
             soundFromLocationSource.loop = true;
 
-            // ★ 範囲を狭くする設定 (ユーザー要望: 0.5m以内)
-            soundFromLocationSource.minDistance = 0.1f;   // 0.1m以内なら最大音量
-            soundFromLocationSource.maxDistance = 0.5f;   // 0.5m離れると聞こえなくなる
+            // ★ 範囲設定 (ユーザー要望: Event 31と同様に 1m-10m)
+            soundFromLocationSource.minDistance = 1.0f;   // 1m以内なら最大音量
+            soundFromLocationSource.maxDistance = 10.0f;  // 10m離れると聞こえなくなる
             soundFromLocationSource.rolloffMode = AudioRolloffMode.Logarithmic; // 自然な減衰
 
             if (!soundFromLocationSource.isPlaying)
@@ -1207,8 +1222,8 @@ public class HorrorEventManager : MonoBehaviour
             subjectID = "TestUser"; // IDがない場合のフォールバック
         }
 
-        // ファイル名: 被験者ID_03_HorrorEvent_log.csv
-        string fileName = $"{subjectID}_03_HorrorEvent_log.csv";
+        // ファイル名: 被験者ID_04_HorrorEvent_log.csv
+        string fileName = $"{subjectID}_04_HorrorEvent_log.csv";
         string directoryPath = Path.Combine(Application.persistentDataPath, "CSV");
 
         if (!Directory.Exists(directoryPath))
