@@ -1,34 +1,36 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class DoorTeleporter : MonoBehaviour, IFocusable
 {
-
     private void OnMouseDown()
     {
         Debug.Log("ドアをクリックした！");
         TeleportAndOpenDoor();
     }
 
-    
     [Header("ワープ設定")]
     public Transform player;           // プレイヤー
     public Vector3 teleportPosition;   // ワープ先（XYZ）
 
     [Header("別のドアを開く設定")]
     public Transform targetDoor;       // 開きたいドア
-    public float openAngle = 90f;      // 開く角度
     public float doorOpenSpeed = 3f;   // 開閉の速さ
 
+    [Header("角度の段階開き")]
+    public float firstOpenAngle = 90f;     // 1段階目（閉→90）
+    public float secondOpenAngle = 180f;   // 2段階目（90→180）
+    public float angleTolerance = 5f;      // 角度判定の許容誤差（±）
+
     [Header("ホラーイベント連携")]
-    [SerializeField] private st1_HorrorEventManager eventManager; // ★ クラス名＆変数名を統一
+    [SerializeField] private st1_HorrorEventManager eventManager;
 
     public static int teleportCount = 0;
 
     [HideInInspector] public bool isDoorOpen = false;
 
     private Quaternion doorClosedRot;
-    private Quaternion doorOpenRot;
     private bool isMoving = false;
 
     // ★ 全ての DoorTeleporter を管理するリスト
@@ -64,12 +66,8 @@ public class DoorTeleporter : MonoBehaviour, IFocusable
     {
         if (targetDoor != null)
         {
+            // 閉じ位置は「開始時点」で記憶（CloseDoor用）
             doorClosedRot = targetDoor.rotation;
-            doorOpenRot = Quaternion.Euler(
-                targetDoor.eulerAngles.x,
-                targetDoor.eulerAngles.y + openAngle,
-                targetDoor.eulerAngles.z
-            );
         }
     }
 
@@ -79,6 +77,7 @@ public class DoorTeleporter : MonoBehaviour, IFocusable
         if (player == null) return;
         Debug.Log("ドアクリックされた");
 
+        // ワープ
         var cc = player.GetComponent<CharacterController>();
         if (cc != null) cc.enabled = false;
 
@@ -93,43 +92,70 @@ public class DoorTeleporter : MonoBehaviour, IFocusable
         // ★ 周期カウント（EventManager 側）
         if (eventManager != null)
         {
-            eventManager.OnDoorClicked();   // ← ここで cycleCount++
+            eventManager.OnDoorClicked();   // ← ここで cycleCount++（あなたの実装前提）
         }
         else
         {
             Debug.LogWarning("EventManager が設定されていないため、周期カウントできません。");
         }
 
-        // ★ カウンタが増えたタイミングで全ドア閉じる
+        // ★ カウンタが増えたタイミングで全ドア閉じる（このドアは除外）
         CloseAllDoors(targetDoor);
 
-        // その後、このドアだけ開ける
-        if (targetDoor != null && !isDoorOpen)
+        // ★ このドアだけ「段階開き」
+        if (targetDoor != null)
         {
+            float currentY = NormalizeAngle(targetDoor.eulerAngles.y);
+
+            // 90度付近なら → 180度へ
+            // それ以外（閉じてる想定）→ 90度へ
+            float targetY;
+
+            if (IsNearAngle(currentY, firstOpenAngle, angleTolerance))
+            {
+                targetY = secondOpenAngle; // 90 → 180
+            }
+            else if (IsNearAngle(currentY, secondOpenAngle, angleTolerance))
+            {
+                // すでに180付近なら何もしない（必要ならここで戻すなども可能）
+                targetY = secondOpenAngle;
+            }
+            else
+            {
+                targetY = firstOpenAngle;  // 0(閉) → 90
+            }
+
+            Quaternion targetRot = Quaternion.Euler(
+                targetDoor.eulerAngles.x,
+                targetY,
+                targetDoor.eulerAngles.z
+            );
+
             StopAllCoroutines();
-            StartCoroutine(MoveDoor(doorOpenRot));
-            isDoorOpen = true;
+            StartCoroutine(MoveDoor(targetRot));
+
+            isDoorOpen = !IsNearAngle(targetY, 0f, angleTolerance);
         }
     }
 
     // ★ 全ドアを閉じる static 関数
-   public static void CloseAllDoors(Transform excludeTargetDoor)
-{
-    foreach (var door in allDoors)
+    public static void CloseAllDoors(Transform excludeTargetDoor)
     {
-        if (door == null) continue;
+        foreach (var door in allDoors)
+        {
+            if (door == null) continue;
 
-        // ★ これから開く予定の targetDoor を持つ DoorTeleporter は閉じない
-        if (door.targetDoor == excludeTargetDoor) continue;
+            // ★ これから開く予定の targetDoor を持つ DoorTeleporter は閉じない
+            if (door.targetDoor == excludeTargetDoor) continue;
 
-        door.CloseDoor();
+            door.CloseDoor();
+        }
     }
-}
 
     // 個別に閉める関数（他のスクリプトやトリガーからも呼べる）
     public void CloseDoor()
     {
-        if (targetDoor == null || !isDoorOpen) return;
+        if (targetDoor == null) return;
 
         StopAllCoroutines();                  // 開き途中でも一旦止める
         StartCoroutine(MoveDoor(doorClosedRot));
@@ -142,7 +168,7 @@ public class DoorTeleporter : MonoBehaviour, IFocusable
         TeleportAndOpenDoor();
     }
 
-    private System.Collections.IEnumerator MoveDoor(Quaternion targetRot)
+    private IEnumerator MoveDoor(Quaternion targetRot)
     {
         isMoving = true;
 
@@ -158,5 +184,28 @@ public class DoorTeleporter : MonoBehaviour, IFocusable
 
         targetDoor.rotation = targetRot;
         isMoving = false;
+    }
+
+    // ------------------------------
+    // 補助関数
+    // ------------------------------
+
+    // 角度を 0〜360 に正規化
+    private float NormalizeAngle(float angle)
+    {
+        angle %= 360f;
+        if (angle < 0f) angle += 360f;
+        return angle;
+    }
+
+    // 角度が target±tol に近いか（0/360またぎにも対応）
+    private bool IsNearAngle(float angle, float target, float tol)
+    {
+        angle = NormalizeAngle(angle);
+        target = NormalizeAngle(target);
+
+        float diff = Mathf.Abs(angle - target);
+        diff = Mathf.Min(diff, 360f - diff); // 0/360の近さを考慮
+        return diff <= tol;
     }
 }
