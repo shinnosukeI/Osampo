@@ -197,12 +197,12 @@ public class PlayerFocusController : MonoBehaviour
             GameObject textObj = new GameObject("ActionText");
             textObj.transform.SetParent(crosshairObj.transform, false);
             UnityEngine.UI.Text actionText = textObj.AddComponent<UnityEngine.UI.Text>();
-            actionText.text = "左クリックでアクション";
+            actionText.text = "右クリックでアクション";
             actionText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             if (actionText.font == null) actionText.font = Font.CreateDynamicFontFromOSFont("Arial", 24);
             actionText.fontSize = 24;
             // テキストの色も少しマイルドな赤に
-            actionText.color = new Color(1f, 0.4f, 0.4f); 
+            actionText.color = Color.white; 
             actionText.alignment = TextAnchor.MiddleCenter;
             actionText.horizontalOverflow = HorizontalWrapMode.Overflow;
             actionText.verticalOverflow = VerticalWrapMode.Overflow;
@@ -303,7 +303,7 @@ public class PlayerFocusController : MonoBehaviour
         if (isHovering)
         {
             // ハイライト状態
-            crosshairRect.localScale = Vector3.one * 1.2f; // 2倍に拡大
+            crosshairRect.localScale = Vector3.one * 1.5f; // 1.5倍に拡大
             if (activeActionUIObject) activeActionUIObject.SetActive(true);
             foreach (var img in crosshairImages)
             {
