@@ -21,7 +21,7 @@ public class st1_HorrorEventManager : MonoBehaviour
     [SerializeField] private AudioSource rainAudio;
 
     [Header("54: 落下イベント")]
-    [SerializeField] private FallingCorpse fallingCorpse; 
+    [SerializeField] private FallingCorpse fallingCorpse;
 
     [Header("55: 窓ガラスが割れるイベント")]
     [SerializeField]
@@ -53,6 +53,7 @@ public class st1_HorrorEventManager : MonoBehaviour
 
     void Start()
     {
+        Debug.Log($"[EventManager START] name={name} id={GetInstanceID()} path={GetHierarchyPath(transform)}");
         if (eventDatabase != null)
         {
             eventDatabase.Initialize();
@@ -128,6 +129,20 @@ public class st1_HorrorEventManager : MonoBehaviour
         fallingCorpse.StartFalling();   // FallingCorpse 側にこのメソッドが必要
     }
 
+    public bool TriggerEventFromTrigger(int eventType)
+{
+    // 45はラジオ再生開始時に別経路でログする設計なので必要なら弾く
+    if (eventType == 45)
+    {
+        Debug.LogWarning("[EventManager] 45はOnRadioPlaybackStartedでログします。");
+        return false;
+    }
+
+    Debug.Log($"[EventManager] 外部トリガーからイベント {eventType} を発火");
+    TriggerHorrorEvent(eventType);
+    return true;
+}
+
     // 55: 窓ガラスが割れる
     public void TriggerWindowBreak()
     {
@@ -142,6 +157,11 @@ public class st1_HorrorEventManager : MonoBehaviour
             Debug.LogError("55: 窓ガラスのGameObjectが設定されていません。");
         }
     }
+
+    public void LogOnly(int eventType)
+{
+    LogEvent(eventType);
+}
 
     // ★ 指定イベントを発動
     private void TriggerHorrorEvent(int eventType)
@@ -162,7 +182,7 @@ public class st1_HorrorEventManager : MonoBehaviour
         // ログ保存 (45番はラジオ再生時にコールバックで保存するので除外)
         if (eventType != 45)
         {
-           LogEvent(eventType);
+            LogEvent(eventType);
         }
 
         if (eventActionMap.TryGetValue(eventType, out Action action))
@@ -199,6 +219,7 @@ public class st1_HorrorEventManager : MonoBehaviour
     // ★ トリガーから呼ぶ：今の周回のイベントを発動していいなら発動
     public bool TryTriggerCurrentCycleEvent()
     {
+        Debug.Log($"[TryTrigger] id={GetInstanceID()} cycle={cycleCount} last={lastTriggeredCycle}");
         // まだ1周目に入っていない
         if (cycleCount <= 0)
         {
@@ -280,6 +301,7 @@ public class st1_HorrorEventManager : MonoBehaviour
 
     private void LogEvent(int eventType)
     {
+        Debug.Log($"[LogEvent] id={GetInstanceID()} eventType={eventType} writerNull={(eventLogWriter == null)}");
         if (eventLogWriter != null)
         {
             string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
@@ -304,4 +326,16 @@ public class st1_HorrorEventManager : MonoBehaviour
     {
         CloseEventLogger();
     }
+    
+    private string GetHierarchyPath(Transform t)
+{
+    var sb = new StringBuilder(t.name);
+    while (t.parent != null)
+    {
+        t = t.parent;
+        sb.Insert(0, t.name + "/");
+    }
+    return sb.ToString();
 }
+}
+

@@ -2,17 +2,18 @@ using UnityEngine;
 
 public class DoorAutoCloseTrigger : MonoBehaviour
 {
-    public DoorController targetDoor;   // 閉めたいドアをここに入れる
+    [Header("閉じたいドア（ドア本体を指定）")]
+    public GameObject targetDoor;
 
     private void OnTriggerEnter(Collider other)
     {
-        // Player というタグのオブジェクトが入ってきたら閉める
-        if (other.CompareTag("Player"))
-        {
-            if (targetDoor != null)
-            {
-                targetDoor.CloseDoor();
-            }
-        }
+        if (!other.CompareTag("Player")) return;
+        if (targetDoor == null) return;
+
+        // ドアについている CloseDoor() を呼ぶ
+        targetDoor.SendMessage(
+            "CloseDoor",
+            SendMessageOptions.DontRequireReceiver
+        );
     }
 }

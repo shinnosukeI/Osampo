@@ -101,7 +101,7 @@ public class DoorTeleporter : MonoBehaviour, IFocusable
         }
 
         // ★ カウンタが増えたタイミングで全ドア閉じる
-        CloseAllDoors();
+        CloseAllDoors(targetDoor);
 
         // その後、このドアだけ開ける
         if (targetDoor != null && !isDoorOpen)
@@ -113,16 +113,18 @@ public class DoorTeleporter : MonoBehaviour, IFocusable
     }
 
     // ★ 全ドアを閉じる static 関数
-    public static void CloseAllDoors()
+   public static void CloseAllDoors(Transform excludeTargetDoor)
+{
+    foreach (var door in allDoors)
     {
-        foreach (var door in allDoors)
-        {
-            if (door != null)
-            {
-                door.CloseDoor();
-            }
-        }
+        if (door == null) continue;
+
+        // ★ これから開く予定の targetDoor を持つ DoorTeleporter は閉じない
+        if (door.targetDoor == excludeTargetDoor) continue;
+
+        door.CloseDoor();
     }
+}
 
     // 個別に閉める関数（他のスクリプトやトリガーからも呼べる）
     public void CloseDoor()
