@@ -45,7 +45,7 @@ public class FallingCorpseTrigger : MonoBehaviour
         }
 
         Debug.Log("[CorpseTrigger] 条件OK → StartFalling()");
-        corpse.StartFalling();
+        eventManager.TriggerEventFromTrigger(54);
         used = true;
     }
 }

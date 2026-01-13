@@ -6,16 +6,22 @@ public class GlassBreakTrigger : MonoBehaviour
     [SerializeField] private st1_HorrorEventManager eventManager;
 
     [Header("ガラス本体（Renderer）")]
-    [SerializeField] private Renderer glassRenderer;     
-    [SerializeField] private Animation glassAnimation;   
+    [SerializeField] private Renderer glassRenderer;
+    [SerializeField] private Animation glassAnimation;
 
     [Header("非表示にしたいオブジェクト（55全体）")]
-    [SerializeField] private GameObject objectToHide;   // ← 追加！
+    [SerializeField] private GameObject objectToHide;
 
     [Header("何周目から有効にするか")]
     [SerializeField] private int enableCycle = 5;
 
     private bool hasBroken = false;
+
+    private void Awake()
+    {
+        if (eventManager == null)
+            eventManager = FindObjectOfType<st1_HorrorEventManager>();
+    }
 
     private void Reset()
     {
@@ -29,7 +35,7 @@ public class GlassBreakTrigger : MonoBehaviour
     {
         // 最初は不可視
         if (objectToHide != null)
-            objectToHide.SetActive(false);  // ← ここ！
+            objectToHide.SetActive(false);
 
         if (glassAnimation != null)
             glassAnimation.playAutomatically = false;
@@ -39,14 +45,21 @@ public class GlassBreakTrigger : MonoBehaviour
     {
         if (hasBroken) return;
         if (!other.CompareTag("Player")) return;
-        if (eventManager == null) return;
+        if (eventManager == null)
+        {
+            Debug.LogError("[GlassBreakTrigger] eventManager が見つかりません");
+            return;
+        }
         if (eventManager.CycleCount < enableCycle) return;
 
         hasBroken = true;
 
+        // ★ ログだけ残す（演出はこのスクリプトでやる）
+        eventManager.LogOnly(55);
+
         // 55 のPrefab全体を表示
         if (objectToHide != null)
-            objectToHide.SetActive(true);  // ← ここ！
+            objectToHide.SetActive(true);
 
         // ガラスrendererも ON
         if (glassRenderer != null)
