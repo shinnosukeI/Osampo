@@ -22,6 +22,8 @@ public class ApproachingPersonEvent : MonoBehaviour
     [SerializeField] private float initialWaitTime = 3.0f; // ★ 追加: 移動開始前の待機
     [Range(0f, 1f)]
     [SerializeField] private float eventVolume = 0.5f;   // ★ 追加: 音量設定
+    [Range(0f, 10f)]
+    [SerializeField] private float lastSoundVolume = 1.0f; // ★ 追加: 最後の音専用の音量
 
     private bool isEventActive = false;
     private bool hasLookedAt = false;
@@ -152,6 +154,20 @@ public class ApproachingPersonEvent : MonoBehaviour
             }
             
             Quaternion startRot = playerTransform.rotation;
+
+            // ★ 修正: 振り向く前に人を配置・表示する（振り返ったら既にいるようにする）
+            if (approachPositions != null && approachPositions.Length > 0)
+            {
+                personObject.transform.position = approachPositions[0].position;
+                personObject.transform.rotation = approachPositions[0].rotation;
+                personObject.SetActive(true);
+
+                // 出現時（配置時）に声を再生
+                if (appearanceVoiceSound != null && audioSource != null)
+                {
+                    audioSource.PlayOneShot(appearanceVoiceSound);
+                }
+            }
             
             // ★ 位置合わせの計算
             Vector3 startPos = playerTransform.position;
@@ -206,18 +222,12 @@ public class ApproachingPersonEvent : MonoBehaviour
 
         yield return new WaitForSeconds(0.2f);
 
-        // 4. 人を初期位置に表示（ここでようやく出現）
-        if (approachPositions != null && approachPositions.Length > 0)
+        // 4. 人を表示（上記で既に表示済みだが、念のため位置補正などあればここで行う）
+        // if (approachPositions != null && approachPositions.Length > 0) ... 既に表示済みなのでスキップ
+        // 念のためActive確認だけ
+        if (personObject != null && !personObject.activeSelf)
         {
-            personObject.transform.position = approachPositions[0].position;
-            personObject.transform.rotation = approachPositions[0].rotation;
-            personObject.SetActive(true);
-
-            // ★ 出現時に声を再生
-            if (appearanceVoiceSound != null && audioSource != null)
-            {
-                audioSource.PlayOneShot(appearanceVoiceSound);
-            }
+             personObject.SetActive(true);
         }
 
         // 振り向き完了したので、次の検知フェーズへ
@@ -271,7 +281,8 @@ public class ApproachingPersonEvent : MonoBehaviour
                 {
                     if (lastMoveSound != null)
                     {
-                        audioSource.PlayOneShot(lastMoveSound);
+                        // ★ 専用の音量で再生
+                        audioSource.PlayOneShot(lastMoveSound, lastSoundVolume);
                     }
                 }
             }

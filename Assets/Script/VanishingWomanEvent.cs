@@ -11,7 +11,6 @@ public class VanishingWomanEvent : MonoBehaviour
 
     [Header("音響設定")]
     [SerializeField] private AudioSource audioSource;
-    [SerializeField] private AudioClip appearSound;
     [SerializeField] private AudioClip vanishSound;
 
     [Header("ノイズ演出用UI")]
@@ -69,35 +68,47 @@ public class VanishingWomanEvent : MonoBehaviour
 
         Debug.Log("👻 消える女イベント開始");
 
-        // 1. ノイズ音再生
+        // 4. 女性を消す (ノイズはまだ残す?) -> 画像乱れ中に消えるのが自然なので
+        womanObject.SetActive(false);
+        
+        Debug.Log("👻 女性消失 -> 音量フェード開始");
+
+        // ★ 音量フェード（消えた瞬間から照明が消えるまで大きくする）
         if (audioSource != null && vanishSound != null)
         {
-            audioSource.PlayOneShot(vanishSound);
+            audioSource.clip = vanishSound;
+            audioSource.volume = 0f;
+            audioSource.Play();
         }
 
-        // 2. ノイズ映像ON
-        if (noiseEffectUI != null)
+        // 指定時間（vanishDelay）かけて音量を上げつつ待機
+        float elapsed = 0f;
+        while (elapsed < vanishDelay)
         {
-            noiseEffectUI.SetActive(true);
+            elapsed += Time.deltaTime;
+            if (audioSource != null)
+            {
+                audioSource.volume = Mathf.Lerp(0f, 1f, elapsed / vanishDelay);
+            }
+            yield return null;
         }
 
-        // 3. 少し待つ（ノイズが表示されている時間）
-        yield return new WaitForSeconds(noiseDuration);
-
-        // 4. 女性を消す ＆ ノイズも消す ＆ ライトを消す
-        womanObject.SetActive(false);
+        // 5. 照明OFF ＆ ノイズOFF ＆ 音停止
         if (noiseEffectUI != null)
         {
             noiseEffectUI.SetActive(false);
         }
 
-        // ライトOFF
         if (targetLights != null)
         {
             foreach (var light in targetLights)
             {
                 if (light != null) light.enabled = false;
             }
+        }
+        if (audioSource != null)
+        {
+             audioSource.Stop();
         }
         Debug.Log("🌑 照明OFF");
 
