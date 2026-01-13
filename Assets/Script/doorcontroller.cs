@@ -12,10 +12,33 @@ public class DoorController : MonoBehaviour, IFocusable
 
     private Coroutine autoCloseCoroutine;  // ★ 自動閉鎖用
 
+    [Header("Event System Link")]
+    [SerializeField] private HorrorEventManager eventManager;
+
+    [Header("Restriction Settings")]
+    [Tooltip("Check this if this door should be locked until the horror event is logged.")]
+    [SerializeField] private bool requiresEventCompletion = false;
+
     void Start()
     {
         closedRotation = transform.rotation;
         openRotation = Quaternion.Euler(transform.eulerAngles + new Vector3(0f, openAngle, 0f));
+
+        if (eventManager == null)
+        {
+            eventManager = FindFirstObjectByType<HorrorEventManager>();
+        }
+
+        if (eventManager != null)
+        {
+            Debug.Log($"🚪 [DoorController] Linked to EventManager: {eventManager.name}");
+        }
+        else
+        {
+            Debug.LogWarning("⚠️ [DoorController] HorrorEventManager NOT found. Restrictions may not work!");
+        }
+
+        Debug.Log($"🚪 [DoorController] Initialized on {gameObject.name}. RequiresCompletion: {requiresEventCompletion}");
     }
 
     void Update()
@@ -60,6 +83,31 @@ public class DoorController : MonoBehaviour, IFocusable
 
     public void ToggleDoor()
     {
+        Debug.Log($"🖱 [DoorController] ToggleDoor called on {gameObject.name}. IsOpen: {isOpen}, Requires: {requiresEventCompletion}");
+
+        // ★ 開けようとするときに制限チェック
+        if (!isOpen)
+        {
+            // フラグが立っている場合のみチェック
+            if (requiresEventCompletion)
+            {
+                if (eventManager == null)
+                {
+                    Debug.LogError("🔒 [DoorController] Locked (Safety). EventManager missing.");
+                    return;
+                }
+
+                bool canProceed = eventManager.CanProceedToNextLoop();
+                Debug.Log($"🧐 [DoorController] Checking Permission... Result: {canProceed}");
+
+                if (!canProceed)
+                {
+                    Debug.Log("🔒 [DoorController] Locked. You must witness the horror event first.");
+                    return;
+                }
+            }
+        }
+
         isOpen = !isOpen;
 
         if (isOpen)

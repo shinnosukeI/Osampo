@@ -87,6 +87,17 @@ public class warptrigger_st2 : MonoBehaviour
     // ★ クリック時の一連の処理
     private void OnDoorClicked()
     {
+        // ★ 進行判定: イベントを見ていない(ログがない)場合は進めない
+        if (stage2EventManager != null)
+        {
+            if (!stage2EventManager.CanProceedToNextLoop())
+            {
+                Debug.Log("🔒 [warptrigger_st2] イベント未確認のためドアを開けません。");
+                // ここで「鍵がかかっている」音などを鳴らすと親切
+                return;
+            }
+        }
+
         TeleportPlayer();
         OpenDoor();
         teleportCount++;

@@ -7,6 +7,7 @@ public class ApproachingPersonEvent : MonoBehaviour
     [SerializeField] private GameObject personObject; // 人のモデル
     [SerializeField] private AudioClip glassSound;    // 最初のガラス音
     [SerializeField] private AudioClip jumpScareSound;// 最後の悲鳴など
+    [SerializeField] private AudioClip appearanceVoiceSound; // ★ 追加: 出現時の声
     [SerializeField] private AudioSource audioSource;
 
     [Header("接近位置（順番に移動）")]
@@ -196,6 +197,12 @@ public class ApproachingPersonEvent : MonoBehaviour
             personObject.transform.position = approachPositions[0].position;
             personObject.transform.rotation = approachPositions[0].rotation;
             personObject.SetActive(true);
+
+            // ★ 出現時に声を再生
+            if (appearanceVoiceSound != null && audioSource != null)
+            {
+                audioSource.PlayOneShot(appearanceVoiceSound);
+            }
         }
 
         // 振り向き完了したので、次の検知フェーズへ
