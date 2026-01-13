@@ -18321,7 +18321,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HorrorEventManager
   debugMode: 1
-  debugSurveyResult: 4
+  targetLights:
+  - {fileID: 771996901}
+  - {fileID: 1381789435}
+  - {fileID: 845097194}
+  - {fileID: 1374540540}
+  - {fileID: 1474540398}
+  - {fileID: 1057641419}
+  - {fileID: 2082812210}
+  - {fileID: 1022065484}
+  - {fileID: 1880942594}
+  - {fileID: 362575685}
+  - {fileID: 1444981115}
+  debugSurveyResult: 2
   debugStartCycle: 1
   currentSurveyResult: -1
   eventDatabase: {fileID: 11400000, guid: cd95c981533df444aaccb542fbea63e9, type: 2}
@@ -18373,62 +18385,89 @@ MonoBehaviour:
     loopSettings:
     - eventID: 21
       lighting: 0
+      lightSettings:
+      - color: {r: 0.8396226, g: 0.122774996, b: 0.122774996, a: 0}
+        intensity: 2
     - eventID: 22
       lighting: 0
+      lightSettings: []
     - eventID: 24
       lighting: 0
+      lightSettings: []
     - eventID: 25
       lighting: 0
+      lightSettings: []
     - eventID: 44
       lighting: 0
+      lightSettings: []
   - surveyResultID: 1
     loopSettings:
     - eventID: 13
-      lighting: 0
+      lighting: 3
+      lightSettings: []
     - eventID: 14
       lighting: 0
+      lightSettings: []
     - eventID: 12
       lighting: 0
+      lightSettings: []
     - eventID: 15
       lighting: 0
+      lightSettings: []
     - eventID: 44
       lighting: 0
+      lightSettings: []
   - surveyResultID: 3
     loopSettings:
     - eventID: 31
       lighting: 0
+      lightSettings: []
     - eventID: 34
       lighting: 0
+      lightSettings: []
     - eventID: 32
       lighting: 0
+      lightSettings: []
     - eventID: 35
       lighting: 0
+      lightSettings: []
     - eventID: 44
       lighting: 0
+      lightSettings: []
   - surveyResultID: 4
     loopSettings:
     - eventID: 43
       lighting: 0
+      lightSettings: []
     - eventID: 41
       lighting: 0
+      lightSettings: []
     - eventID: 42
       lighting: 0
+      lightSettings: []
     - eventID: 46
       lighting: 0
+      lightSettings: []
     - eventID: 44
       lighting: 0
+      lightSettings: []
   - surveyResultID: 5
     loopSettings:
     - eventID: 51
       lighting: 0
+      lightSettings: []
     - eventID: 52
       lighting: 0
+      lightSettings: []
     - eventID: 56
       lighting: 0
+      lightSettings: []
     - eventID: 53
       lighting: 0
+      lightSettings: []
     - eventID: 44
       lighting: 0
+      lightSettings: []
 --- !u!4 &1697327540
 Transform:
   m_ObjectHideFlags: 0

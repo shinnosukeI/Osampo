@@ -13,6 +13,10 @@ public class HorrorEventManager : MonoBehaviour
     [Header("Debug Settings")]
     [Tooltip("有効にすると、以下のDebug設定でゲームを開始します")]
     [SerializeField] private bool debugMode = false;
+
+    [Header("Lighting Settings")]
+    [Tooltip("制御したい照明のリスト（複数可）")]
+    [SerializeField] private List<Light> targetLights;
     
     [Tooltip("デバッグ用：強制的にこのアンケート結果（ステージ）にする (1～5)")]
     [Range(1, 5)]
@@ -176,15 +180,30 @@ public class HorrorEventManager : MonoBehaviour
     }
 
     [System.Serializable]
+    public struct LightSetting
+    {
+        public Color color;
+        public float intensity;
+
+        public LightSetting(Color col, float inten)
+        {
+            color = col;
+            intensity = inten;
+        }
+    }
+
+    [System.Serializable]
     public struct StageLoopData
     {
         public int eventID;
         public LightingType lighting;
+        public List<LightSetting> lightSettings; // ★ 複数照明対応
 
-        public StageLoopData(int id, LightingType light)
+        public StageLoopData(int id, LightingType light, List<LightSetting> settings = null)
         {
             eventID = id;
             lighting = light;
+            lightSettings = settings ?? new List<LightSetting>();
         }
     }
 
@@ -710,12 +729,32 @@ public class HorrorEventManager : MonoBehaviour
         }
 
         // 3. 照明設定
-        SetLighting(data.lighting);
+        SetLighting(data);
 
     }
 
-    private void SetLighting(LightingType type)
+    private void SetLighting(StageLoopData data)
     {
+        // ★ 追加: 指定された照明リストに対して色と強度を適用
+        if (targetLights != null && data.lightSettings != null)
+        {
+            for (int i = 0; i < targetLights.Count; i++)
+            {
+                if (targetLights[i] == null) continue;
+
+                // 設定があれば適用（設定が足りない場合は既存の状態を維持、またはデフォルト？）
+                // ここでは設定がある分だけ適用する
+                if (i < data.lightSettings.Count)
+                {
+                    targetLights[i].color = data.lightSettings[i].color;
+                    targetLights[i].intensity = data.lightSettings[i].intensity;
+                }
+            }
+        }
+
+        // 既存の照明設定 (RenderSettingsなど)
+        LightingType type = data.lighting;
+
         // 初期リセット
         RenderSettings.ambientLight = initAmbientLight;
         RenderSettings.fogDensity = initFogDensity;
