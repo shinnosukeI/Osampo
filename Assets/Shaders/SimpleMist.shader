@@ -2,6 +2,7 @@ Shader "Unlit/SimpleMist"
 {
     Properties
     {
+        [PerRendererData] _MainTex ("Sprite Texture", 2D) = "white" {}
         _Color ("Mist Color", Color) = (1,1,1,0.5)
         _Speed ("Speed", Vector) = (0.1, 0.05, 0, 0)
         _Scale ("Noise Scale", Float) = 5.0
