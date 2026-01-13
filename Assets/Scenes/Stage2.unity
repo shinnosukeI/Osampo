@@ -3332,6 +3332,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: "15.\u30BE\u30F3\u30D3\u306B\u8FFD\u308F\u308C\u308B"
       objectReference: {fileID: 0}
+    - target: {fileID: 2382799219754379413, guid: 7d2bef75eb15f9241a477f7810c94995, type: 3}
+      propertyPath: m_Color.b
+      value: 0.505874
+      objectReference: {fileID: 0}
+    - target: {fileID: 2382799219754379413, guid: 7d2bef75eb15f9241a477f7810c94995, type: 3}
+      propertyPath: m_Color.g
+      value: 0.505874
+      objectReference: {fileID: 0}
+    - target: {fileID: 2382799219754379413, guid: 7d2bef75eb15f9241a477f7810c94995, type: 3}
+      propertyPath: m_Color.r
+      value: 0.5283019
+      objectReference: {fileID: 0}
     - target: {fileID: 3596924169608553300, guid: 7d2bef75eb15f9241a477f7810c94995, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -7912,7 +7924,7 @@ MonoBehaviour:
   glassSound: {fileID: 8300000, guid: 36adf7dbbf16c2247864d87fc5d13532, type: 3}
   jumpScareSound: {fileID: 0}
   appearanceVoiceSound: {fileID: 8300000, guid: 9fac4872c0e378c48a0ff2b0f5fa78bc, type: 3}
-  lastMoveSound: {fileID: 0}
+  lastMoveSound: {fileID: 8300000, guid: 188fa40a06b894e46b8b4cf90975b2ac, type: 3}
   audioSource: {fileID: 0}
   approachPositions:
   - {fileID: 1847541127}
@@ -7926,6 +7938,7 @@ MonoBehaviour:
   jumpScareDuration: 1
   initialWaitTime: 3
   eventVolume: 0.271
+  lastSoundVolume: 4.65
   playerForceMoveTarget: {fileID: 68310457}
 --- !u!114 &700739171
 MonoBehaviour:
@@ -17617,6 +17630,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1599477156}
   - component: {fileID: 1599477155}
+  - component: {fileID: 1599477157}
   m_Layer: 0
   m_Name: 53
   m_TagString: Untagged
@@ -17638,9 +17652,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VanishingWomanEvent
   womanObject: {fileID: 2014870449}
   vanishDelay: 2
-  audioSource: {fileID: 0}
-  appearSound: {fileID: 0}
-  vanishSound: {fileID: 0}
+  audioSource: {fileID: 1599477157}
+  vanishSound: {fileID: 8300000, guid: bf7f05eb53b39ac49b9d28f649e2f8fc, type: 3}
   noiseEffectUI: {fileID: 0}
   noiseDuration: 0.5
   targetLights:
@@ -17665,6 +17678,103 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &1599477157
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1599477154}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &1614474514
 GameObject:
   m_ObjectHideFlags: 0
@@ -18347,8 +18457,8 @@ MonoBehaviour:
   - {fileID: 1880942594}
   - {fileID: 362575685}
   - {fileID: 1444981115}
-  debugSurveyResult: 1
-  debugStartCycle: 5
+  debugSurveyResult: 4
+  debugStartCycle: 4
   currentSurveyResult: -1
   eventDatabase: {fileID: 11400000, guid: cd95c981533df444aaccb542fbea63e9, type: 2}
   objectToFallTarget: {fileID: 0}
@@ -18375,6 +18485,22 @@ MonoBehaviour:
   zombieChaseEventTarget: {fileID: 400829276}
   thunderAudioSource: {fileID: 1291720598}
   thunderSound: {fileID: 8300000, guid: 56b5c04be43d2834fb02d424e0bb69ab, type: 3}
+  thunderVolume: 2.21
+  thunderLights:
+  - {fileID: 771996901}
+  - {fileID: 1381789435}
+  - {fileID: 845097194}
+  - {fileID: 1374540540}
+  - {fileID: 1474540398}
+  - {fileID: 1057641419}
+  - {fileID: 2082812210}
+  - {fileID: 1022065484}
+  - {fileID: 1880942594}
+  - {fileID: 362575685}
+  - {fileID: 1444981115}
+  - {fileID: 0}
+  thunderIntensityMultiplier: 3
+  flashCount: 5
   laughAudioSource: {fileID: 877531015}
   laughSound: {fileID: 8300000, guid: febb18d12aea878458060df8713c88f2, type: 3}
   footstepsSound: {fileID: 8300000, guid: 3ac005d8a882bd540aa4c1a2b34f61d3, type: 3}
@@ -18413,7 +18539,27 @@ MonoBehaviour:
       lightSettings: []
     - eventID: 44
       lighting: 0
-      lightSettings: []
+      lightSettings:
+      - color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
+      - color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
+      - color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
+      - color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
+      - color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
+      - color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
+      - color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
+      - color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
+      - color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
+      - color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
   - surveyResultID: 1
     loopSettings:
     - eventID: 13
@@ -18481,7 +18627,17 @@ MonoBehaviour:
       lightSettings: []
     - eventID: 44
       lighting: 0
-      lightSettings: []
+      lightSettings:
+      - color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
+      - color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
+      - color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
+      - color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
+      - color: {r: 0.17254902, g: 0.3647059, b: 0.5294118, a: 0}
+        intensity: 0
 --- !u!4 &1697327540
 Transform:
   m_ObjectHideFlags: 0

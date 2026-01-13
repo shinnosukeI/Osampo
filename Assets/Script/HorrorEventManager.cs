@@ -107,8 +107,11 @@ public class HorrorEventManager : MonoBehaviour
     [Header("46: 雷イベント")] // ★ 追加
     [SerializeField]
     private AudioSource thunderAudioSource;
-    [SerializeField]
-    private AudioClip thunderSound;
+    [SerializeField] private AudioClip thunderSound;
+    [Range(0f, 5f)] [SerializeField] private float thunderVolume = 1.0f; // ★ 追加: 雷の音量
+    [SerializeField] private Light[] thunderLights; // ★ 追加: 雷で光らせるライト
+    [SerializeField] private float thunderIntensityMultiplier = 5.0f; // ★ 追加: 光の強さ倍率
+    [SerializeField] private int flashCount = 10; // ★ 追加: 点滅回数
 
     [Header("42: 笑い声イベント")] // ★ 追加
     [SerializeField]
@@ -1162,11 +1165,67 @@ public class HorrorEventManager : MonoBehaviour
             Debug.Log("⚡ 雷が鳴りました！");
              // AudioSourceはComponentなのでGameObjectをActiveにする
             thunderAudioSource.gameObject.SetActive(true);
-            thunderAudioSource.PlayOneShot(thunderSound);
+            thunderAudioSource.PlayOneShot(thunderSound, thunderVolume);
+            
+            // ★ 雷の点滅開始
+            StartCoroutine(ThunderFlashSequence());
         }
         else
         {
             Debug.LogError("46: 雷のAudioSourceまたはAudioClipが設定されていません。");
+        }
+    }
+
+    // ★ 雷の点滅コルーチン
+    private System.Collections.IEnumerator ThunderFlashSequence()
+    {
+        if (thunderLights == null || thunderLights.Length == 0) yield break;
+
+        // 元の強さを保存して、いったん微弱な光にする（真っ暗にはしない）
+        float[] originalIntensities = new float[thunderLights.Length];
+        for (int i = 0; i < thunderLights.Length; i++)
+        {
+            if (thunderLights[i] != null)
+            {
+                originalIntensities[i] = thunderLights[i].intensity;
+                thunderLights[i].enabled = true;
+                thunderLights[i].intensity = originalIntensities[i] * 0.2f; // 20%の明るさで待機
+            }
+        }
+
+        // ビカビカさせる
+        for (int i = 0; i < flashCount; i++)
+        {
+            // 点灯 (Flash)
+            for (int j = 0; j < thunderLights.Length; j++)
+            {
+                if (thunderLights[j] != null)
+                {
+                    // 元の明るさ ～ 倍率の明るさ でランダム
+                    thunderLights[j].intensity = UnityEngine.Random.Range(originalIntensities[j], originalIntensities[j] * thunderIntensityMultiplier);
+                }
+            }
+            yield return new WaitForSeconds(UnityEngine.Random.Range(0.05f, 0.15f));
+
+            // 減光 (Dim)
+            for (int j = 0; j < thunderLights.Length; j++)
+            {
+                if (thunderLights[j] != null)
+                {
+                    thunderLights[j].intensity = originalIntensities[j] * 0.2f; // 20%に戻す
+                }
+            }
+            yield return new WaitForSeconds(UnityEngine.Random.Range(0.05f, 0.2f));
+        }
+
+        // 最後は完全に元の状態に戻す
+        for (int i = 0; i < thunderLights.Length; i++)
+        {
+            if (thunderLights[i] != null)
+            {
+                thunderLights[i].enabled = true;
+                thunderLights[i].intensity = originalIntensities[i];
+            }
         }
     }
 
