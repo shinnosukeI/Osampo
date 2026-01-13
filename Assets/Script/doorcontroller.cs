@@ -12,10 +12,18 @@ public class DoorController : MonoBehaviour, IFocusable
 
     private Coroutine autoCloseCoroutine;  // ★ 自動閉鎖用
 
+    [Header("Event System Link")]
+    [SerializeField] private HorrorEventManager eventManager;
+
     void Start()
     {
         closedRotation = transform.rotation;
         openRotation = Quaternion.Euler(transform.eulerAngles + new Vector3(0f, openAngle, 0f));
+
+        if (eventManager == null)
+        {
+            eventManager = FindFirstObjectByType<HorrorEventManager>();
+        }
     }
 
     void Update()
@@ -60,6 +68,16 @@ public class DoorController : MonoBehaviour, IFocusable
 
     public void ToggleDoor()
     {
+        // ★ 開けようとするときに制限チェック
+        if (!isOpen)
+        {
+            if (eventManager != null && !eventManager.CanProceedToNextLoop())
+            {
+                Debug.Log("🔒 [DoorController] Locked. You must witness the horror event first.");
+                return;
+            }
+        }
+
         isOpen = !isOpen;
 
         if (isOpen)

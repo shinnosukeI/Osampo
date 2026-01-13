@@ -315,17 +315,20 @@ public class HorrorEventManager : MonoBehaviour
     /// </summary>
     private bool PruneUnusedTriggers(int activeEventID)
     {
-        // シーン上のすべての HorrorEventTrigger を取得 (非アクティブも含める)
+        // 1. HorrorEventTrigger (コライダー式の従来のトリガー)
         HorrorEventTrigger[] allTriggers = FindObjectsByType<HorrorEventTrigger>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         
-        Debug.Log($"👀 [Prune] Searching triggers for ActiveID: {activeEventID}. Found total: {allTriggers.Length} triggers.");
+        // 2. ProximityLogTrigger (接近検知式の新しいトリガー)
+        ProximityLogTrigger[] proxTriggers = FindObjectsByType<ProximityLogTrigger>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+
+        Debug.Log($"👀 [Prune] Searching triggers for ActiveID: {activeEventID}. Found Standard: {allTriggers.Length}, Proximity: {proxTriggers.Length}");
         
         int disabledCount = 0;
         bool foundActive = false;
 
+        // HorrorEventTrigger の処理
         foreach (var trigger in allTriggers)
         {
-            // トリガーが担当するイベントIDが、現在のアクティブIDと一致しなければ無効化
             if (trigger.eventType != activeEventID)
             {
                 if (trigger.gameObject.activeSelf)
@@ -336,11 +339,34 @@ public class HorrorEventManager : MonoBehaviour
             }
             else
             {
-                // 一致する場合は有効化
                 trigger.gameObject.SetActive(true);
-                trigger.ResetTrigger(); // ★ リセットして再利用可能にする
+                trigger.ResetTrigger();
                 foundActive = true;
-                Debug.Log($"✅ [Prune] ACTIVATED Trigger for Event {activeEventID} (Obj: {trigger.gameObject.name})");
+                Debug.Log($"✅ [Prune] ACTIVATED Standard Trigger for Event {activeEventID} (Obj: {trigger.gameObject.name})");
+            }
+        }
+
+        // ProximityLogTrigger の処理
+        foreach (var trigger in proxTriggers)
+        {
+            if (trigger.eventType != activeEventID)
+            {
+                // 自分自身のコンポーネントのみ無効化するか、GameObjectごと消すか？
+                // 汎用性を考えてGameObjectごと消すが、他のコンポーネントがある場合は注意が必要。
+                // 今回は「トリガー専用オブジェクト」とみなしてSetActive(false)する。
+                if (trigger.gameObject.activeSelf)
+                {
+                    trigger.gameObject.SetActive(false);
+                    disabledCount++;
+                }
+            }
+            else
+            {
+                trigger.gameObject.SetActive(true);
+                // ProximityLogTriggerにはResetTriggerがないが、Enable時にログ済みフラグが残っている場合があるため、
+                // 必要ならリセット機能を追加すべきだが、今回はActive化のみ行う
+                foundActive = true; 
+                Debug.Log($"✅ [Prune] ACTIVATED Proximity Trigger for Event {activeEventID} (Obj: {trigger.gameObject.name})");
             }
         }
 
@@ -1356,6 +1382,43 @@ public class HorrorEventManager : MonoBehaviour
         {
             if (data.eventID == eventID) return true;
         }
+        return false;
+    }
+
+    // ============================
+    // ★ 進行判定 (ログがないと進めない)
+    // ============================
+    public bool CanProceedToNextLoop()
+    {
+        // スケジュールがない場合は進行可（または不可? 安全策で可）
+        // if (currentStageSchedule.Count == 0) return true;
+        
+        Debug.Log($"🔍 [CanProceed] Checking... Cycle: {cycleCount}, ScheduleCount: {currentStageSchedule.Count}");
+
+        // 現在のサイクルに対応するインデックスを取得
+        // CycleCountは1始まり。インデックスは0始まり。
+        int index = cycleCount - 1;
+        if (index < 0) index = 0;
+
+        // ループ5以降の挙動に合わせてインデックスを調整
+        if (index >= currentStageSchedule.Count)
+        {
+            index = currentStageSchedule.Count - 1;
+        }
+        
+        if (currentStageSchedule.Count == 0) return true;
+
+        int currentEventID = currentStageSchedule[index].eventID;
+
+        // 現在のイベントがログに記録されているか確認
+        if (currentLoopLoggedEvents.Contains(currentEventID))
+        {
+            Debug.Log($"🔓 [CanProceed] Allowed. Event {currentEventID} is logged.");
+            return true;
+        }
+
+        // ログがない場合は進行不可
+        Debug.Log($"⛔ [HorrorEventManager] 進行不可: イベント {currentEventID} のログが記録されていません。 Logged Events: {string.Join(",", currentLoopLoggedEvents)}");
         return false;
     }
 }

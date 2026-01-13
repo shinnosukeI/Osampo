@@ -18333,7 +18333,7 @@ MonoBehaviour:
   - {fileID: 1880942594}
   - {fileID: 362575685}
   - {fileID: 1444981115}
-  debugSurveyResult: 2
+  debugSurveyResult: 4
   debugStartCycle: 1
   currentSurveyResult: -1
   eventDatabase: {fileID: 11400000, guid: cd95c981533df444aaccb542fbea63e9, type: 2}
