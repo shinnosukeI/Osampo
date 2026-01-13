@@ -19,6 +19,9 @@ public class DoorController : MonoBehaviour, IFocusable
     [Tooltip("Check this if this door should be locked until the horror event is logged.")]
     [SerializeField] private bool requiresEventCompletion = false;
 
+    // ★一度でもインタラクトされたかを記録
+    public bool HasBeenInteracted { get; private set; } = false;
+
     void Start()
     {
         closedRotation = transform.rotation;
@@ -84,6 +87,9 @@ public class DoorController : MonoBehaviour, IFocusable
     public void ToggleDoor()
     {
         Debug.Log($"🖱 [DoorController] ToggleDoor called on {gameObject.name}. IsOpen: {isOpen}, Requires: {requiresEventCompletion}");
+
+        // ★インタラクトされたことを記録
+        HasBeenInteracted = true;
 
         // ★ 開けようとするときに制限チェック
         if (!isOpen)
