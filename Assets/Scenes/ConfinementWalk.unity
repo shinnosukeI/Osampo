@@ -971,6 +971,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1003478098}
   - component: {fileID: 1003478097}
+  - component: {fileID: 1003478099}
   m_Layer: 0
   m_Name: TitleManager
   m_TagString: Untagged
@@ -1010,6 +1011,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1003478099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1003478096}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ac30839fcf16af4d99dbc63e6538992, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TitleFogController
+  fogColor: {r: 0.8207547, g: 0.8207547, b: 0.8207547, a: 0.02745098}
+  fogSpeed: {x: 0.2, y: 0.3}
+  fogScale: 20
+  sortOrder: 5
 --- !u!1 &1023421195
 GameObject:
   m_ObjectHideFlags: 0
@@ -2817,8 +2834,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Config
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: e226014d7d7ac8946ae4b1b9ed074ed3, type: 2}
-  m_sharedMaterial: {fileID: -175663180260395525, guid: e226014d7d7ac8946ae4b1b9ed074ed3, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2953,8 +2970,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Start
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: e226014d7d7ac8946ae4b1b9ed074ed3, type: 2}
-  m_sharedMaterial: {fileID: -175663180260395525, guid: e226014d7d7ac8946ae4b1b9ed074ed3, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
