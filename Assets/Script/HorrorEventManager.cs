@@ -213,7 +213,10 @@ public class HorrorEventManager : MonoBehaviour
     // ★ インスタンス化された一時的なオブジェクト（ゾンビ、ボールなど）の追跡リスト
     private List<GameObject> spawnedObjects = new List<GameObject>();
 
-    // 初期照明設定の保存用
+    // ★ 照明の初期状態保存用
+    private List<LightSetting> initialLightSettings = new List<LightSetting>();
+
+    // 初期照明設定の保存用 (RenderSettings)
     private Color initAmbientLight;
     private float initFogDensity;
     private Color initFogColor;
@@ -251,11 +254,28 @@ public class HorrorEventManager : MonoBehaviour
 
     void Start()
     {
-        // 照明の初期値を保存
+        // 照明の初期値を保存 (RenderSettings)
         initAmbientLight = RenderSettings.ambientLight;
         initFogDensity = RenderSettings.fogDensity;
         initFogColor = RenderSettings.fogColor;
         initFogEnabled = RenderSettings.fog;
+
+        // ★ Target Lights の初期値を保存
+        if (targetLights != null)
+        {
+            foreach (var l in targetLights)
+            {
+                if (l != null)
+                {
+                    initialLightSettings.Add(new LightSetting(l.color, l.intensity));
+                }
+                else
+                {
+                    // インデックスズレ防止のためダミー
+                    initialLightSettings.Add(new LightSetting(Color.white, 1f));
+                }
+            }
+        }
 
         // GameManagerからアンケート結果を取得
         currentSurveyResult = GameManager.SavedSurveyResult;
@@ -761,19 +781,36 @@ public class HorrorEventManager : MonoBehaviour
 
     private void SetLighting(StageLoopData data)
     {
-        // ★ 追加: 指定された照明リストに対して色と強度を適用
-        if (targetLights != null && data.lightSettings != null)
+        // specified lighting settings applied to target list
+        if (targetLights != null)
         {
-            for (int i = 0; i < targetLights.Count; i++)
+            // ★ まず初期状態にリセット
+            if (initialLightSettings != null)
             {
-                if (targetLights[i] == null) continue;
-
-                // 設定があれば適用（設定が足りない場合は既存の状態を維持、またはデフォルト？）
-                // ここでは設定がある分だけ適用する
-                if (i < data.lightSettings.Count)
+                for (int i = 0; i < targetLights.Count; i++)
                 {
-                    targetLights[i].color = data.lightSettings[i].color;
-                    targetLights[i].intensity = data.lightSettings[i].intensity;
+                    if (targetLights[i] == null) continue;
+
+                    if (i < initialLightSettings.Count)
+                    {
+                        targetLights[i].color = initialLightSettings[i].color;
+                        targetLights[i].intensity = initialLightSettings[i].intensity;
+                    }
+                }
+            }
+
+            // ★ その上で、現在の設定があれば上書き適用
+            if (data.lightSettings != null)
+            {
+                for (int i = 0; i < targetLights.Count; i++)
+                {
+                    if (targetLights[i] == null) continue;
+
+                    if (i < data.lightSettings.Count)
+                    {
+                        targetLights[i].color = data.lightSettings[i].color;
+                        targetLights[i].intensity = data.lightSettings[i].intensity;
+                    }
                 }
             }
         }
