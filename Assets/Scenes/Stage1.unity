@@ -11182,10 +11182,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FallingCorpse
   impactSound: {fileID: 8300000, guid: fe2e9ccca2f75ad488668a4fc01fe58a, type: 3}
   minImpactVelocity: 5
+  enableRotation: 0
   localTorqueDir: {x: 1, y: 0, z: 0}
   torqueImpulse: 0.3
   localPushDir: {x: 0, y: -0.3, z: 1}
   pushImpulse: 1
+  pushTarget: {fileID: 0}
 --- !u!65 &722817349
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -20389,6 +20391,7 @@ MonoBehaviour:
   displayDuration: 30
   defaultColor: {r: 1, g: 1, b: 1, a: 1}
   pressedColor: {r: 0.7, g: 0.7, b: 0.7, a: 1}
+  fadeDuration: 1.5
 --- !u!1 &1614474514
 GameObject:
   m_ObjectHideFlags: 0

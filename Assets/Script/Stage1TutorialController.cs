@@ -16,6 +16,7 @@ public class Stage1TutorialController : MonoBehaviour
     [SerializeField] private float displayDuration = 45.0f;
     [SerializeField] private Color defaultColor = Color.white;
     [SerializeField] private Color pressedColor = new Color(0.7f, 0.7f, 0.7f, 1.0f); // 薄灰色
+    [SerializeField] private float fadeDuration = 2.0f; // フェードアウトにかける時間
 
     private void Start()
     {
@@ -56,7 +57,30 @@ public class Stage1TutorialController : MonoBehaviour
         
         if (tutorialImage != null)
         {
+            // CanvasGroupを取得、なければ追加
+            CanvasGroup cg = tutorialImage.GetComponent<CanvasGroup>();
+            if (cg == null)
+            {
+                cg = tutorialImage.AddComponent<CanvasGroup>();
+            }
+
+            // フェードアウトループ
+            float startAlpha = cg.alpha;
+            float time = 0f;
+
+            while (time < fadeDuration)
+            {
+                time += Time.deltaTime;
+                cg.alpha = Mathf.Lerp(startAlpha, 0f, time / fadeDuration);
+                yield return null;
+            }
+
+            // 完全に透明にしてから非表示
+            cg.alpha = 0f;
             tutorialImage.SetActive(false);
+
+            // 次回表示時のために透明度を戻しておく（必要であれば）
+            cg.alpha = 1f; 
         }
     }
 
