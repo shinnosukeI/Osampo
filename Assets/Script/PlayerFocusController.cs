@@ -11,9 +11,12 @@ public class PlayerFocusController : MonoBehaviour
     [SerializeField] private GameObject actionGuideUI; // カステムアクションガイドUI
 
     private Camera playerCamera;
+    private HorrorEventManager horrorEventManager;
 
     void Start()
     {
+        horrorEventManager = FindFirstObjectByType<HorrorEventManager>();
+
         playerCamera = Camera.main;
         if (playerCamera == null)
         {
@@ -58,6 +61,36 @@ public class PlayerFocusController : MonoBehaviour
 
             if (focusable != null)
             {
+                 // コンポーネントがアタッチされているオブジェクトの名前を確認する
+                string objName = (focusable as Component).name.ToLower().Trim();
+
+                // 特定の名前のオブジェクトは除外
+                if (objName == "doorpovit" || objName == "doorprovit")
+                {
+                    Debug.Log($"ℹ [PlayerFocusController] Ignored target: {objName}");
+                    return;
+                }
+
+                // 特定のドア (doorpovit (3)) はCycleCountなどの条件で制御
+                if (objName.Contains("doorpovit (3)") || objName.Contains("doorprovit (3)"))
+                {
+                    // HorrorEventManagerが見つからない場合は安全のため通常のワンタイム動作とするか、デフォルトの挙動にする
+                    // CycleCount == 0 の時は反応しない
+                    if (horrorEventManager != null && horrorEventManager.CycleCount == 0)
+                    {
+                        Debug.Log($"ℹ [PlayerFocusController] Target {objName} ignored (Cycle 0).");
+                        return;
+                    }
+
+                    // CycleCount >= 1 または マネージャー不明時はワンタイム
+                    DoorController door = hit.collider.GetComponentInParent<DoorController>();
+                    if (door != null && door.HasBeenInteracted)
+                    {
+                         Debug.Log($"ℹ [PlayerFocusController] Target {hit.collider.name} has already been interacted with.");
+                         return;
+                    }
+                }
+
                 Debug.Log($"👁 [PlayerFocusController] Focused on target: {hit.collider.name}");
                 focusable.OnFocus();
             }
@@ -221,7 +254,41 @@ public class PlayerFocusController : MonoBehaviour
 
             if (focusable != null)
             {
-                hitFocusable = true;
+                // コンポーネントがアタッチされているオブジェクトの名前を確認する
+                // (Colliderが子要素にある場合、hit.collider.nameでは親の名前が取れないため)
+                string objName = (focusable as Component).name.ToLower().Trim();
+
+                // 特定の名前のオブジェクトは除外（完全一致のみ除外して、(1)などは許可する）
+                if (objName == "doorpovit" || objName == "doorprovit")
+                {
+                    hitFocusable = false;
+                }
+                // 特定のドア (doorpovit (3)) はCycleCountなどの条件で制御
+                else if (objName.Contains("doorpovit (3)") || objName.Contains("doorprovit (3)"))
+                {
+                     // CycleCount == 0 の時は反応しない
+                     if (horrorEventManager != null && horrorEventManager.CycleCount == 0)
+                     {
+                         hitFocusable = false;
+                     }
+                     else
+                     {
+                         // CycleCount >= 1: ワンタイム
+                         DoorController door = hit.collider.GetComponentInParent<DoorController>();
+                         if (door != null && door.HasBeenInteracted)
+                         {
+                             hitFocusable = false;
+                         }
+                         else
+                         {
+                             hitFocusable = true;
+                         }
+                     }
+                }
+                else
+                {
+                    hitFocusable = true;
+                }
             }
         }
 
