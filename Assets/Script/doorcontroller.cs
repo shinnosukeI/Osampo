@@ -39,9 +39,22 @@ public class DoorController : MonoBehaviour, IFocusable
         );
     }
 
+    // イベントなどでフォーカス先を上書きしたい場合の設定
+    public IFocusable FocusOverride { get; set; }
+
     // IFocusableの実装 (右クリックなどで呼ばれる)
     public void OnFocus()
     {
+        // 上書き設定があればそちらを呼ぶ
+        if (FocusOverride != null)
+        {
+            FocusOverride.OnFocus();
+            return;
+        }
+
+        // イベントなどで無効化されている場合は反応しない
+        if (!this.enabled) return;
+
         ToggleDoor();
     }
 
