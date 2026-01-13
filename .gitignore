@@ -82,4 +82,5 @@ crashlytics-build.properties
 
 /HeartRate/logs.txt
 
-/pelvis.prefab
+/Assets/Materials/pelvis.prefab
+/Assets/Materials/pelvis.prefab.meta
