@@ -7912,6 +7912,7 @@ MonoBehaviour:
   glassSound: {fileID: 8300000, guid: 36adf7dbbf16c2247864d87fc5d13532, type: 3}
   jumpScareSound: {fileID: 0}
   appearanceVoiceSound: {fileID: 8300000, guid: 9fac4872c0e378c48a0ff2b0f5fa78bc, type: 3}
+  lastMoveSound: {fileID: 0}
   audioSource: {fileID: 0}
   approachPositions:
   - {fileID: 1847541127}
@@ -7921,8 +7922,10 @@ MonoBehaviour:
   - {fileID: 1566623728}
   - {fileID: 585576986}
   lookThreshold: 0.7
-  stepDelay: 0.5
+  stepDelay: 0.1
   jumpScareDuration: 1
+  initialWaitTime: 3
+  eventVolume: 0.271
   playerForceMoveTarget: {fileID: 68310457}
 --- !u!114 &700739171
 MonoBehaviour:
@@ -18345,7 +18348,7 @@ MonoBehaviour:
   - {fileID: 362575685}
   - {fileID: 1444981115}
   debugSurveyResult: 1
-  debugStartCycle: 2
+  debugStartCycle: 5
   currentSurveyResult: -1
   eventDatabase: {fileID: 11400000, guid: cd95c981533df444aaccb542fbea63e9, type: 2}
   objectToFallTarget: {fileID: 0}
@@ -22595,6 +22598,10 @@ PrefabInstance:
     - target: {fileID: 7080045929559563020, guid: 12ed1a3979e40754c8d820661d7495de, type: 3}
       propertyPath: m_Name
       value: Zombie_Schoolgirl3_
+      objectReference: {fileID: 0}
+    - target: {fileID: 7080045929559563020, guid: 12ed1a3979e40754c8d820661d7495de, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7569056662051963318, guid: 12ed1a3979e40754c8d820661d7495de, type: 3}
       propertyPath: m_LocalPosition.x
