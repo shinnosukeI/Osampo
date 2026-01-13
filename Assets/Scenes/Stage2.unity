@@ -582,6 +582,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4da8d717a0b69a6429b573638c52d8a3, type: 3}
       insertIndex: -1
       addedObject: {fileID: 72546086}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4da8d717a0b69a6429b573638c52d8a3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 72546088}
   m_SourcePrefab: {fileID: 100100000, guid: 4da8d717a0b69a6429b573638c52d8a3, type: 3}
 --- !u!1 &72546082 stripped
 GameObject:
@@ -641,6 +644,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HorrorEventTrigger
   eventType: 52
   triggerOnce: 1
+--- !u!65 &72546088
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 72546082}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &72571482 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: a25107b7efe4e0941bed4252077d72c1, type: 3}
@@ -4372,6 +4396,22 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: f47b34077472fde45a20e8cc2d5874a5, type: 3}
   m_PrefabInstance: {fileID: 1585284538}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &493590629
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 493590627}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1ca436bd97af5d42a9b6b69ec141ad2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ProximityLogTrigger
+  eventType: 13
+  detectionRadius: 3
+  targetTag: Player
+  logOnce: 1
 --- !u!1001 &497885591
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4479,6 +4519,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6259796263409521304, guid: d4d2a382aa0ff1b4b85558799ee9b187, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1733014534}
+    - targetCorrespondingSourceObject: {fileID: 6259796263409521304, guid: d4d2a382aa0ff1b4b85558799ee9b187, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1733014536}
   m_SourcePrefab: {fileID: 100100000, guid: d4d2a382aa0ff1b4b85558799ee9b187, type: 3}
 --- !u!1001 &531491195
 PrefabInstance:
@@ -7337,6 +7380,7 @@ MonoBehaviour:
   focusLayer:
     serializedVersion: 2
     m_Bits: 4294967295
+  actionGuideUI: {fileID: 0}
 --- !u!1 &653713952
 GameObject:
   m_ObjectHideFlags: 0
@@ -17544,7 +17588,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f47b34077472fde45a20e8cc2d5874a5, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 493590629}
   m_SourcePrefab: {fileID: 100100000, guid: f47b34077472fde45a20e8cc2d5874a5, type: 3}
 --- !u!1 &1599477154
 GameObject:
@@ -18938,6 +18985,22 @@ CapsuleCollider:
   m_Height: 1
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1733014536
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1733014532}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1ca436bd97af5d42a9b6b69ec141ad2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ProximityLogTrigger
+  eventType: 22
+  detectionRadius: 10
+  targetTag: Player
+  logOnce: 1
 --- !u!1001 &1759899499
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -19255,6 +19318,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1792127237}
   - component: {fileID: 1792127236}
+  - component: {fileID: 1792127238}
   m_Layer: 0
   m_Name: 34
   m_TagString: Untagged
@@ -19374,6 +19438,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: -90, y: -86.656, z: 0.969}
+--- !u!114 &1792127238
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1792127235}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1ca436bd97af5d42a9b6b69ec141ad2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ProximityLogTrigger
+  eventType: 34
+  detectionRadius: 10
+  targetTag: Player
+  logOnce: 1
 --- !u!1001 &1809288456
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -20038,6 +20118,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1881580877}
+  - component: {fileID: 1881580878}
   m_Layer: 0
   m_Name: 32
   m_TagString: Untagged
@@ -20062,6 +20143,22 @@ Transform:
   - {fileID: 44769584}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1881580878
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1881580876}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1ca436bd97af5d42a9b6b69ec141ad2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ProximityLogTrigger
+  eventType: 32
+  detectionRadius: 10
+  targetTag: Player
+  logOnce: 1
 --- !u!1 &1889333196
 GameObject:
   m_ObjectHideFlags: 0

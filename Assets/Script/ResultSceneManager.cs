@@ -61,6 +61,10 @@ public class ResultSceneManager : MonoBehaviour
 
         // 4. スクリーンショット保存 (自動)
         StartCoroutine(SaveResultScreenshotSequence());
+
+        // 5. カーソルを表示・ロック解除
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
     }
 
     private void DisplayResults()

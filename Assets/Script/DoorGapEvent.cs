@@ -63,6 +63,8 @@ public class DoorGapEvent : MonoBehaviour, IFocusable
         if (doorController != null)
         {
             doorController.enabled = false;
+            // ドアを見てもこのイベントが発動するようにする
+            doorController.FocusOverride = this;
         }
 
         // 現在の回転を保存（閉まっている前提）
@@ -130,6 +132,7 @@ public class DoorGapEvent : MonoBehaviour, IFocusable
         // DoorControllerを有効に戻す（プレイヤーが後で通れるように）
         if (doorController != null)
         {
+            doorController.FocusOverride = null; // 上書き解除
             doorController.enabled = true;
             // DoorControllerの状態整合性を取るためにCloseを呼んでおくのが無難
             doorController.CloseDoor(); 
