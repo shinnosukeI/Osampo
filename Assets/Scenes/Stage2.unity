@@ -3944,6 +3944,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 80
   speed: 2
+  eventManager: {fileID: 0}
+  requiresEventCompletion: 1
 --- !u!4 &441854464
 Transform:
   m_ObjectHideFlags: 0
@@ -3974,6 +3976,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   speed: 2
+  eventManager: {fileID: 0}
+  requiresEventCompletion: 1
 --- !u!1 &451058426
 GameObject:
   m_ObjectHideFlags: 0
@@ -7907,6 +7911,7 @@ MonoBehaviour:
   personObject: {fileID: 990831627}
   glassSound: {fileID: 8300000, guid: 36adf7dbbf16c2247864d87fc5d13532, type: 3}
   jumpScareSound: {fileID: 0}
+  appearanceVoiceSound: {fileID: 8300000, guid: 9fac4872c0e378c48a0ff2b0f5fa78bc, type: 3}
   audioSource: {fileID: 0}
   approachPositions:
   - {fileID: 1847541127}
@@ -8384,6 +8389,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   speed: 2
+  eventManager: {fileID: 0}
+  requiresEventCompletion: 1
 --- !u!65 &767345312
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -12235,6 +12242,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 45
   speed: 1
+  eventManager: {fileID: 0}
+  requiresEventCompletion: 0
 --- !u!4 &1071550489
 Transform:
   m_ObjectHideFlags: 0
@@ -16781,6 +16790,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 45
   speed: 1
+  eventManager: {fileID: 0}
+  requiresEventCompletion: 0
 --- !u!4 &1500718830
 Transform:
   m_ObjectHideFlags: 0
@@ -21657,6 +21668,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 45
   speed: 1
+  eventManager: {fileID: 0}
+  requiresEventCompletion: 0
 --- !u!4 &2080878056
 Transform:
   m_ObjectHideFlags: 0
