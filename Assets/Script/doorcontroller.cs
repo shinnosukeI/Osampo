@@ -12,6 +12,9 @@ public class DoorController : MonoBehaviour, IFocusable
 
     private Coroutine autoCloseCoroutine;
 
+    // ★一度でもインタラクトされたかを記録
+    public bool HasBeenInteracted { get; private set; } = false;
+
     void Start()
     {
         closedRotation = transform.localRotation;

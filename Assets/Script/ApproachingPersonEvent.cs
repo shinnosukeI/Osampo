@@ -8,6 +8,7 @@ public class ApproachingPersonEvent : MonoBehaviour
     [SerializeField] private AudioClip glassSound;    // 最初のガラス音
     [SerializeField] private AudioClip jumpScareSound;// 最後の悲鳴など
     [SerializeField] private AudioClip appearanceVoiceSound; // ★ 追加: 出現時の声
+    [SerializeField] private AudioClip lastMoveSound; // ★ 追加: 最後の移動が終わったときの音
     [SerializeField] private AudioSource audioSource;
 
     [Header("接近位置（順番に移動）")]
@@ -17,6 +18,12 @@ public class ApproachingPersonEvent : MonoBehaviour
     [SerializeField] private float lookThreshold = 0.7f; // 視界に入った判定の閾値
     [SerializeField] private float stepDelay = 0.5f;     // 移動間の待機時間
     [SerializeField] private float jumpScareDuration = 2.0f; // 最後の表示時間
+    [Tooltip("出現してから移動を開始するまでの待機時間")]
+    [SerializeField] private float initialWaitTime = 3.0f; // ★ 追加: 移動開始前の待機
+    [Range(0f, 1f)]
+    [SerializeField] private float eventVolume = 0.5f;   // ★ 追加: 音量設定
+    [Range(0f, 10f)]
+    [SerializeField] private float lastSoundVolume = 1.0f; // ★ 追加: 最後の音専用の音量
 
     private bool isEventActive = false;
     private bool hasLookedAt = false;
@@ -41,6 +48,16 @@ public class ApproachingPersonEvent : MonoBehaviour
             {
                 audioSource = gameObject.AddComponent<AudioSource>();
             }
+            audioSource = GetComponent<AudioSource>();
+            if (audioSource == null)
+            {
+                audioSource = gameObject.AddComponent<AudioSource>();
+            }
+        }
+        // ★ 音量適用
+        if (audioSource != null)
+        {
+            audioSource.volume = eventVolume;
         }
 
         playerCamera = Camera.main;
@@ -137,6 +154,20 @@ public class ApproachingPersonEvent : MonoBehaviour
             }
             
             Quaternion startRot = playerTransform.rotation;
+
+            // ★ 修正: 振り向く前に人を配置・表示する（振り返ったら既にいるようにする）
+            if (approachPositions != null && approachPositions.Length > 0)
+            {
+                personObject.transform.position = approachPositions[0].position;
+                personObject.transform.rotation = approachPositions[0].rotation;
+                personObject.SetActive(true);
+
+                // 出現時（配置時）に声を再生
+                if (appearanceVoiceSound != null && audioSource != null)
+                {
+                    audioSource.PlayOneShot(appearanceVoiceSound);
+                }
+            }
             
             // ★ 位置合わせの計算
             Vector3 startPos = playerTransform.position;
@@ -191,18 +222,12 @@ public class ApproachingPersonEvent : MonoBehaviour
 
         yield return new WaitForSeconds(0.2f);
 
-        // 4. 人を初期位置に表示（ここでようやく出現）
-        if (approachPositions != null && approachPositions.Length > 0)
+        // 4. 人を表示（上記で既に表示済みだが、念のため位置補正などあればここで行う）
+        // if (approachPositions != null && approachPositions.Length > 0) ... 既に表示済みなのでスキップ
+        // 念のためActive確認だけ
+        if (personObject != null && !personObject.activeSelf)
         {
-            personObject.transform.position = approachPositions[0].position;
-            personObject.transform.rotation = approachPositions[0].rotation;
-            personObject.SetActive(true);
-
-            // ★ 出現時に声を再生
-            if (appearanceVoiceSound != null && audioSource != null)
-            {
-                audioSource.PlayOneShot(appearanceVoiceSound);
-            }
+             personObject.SetActive(true);
         }
 
         // 振り向き完了したので、次の検知フェーズへ
@@ -237,6 +262,9 @@ public class ApproachingPersonEvent : MonoBehaviour
 
     private IEnumerator ApproachSequence()
     {
+        // ★ 追加: 3秒待ってから移動開始
+        yield return new WaitForSeconds(initialWaitTime);
+
         // 3. 接近（瞬間移動）
         // 初期位置(0)は既に表示済みなので、1から開始
         for (int i = 1; i < approachPositions.Length; i++)
@@ -248,8 +276,15 @@ public class ApproachingPersonEvent : MonoBehaviour
                 personObject.transform.position = approachPositions[i].position;
                 personObject.transform.rotation = approachPositions[i].rotation;
                 
-                // 移動音などを鳴らしても良い
-                // audioSource.PlayOneShot(stepSound); 
+                // ★ 最後の移動かどうか判定
+                if (i == approachPositions.Length - 1)
+                {
+                    if (lastMoveSound != null)
+                    {
+                        // ★ 専用の音量で再生
+                        audioSource.PlayOneShot(lastMoveSound, lastSoundVolume);
+                    }
+                }
             }
         }
 
