@@ -275,7 +275,7 @@ public class st1_HorrorEventManager : MonoBehaviour
         }
 
         // ファイル名: ユーザー名_02_HorrorEvent_log.csv
-        string fileName = $"{subjectID}_02_HorrorEvent_log.csv";
+        string fileName = $"{subjectID}_02_stage1_HorrorEvent_log.csv";
         string directoryPath = Path.Combine(Application.persistentDataPath, "CSV");
 
         if (!Directory.Exists(directoryPath))
