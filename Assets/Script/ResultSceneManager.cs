@@ -496,8 +496,8 @@ public class ResultSceneManager : MonoBehaviour
     /// </summary>
     private IEnumerator SaveResultScreenshotSequence()
     {
-        // フェードイン完了を待つために0.8秒待機
-        yield return new WaitForSeconds(0.8f);
+        // フェードイン完了を待つために1.2秒待機
+        yield return new WaitForSeconds(1.2f);
         // UI描画完了を待つ
         yield return new WaitForEndOfFrame();
 
