@@ -177,15 +177,170 @@ public class ResultSceneManager : MonoBehaviour
             surveyResultText.text = resultText;
         }
 
-        // 5. グラフ描画 (Phase 1)
-        if (stage1GraphRenderer != null)
+        // 5. グラフ描画 (CSVデータ読み込み・統合)
+        DisplayGraphWithEvents(1, stage1GraphRenderer, GameManager.SavedStage1BPMList); // Stage 1
+        DisplayGraphWithEvents(2, stage2GraphRenderer, GameManager.SavedStage2BPMList); // Stage 2
+    }
+
+    /// <summary>
+    /// 指定ステージのログを読み込み、グラフを表示する
+    /// </summary>
+    private void DisplayGraphWithEvents(int stageNum, GraphRenderer graphRenderer, List<int> fallbackList)
+    {
+        if (graphRenderer == null) return;
+
+        string bpmFile = "";
+        string eventFile = "";
+        string subjectID = GameManager.SubjectID;
+        if (string.IsNullOrEmpty(subjectID)) subjectID = "P001"; // Fallback
+
+        // 新しい命名規則に対応
+        if (stageNum == 1)
         {
-            stage1GraphRenderer.ShowGraph(GameManager.SavedStage1BPMList);
+            bpmFile = $"{subjectID}_03_stage1_bpm_log.csv";
+            eventFile = $"{subjectID}_02_stage1_HorrorEvent_log.csv";
         }
-        if (stage2GraphRenderer != null)
+        else
         {
-            stage2GraphRenderer.ShowGraph(GameManager.SavedStage2BPMList);
+            bpmFile = $"{subjectID}_05_stage2_bpm_log.csv";
+            eventFile = $"{subjectID}_04_stage2_HorrorEvent_log.csv";
         }
+
+        List<int> bpmList = fallbackList;
+        List<(int index, int eventId)> eventList = new List<(int, int)>();
+
+        // CSVからの読み込みを試みる
+        string directoryPath = Path.Combine(Application.persistentDataPath, "CSV");
+        string bpmPath = Path.Combine(directoryPath, bpmFile);
+        string eventPath = Path.Combine(directoryPath, eventFile);
+
+        bool bpmLoaded = false;
+
+        if (File.Exists(bpmPath))
+        {
+            var loadedBpmData = ReadBpmLog(bpmPath);
+            if (loadedBpmData.Count > 0)
+            {
+                bpmList = loadedBpmData.Select(x => x.bpm).ToList();
+                bpmLoaded = true;
+                
+                // イベントログとの照合 (BPMがロードできた場合のみ意味がある)
+                if (File.Exists(eventPath))
+                {
+                    var loadedEvents = ReadEventLog(eventPath);
+                    if (loadedEvents.Count > 0)
+                    {
+                        eventList = CorrelateEvents(loadedBpmData, loadedEvents);
+                    }
+                }
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"[ResultScene] BPM Log not found at {bpmPath}. Using memory data.");
+        }
+
+        // グラフ描画
+        graphRenderer.ShowGraph(bpmList, eventList);
+    }
+
+    // BPMデータの構造体
+    private struct BpmData
+    {
+        public System.DateTime timestamp;
+        public int bpm;
+    }
+
+    // イベントデータの構造体
+    private struct EventData
+    {
+        public System.DateTime timestamp;
+        public int eventId;
+    }
+
+    private List<BpmData> ReadBpmLog(string path)
+    {
+        var result = new List<BpmData>();
+        try
+        {
+            string[] lines = File.ReadAllLines(path);
+            // ヘッダー (Timestamp,BPM) をスキップ
+            for (int i = 1; i < lines.Length; i++)
+            {
+                var parts = lines[i].Split(',');
+                if (parts.Length >= 2)
+                {
+                    if (System.DateTime.TryParse(parts[0], out var dt) && int.TryParse(parts[1], out var val))
+                    {
+                        result.Add(new BpmData { timestamp = dt, bpm = val });
+                    }
+                }
+            }
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"Failed to read BPM log: {e.Message}");
+        }
+        return result;
+    }
+
+    private List<EventData> ReadEventLog(string path)
+    {
+        var result = new List<EventData>();
+        try
+        {
+            string[] lines = File.ReadAllLines(path);
+            // ヘッダー (Timestamp,EventID) をスキップ
+            for (int i = 1; i < lines.Length; i++)
+            {
+                var parts = lines[i].Split(',');
+                if (parts.Length >= 2)
+                {
+                    if (System.DateTime.TryParse(parts[0], out var dt) && int.TryParse(parts[1], out var val))
+                    {
+                        result.Add(new EventData { timestamp = dt, eventId = val });
+                    }
+                }
+            }
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"Failed to read Event log: {e.Message}");
+        }
+        return result;
+    }
+
+    // イベント発生時刻に最も近いBPMデータのインデックスを探す
+    private List<(int index, int eventId)> CorrelateEvents(List<BpmData> bpmData, List<EventData> eventData)
+    {
+        var correlated = new List<(int, int)>();
+
+        foreach (var evt in eventData)
+        {
+            // 最も近いタイムスタンプを探す
+            // BPMデータは時系列順前提
+            double minDiff = double.MaxValue;
+            int bestIndex = -1;
+
+            for (int i = 0; i < bpmData.Count; i++)
+            {
+                double diff = System.Math.Abs((bpmData[i].timestamp - evt.timestamp).TotalSeconds);
+                if (diff < minDiff)
+                {
+                    minDiff = diff;
+                    bestIndex = i;
+                }
+            }
+
+            // 誤差が大きすぎる場合（例: ログが途切れている）は除外しても良いが、ここでは単純に最小差を採用
+            // ただし5秒以上ずれている場合は関連なしとみなす等の閾値を設けても良い
+            if (bestIndex != -1 && minDiff < 5.0) 
+            {
+                correlated.Add((bestIndex, evt.eventId));
+                Debug.Log($"Matched Event {evt.eventId} to BPM Index {bestIndex} (Diff: {minDiff:F2}s)");
+            }
+        }
+        return correlated;
     }
 
     /// <summary>

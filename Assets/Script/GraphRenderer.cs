@@ -22,11 +22,15 @@ public class GraphRenderer : MonoBehaviour
             graphContainer = GetComponent<RectTransform>();
         }
     }
+    [Header("Event Markers")]
+    [SerializeField] private Color eventMarkerColor = Color.red;
+    [SerializeField] private float eventMarkerSize = 15f; // 少し大きめ
 
     /// <summary>
     /// 心拍数リストを受け取り、グラフを描画する
+    /// events: イベントが発生したインデックスとイベントIDのリスト (オプション)
     /// </summary>
-    public void ShowGraph(List<int> bpmList)
+    public void ShowGraph(List<int> bpmList, List<(int index, int eventId)> events = null)
     {
         // 既存のグラフをクリア
         foreach (Transform child in graphContainer)
@@ -61,8 +65,10 @@ public class GraphRenderer : MonoBehaviour
         {
             float xPosition = i * xSize;
             float yPosition = ((bpmList[i] - yMin) / yDifference) * graphHeight;
+            Vector2 pos = new Vector2(xPosition, yPosition);
 
-            GameObject circleGameObject = CreateCircle(new Vector2(xPosition, yPosition));
+            // 通常のドット描画
+            GameObject circleGameObject = CreateCircle(pos, false);
             
             if (lastCircleGameObject != null)
             {
@@ -70,33 +76,63 @@ public class GraphRenderer : MonoBehaviour
                                     circleGameObject.GetComponent<RectTransform>().anchoredPosition);
             }
             lastCircleGameObject = circleGameObject;
+
+            // イベントマーカーのチェック
+            if (events != null)
+            {
+                foreach (var evt in events)
+                {
+                    if (evt.index == i)
+                    {
+                        CreateEventMarker(pos, evt.eventId);
+                    }
+                }
+            }
         }
     }
 
-    private GameObject CreateCircle(Vector2 anchoredPosition)
+    private GameObject CreateCircle(Vector2 anchoredPosition, bool isEvent)
     {
-        GameObject gameObject = new GameObject("dot", typeof(Image));
+        GameObject gameObject = new GameObject(isEvent ? "event_marker" : "dot", typeof(Image));
         gameObject.transform.SetParent(graphContainer, false);
         
         Image image = gameObject.GetComponent<Image>();
         image.sprite = dotSprite;
-        image.color = graphColor;
+        
+        // 色とサイズを切り替え
+        if (isEvent)
+        {
+            image.color = eventMarkerColor;
+            gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(eventMarkerSize, eventMarkerSize);
+        }
+        else
+        {
+            image.color = graphColor;
+            gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(dotSize, dotSize);
+        }
 
         RectTransform rectTransform = gameObject.GetComponent<RectTransform>();
-        // アンカーを左下に設定
         rectTransform.anchorMin = new Vector2(0, 0);
         rectTransform.anchorMax = new Vector2(0, 0);
-        // ピボットを中心にする
         rectTransform.pivot = new Vector2(0.5f, 0.5f);
         
         rectTransform.anchoredPosition = anchoredPosition;
-        rectTransform.sizeDelta = new Vector2(dotSize, dotSize);
-        
-        // スケールと回転をリセット (念のため)
-        rectTransform.localScale = Vector3.one;
-        rectTransform.localRotation = Quaternion.identity;
+
+        // イベントマーカーは前面に表示
+        if (isEvent)
+        {
+            rectTransform.SetAsLastSibling();
+        }
         
         return gameObject;
+    }
+
+    private void CreateEventMarker(Vector2 position, int eventId)
+    {
+        // マーカーを描画 (単純に色違いの大きなドットを表示)
+        CreateCircle(position, true);
+
+        // 必要であればここにテキスト表示などを追加可能
     }
 
     private void CreateDotConnection(Vector2 dotPositionA, Vector2 dotPositionB)
