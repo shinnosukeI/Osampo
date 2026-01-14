@@ -62,12 +62,12 @@ public class StageHeartRateManager : BaseHeartRateManager
         if (sceneName == "99_BPMTestScene1" || sceneName == "Stage1")
         {
             // ユーザー要望: Stage1は 03
-            logFileName = "03_test_Stage1_bpm_log";
+            logFileName = "03_stage1_bpm_log";
         }
         else if (sceneName == "99_BPMTestScene2" || sceneName == "Stage2")
         {
             // ユーザー要望: Stage2は 05
-            logFileName = "05_test_stage2_bpm_log";
+            logFileName = "05_stage2_bpm_log";
         }
         else
         {
