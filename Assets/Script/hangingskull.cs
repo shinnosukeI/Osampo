@@ -68,3 +68,5 @@ public class HangingSkull : MonoBehaviour
         rb.AddTorque(torque, ForceMode.Impulse);
     }
 }
+
+//ssss
