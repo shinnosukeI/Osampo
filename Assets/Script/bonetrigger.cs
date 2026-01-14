@@ -57,3 +57,5 @@ public class BoneTrigger : MonoBehaviour
         Debug.Log($"☠️ [BoneTrigger] Cycle={current} 骸骨イベント発生（ID:{boneEventID}）");
     }
 }
+
+//test
