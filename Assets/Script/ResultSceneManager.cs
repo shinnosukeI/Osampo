@@ -14,11 +14,18 @@ public class ResultSceneManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI stage1Rank1Text;
     [SerializeField] private TextMeshProUGUI stage1Rank2Text;
     [SerializeField] private TextMeshProUGUI stage1Rank3Text;
+    [SerializeField] private TextMeshProUGUI stage1Rank1EventText; // 追加
+    [SerializeField] private TextMeshProUGUI stage1Rank2EventText; // 追加
+    [SerializeField] private TextMeshProUGUI stage1Rank3EventText; // 追加
     [SerializeField] private TextMeshProUGUI stage1AverageText; 
     [SerializeField] private TextMeshProUGUI stage2Rank1Text;
+    [SerializeField] private TextMeshProUGUI stage2Rank1EventText; // 追加: Stage2用
     [SerializeField] private TextMeshProUGUI stage2AverageText; 
     [SerializeField] private TextMeshProUGUI fearEvaluationText; // 追加: 判定結果表示用
     [SerializeField] private TextMeshProUGUI surveyResultText; // 追加: 選択された恐怖ID表示用
+    
+    [Header("Data")]
+    [SerializeField] private HorrorEventDatabase eventDatabase; // 追加
 
     [Header("System")]
     [SerializeField] private GameManager gameManager;
@@ -56,6 +63,9 @@ public class ResultSceneManager : MonoBehaviour
                 Debug.LogError("ResultSceneManager: GameManager not found in scene!");
             }
         }
+        
+        // Database初期化
+        if (eventDatabase != null) eventDatabase.Initialize();
 
         DisplayResults();
 
@@ -76,8 +86,38 @@ public class ResultSceneManager : MonoBehaviour
         }
 
         // 2. Stage1 (99_BPMTestScene1) のランキング
-        // 変更: 単純な上位ではなく、ピーク（山）のトップ3を取得する
-        List<int> stage1Ranks = CalculateTopPeaks(GameManager.SavedStage1BPMList, 3);
+        List<int> stage1Ranks = new List<int>();
+        
+        // CSVからの読み込みを試みる (タイムスタンプが必要なため)
+        string subjectID = GameManager.SubjectID;
+        if (string.IsNullOrEmpty(subjectID)) subjectID = "P001";
+        
+        // Stage 1 Paths
+        string s1bpmPath = Path.Combine(Application.persistentDataPath, "CSV", $"{subjectID}_03_stage1_bpm_log.csv");
+        string s1eventPath = Path.Combine(Application.persistentDataPath, "CSV", $"{subjectID}_02_stage1_HorrorEvent_log.csv");
+
+        if (File.Exists(s1bpmPath) && File.Exists(s1eventPath))
+        {
+            // CSVがある場合：タイムスタンプを使ってイベント特定付きのランキング計算
+            var bpmData = ReadBpmLog(s1bpmPath);
+            var eventData = ReadEventLog(s1eventPath);
+            var rankedPeaks = CalculateTopPeaksWithEvents(bpmData, eventData, 3);
+
+            stage1Ranks = rankedPeaks.Select(x => x.bpm).ToList();
+
+            // イベント名表示
+            if (stage1Rank1EventText != null) stage1Rank1EventText.text = rankedPeaks.Count > 0 ? GetEventName(rankedPeaks[0].eventId) : "-";
+            if (stage1Rank2EventText != null) stage1Rank2EventText.text = rankedPeaks.Count > 1 ? GetEventName(rankedPeaks[1].eventId) : "-";
+            if (stage1Rank3EventText != null) stage1Rank3EventText.text = rankedPeaks.Count > 2 ? GetEventName(rankedPeaks[2].eventId) : "-";
+        }
+        else
+        {
+            // CSVがない場合：既存ロジック (イベント名は出せない)
+            stage1Ranks = CalculateTopPeaks(GameManager.SavedStage1BPMList, 3);
+            if (stage1Rank1EventText != null) stage1Rank1EventText.text = "-";
+            if (stage1Rank2EventText != null) stage1Rank2EventText.text = "-";
+            if (stage1Rank3EventText != null) stage1Rank3EventText.text = "-";
+        }
         
         if (stage1Rank1Text != null) stage1Rank1Text.text = stage1Ranks.Count > 0 ? $"{stage1Ranks[0]}" : "-";
         if (stage1Rank2Text != null) stage1Rank2Text.text = stage1Ranks.Count > 1 ? $"{stage1Ranks[1]}" : "-";
@@ -91,8 +131,29 @@ public class ResultSceneManager : MonoBehaviour
         }
 
         // 3. Stage2 (99_BPMTestScene2) のランキング (1位のみ)
-        // Stage2は現状維持（単純な最大値で良いか確認が必要だが、指示はStage1のみだったので既存ロジック）
-        List<int> stage2Ranks = CalculateTopRanks(GameManager.SavedStage2BPMList, 1);
+        // Stage 2 Paths
+        string s2bpmPath = Path.Combine(Application.persistentDataPath, "CSV", $"{subjectID}_05_stage2_bpm_log.csv");
+        string s2eventPath = Path.Combine(Application.persistentDataPath, "CSV", $"{subjectID}_04_stage2_HorrorEvent_log.csv");
+        
+        List<int> stage2Ranks = new List<int>();
+
+        if (File.Exists(s2bpmPath) && File.Exists(s2eventPath))
+        {
+            var bpmData = ReadBpmLog(s2bpmPath);
+            var eventData = ReadEventLog(s2eventPath);
+            // Top 1のみ
+            var rankedPeaks = CalculateTopPeaksWithEvents(bpmData, eventData, 1);
+            
+            stage2Ranks = rankedPeaks.Select(x => x.bpm).ToList();
+
+            // イベント名
+            if (stage2Rank1EventText != null) stage2Rank1EventText.text = rankedPeaks.Count > 0 ? GetEventName(rankedPeaks[0].eventId) : "-";
+        }
+        else
+        {
+            stage2Ranks = CalculateTopRanks(GameManager.SavedStage2BPMList, 1);
+            if (stage2Rank1EventText != null) stage2Rank1EventText.text = "-";
+        }
 
         if (stage2Rank1Text != null) stage2Rank1Text.text = stage2Ranks.Count > 0 ? $"{stage2Ranks[0]}" : "-";
 
@@ -162,24 +223,40 @@ public class ResultSceneManager : MonoBehaviour
         if (surveyResultText != null)
         {
             int resultId = GameManager.SavedSurveyResult;
-            string resultText = "-";
-
-            switch (resultId)
-            {
-                case 1: resultText = "異形・クリーチャー的恐怖"; break;
-                case 2: resultText = "人体・人形的恐怖"; break;
-                case 3: resultText = "生理的嫌悪・外相的恐怖"; break;
-                case 4: resultText = "心理的・行動的恐怖"; break;
-                case 5: resultText = "超常的な恐怖"; break;
-                default: resultText = resultId != -1 ? $"不明な恐怖(ID:{resultId})" : "-"; break;
-            }
-
-            surveyResultText.text = resultText;
+            surveyResultText.text = GetEventName(resultId, true); // true = カテゴリ名として取得の可能性あり？ 現状はイベント名
         }
 
-        // 5. グラフ描画 (CSVデータ読み込み・統合)
+        // 6. グラフ描画 (CSVデータ読み込み・統合)
         DisplayGraphWithEvents(1, stage1GraphRenderer, GameManager.SavedStage1BPMList); // Stage 1
         DisplayGraphWithEvents(2, stage2GraphRenderer, GameManager.SavedStage2BPMList); // Stage 2
+    }
+
+    private string GetEventName(int eventId, bool isCategory = false)
+    {
+        if (eventId == -1) return "-";
+        
+        // アンケート結果ID(1-5)の場合は直接文字列を返す(既存ロジック) or Databaseにカテゴリがあるならそちらを使う
+        // ここでは簡易的に既存ロジック＋DB検索
+        if (eventId >= 1 && eventId <= 5)
+        {
+             switch (eventId)
+            {
+                case 1: return "異形・クリーチャー的恐怖";
+                case 2: return "人体・人形的恐怖";
+                case 3: return "生理的嫌悪・外相的恐怖";
+                case 4: return "心理的・行動的恐怖";
+                case 5: return "超常的な恐怖";
+            }
+        }
+
+        // イベントIDの場合
+        if (eventDatabase != null)
+        {
+            var data = eventDatabase.GetEventData(eventId);
+            if (data != null) return data.eventName;
+        }
+        
+        return $"不明(ID:{eventId})";
     }
 
     /// <summary>
@@ -341,6 +418,97 @@ public class ResultSceneManager : MonoBehaviour
             }
         }
         return correlated;
+    }
+
+    private struct PeakInfo
+    {
+        public int bpm;
+        public System.DateTime timestamp;
+        public int eventId; // 推定された原因イベントID
+    }
+
+    /// <summary>
+    /// CSVデータを用いてピーク抽出＆イベント照合を行う
+    /// </summary>
+    private List<PeakInfo> CalculateTopPeaksWithEvents(List<BpmData> bpmData, List<EventData> eventData, int count)
+    {
+        if (bpmData == null || bpmData.Count == 0) return new List<PeakInfo>();
+
+        // 1. ピーク抽出 (Timestamp付き)
+        // 既存のCalculateTopPeaksのロジックを踏襲しつつ、BpmDataインスタンスを保持する
+        
+        // 連続重複除去
+        var compressed = new List<BpmData>();
+        compressed.Add(bpmData[0]);
+        for (int i = 1; i < bpmData.Count; i++)
+        {
+            if (bpmData[i].bpm != bpmData[i - 1].bpm)
+            {
+                compressed.Add(bpmData[i]);
+            }
+        }
+
+        // ピーク（極大値）を探す
+        var peaks = new List<BpmData>();
+        for (int i = 1; i < compressed.Count - 1; i++)
+        {
+            if (compressed[i].bpm > compressed[i - 1].bpm && compressed[i].bpm > compressed[i + 1].bpm)
+            {
+                peaks.Add(compressed[i]);
+            }
+        }
+
+        // 足りない場合は全体から補充 (重複しないように)
+        var candidates = peaks.ToList();
+        if (candidates.Count < count)
+        {
+             // 構造体の等価比較はデフォルトでフィールド比較ではないため、BPM値の重複を除外する工夫が必要
+             // ここでは簡易的にBPM値でフィルタリング
+             var existingBpms = new HashSet<int>(peaks.Select(p => p.bpm));
+
+             var others = compressed
+                .Where(x => !existingBpms.Contains(x.bpm)) // 既にピークとして選ばれたBPM値は除外
+                .OrderByDescending(x => x.bpm);
+             
+             foreach(var o in others)
+             {
+                 if (candidates.Count >= count) break;
+                 candidates.Add(o);
+             }
+        }
+
+        // 上位count個を取得
+        var topPeaks = candidates.OrderByDescending(x => x.bpm).Take(count).ToList();
+
+        // 2. イベント照合 (Reaction Latency: 0s ~ 15s)
+        var result = new List<PeakInfo>();
+        double latencyWindow = 15.0; // 秒
+
+        foreach (var p in topPeaks)
+        {
+            int causedEventId = -1;
+            
+            // ピーク時刻 <= イベント時刻 <= ピーク時刻 - Window
+            // 一番新しい（ピークに近い）ものを選ぶ
+             var targetEvent = eventData
+                .Where(e => e.timestamp <= p.timestamp && e.timestamp >= p.timestamp.AddSeconds(-latencyWindow))
+                .OrderByDescending(e => e.timestamp)
+                .FirstOrDefault();
+            
+            if (targetEvent.eventId != 0) // struct default check (0 is invalid if IDs start from 1)
+            {
+                causedEventId = targetEvent.eventId;
+                Debug.Log($"Peak BPM {p.bpm} at {p.timestamp} caused by Event {causedEventId} at {targetEvent.timestamp}");
+            }
+            else
+            {
+                Debug.Log($"Peak BPM {p.bpm} at {p.timestamp} has NO correlated event in window.");
+            }
+
+            result.Add(new PeakInfo { bpm = p.bpm, timestamp = p.timestamp, eventId = causedEventId });
+        }
+
+        return result;
     }
 
     /// <summary>

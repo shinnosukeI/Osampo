@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: HorrorEvent_51
   m_EditorClassIdentifier: Assembly-CSharp::HorrorEventData
   eventType: 51
-  eventName: "\u4EBA\u5F71\u304C\u898B\u3048\u308B"
+  eventName: "\u4EBA\u5F71"
   category: 5
