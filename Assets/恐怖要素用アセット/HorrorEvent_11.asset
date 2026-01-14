@@ -13,8 +13,5 @@ MonoBehaviour:
   m_Name: HorrorEvent_11
   m_EditorClassIdentifier: Assembly-CSharp::HorrorEventData
   eventType: 11
-  eventName: "\u30C9\u30A2\u306E\u4E0B\u306E\u9699\u9593\u304B\u3089\u5927\u91CF\u306E\u30B4\u30AD\u30D6\u30EA"
+  eventName: "\u30B4\u30AD\u30D6\u30EA"
   category: 1
-  onTriggerEvent:
-    m_PersistentCalls:
-      m_Calls: []
