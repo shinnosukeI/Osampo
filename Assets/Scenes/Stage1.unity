@@ -1967,11 +1967,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9eb8729b438e9004ea7b003b22a4d645, type: 3}
---- !u!4 &213475683 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -9058838804961887535, guid: 9eb8729b438e9004ea7b003b22a4d645, type: 3}
-  m_PrefabInstance: {fileID: 213475682}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &218619131
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3273,6 +3268,10 @@ MonoBehaviour:
   zombieChaseEventTarget: {fileID: 0}
   thunderAudioSource: {fileID: 0}
   thunderSound: {fileID: 0}
+  thunderVolume: 1
+  thunderLights: []
+  thunderIntensityMultiplier: 5
+  flashCount: 10
   laughAudioSource: {fileID: 0}
   laughSound: {fileID: 0}
   footstepsSound: {fileID: 0}
@@ -3298,109 +3297,12 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1969173514744084753, guid: 04a7135ac67fab543ae5364a83365ad9, type: 3}
   m_PrefabInstance: {fileID: 1776007691}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 396098593}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2b2edc522b4a7d74dab595caf7fffcc4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RadioEventController
---- !u!82 &396098596
-AudioSource:
-  m_ObjectHideFlags: 8
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 0}
-  m_PlayOnAwake: 1
-  m_Volume: 1
-  m_Pitch: 1
-  Loop: 0
-  Mute: 0
-  Spatialize: 0
-  SpatializePostEffects: 0
-  Priority: 128
-  DopplerLevel: 1
-  MinDistance: 1
-  MaxDistance: 500
-  Pan2D: 0
-  rolloffMode: 0
-  BypassEffects: 0
-  BypassListenerEffects: 0
-  BypassReverbZones: 0
-  rolloffCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  panLevelCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  spreadCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  reverbZoneMixCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
 --- !u!1001 &419240419
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10833,7 +10735,7 @@ MonoBehaviour:
   normalWindowObject: {fileID: 733700193}
   brokenWindowObject: {fileID: 733700193}
   cockroachSwarmTarget: {fileID: 1701761517}
-  cycleCount: 1
+  cycleCount: 3
   cycleEventTypes: 2d000000360000000b000000170000003700000021000000
 --- !u!1 &690401339
 GameObject:
@@ -11182,10 +11084,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FallingCorpse
   impactSound: {fileID: 8300000, guid: fe2e9ccca2f75ad488668a4fc01fe58a, type: 3}
   minImpactVelocity: 5
+  enableRotation: 0
   localTorqueDir: {x: 1, y: 0, z: 0}
   torqueImpulse: 0.3
   localPushDir: {x: 0, y: -0.3, z: 1}
   pushImpulse: 1
+  pushTarget: {fileID: 0}
 --- !u!65 &722817349
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -16491,7 +16395,7 @@ Transform:
   - {fileID: 2022634012}
   - {fileID: 213371655}
   - {fileID: 289988614}
-  - {fileID: 213475683}
+  - {fileID: 1437944512}
   - {fileID: 1371497860}
   - {fileID: 2113719675}
   - {fileID: 1944776348}
@@ -16980,8 +16884,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\u79FB\u52D5"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 5fd29e9071b1feb409c118ec515f2131, type: 2}
-  m_sharedMaterial: {fileID: -8645140211614421787, guid: 5fd29e9071b1feb409c118ec515f2131, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -17922,7 +17826,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2442514732749828082, guid: 58322a5b79b22c7468310e10747069a7, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.26
+      value: 1.43
       objectReference: {fileID: 0}
     - target: {fileID: 2442514732749828082, guid: 58322a5b79b22c7468310e10747069a7, type: 3}
       propertyPath: m_LocalPosition.z
@@ -19239,6 +19143,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1434253055}
   m_CullTransparentMesh: 1
+--- !u!4 &1437944512 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 9eb8729b438e9004ea7b003b22a4d645, type: 3}
+  m_PrefabInstance: {fileID: 213475682}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1444981111
 GameObject:
   m_ObjectHideFlags: 0
