@@ -48,10 +48,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -8049058555058158804, guid: 2f206f20b82c4314a847b155f455e0a0, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 3155895ac4d584c4f9b69d64ecb2d50f, type: 2}
+    - target: {fileID: -8049058555058158804, guid: 2f206f20b82c4314a847b155f455e0a0, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: b865ee33b31320f41803abe07abd2902, type: 2}
     - target: {fileID: 919132149155446097, guid: 2f206f20b82c4314a847b155f455e0a0, type: 3}
       propertyPath: m_Name
       value: Zombie_Schoolgirl3_
       objectReference: {fileID: 0}
+    - target: {fileID: 3924869445045259439, guid: 2f206f20b82c4314a847b155f455e0a0, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: b865ee33b31320f41803abe07abd2902, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: -9197005490199319965, guid: 2f206f20b82c4314a847b155f455e0a0, type: 3}
@@ -218,10 +230,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FallingCorpse
   impactSound: {fileID: 0}
   minImpactVelocity: 1
+  enableRotation: 0
   localTorqueDir: {x: 1, y: 0, z: 0}
   torqueImpulse: 5
   localPushDir: {x: 0, y: 0, z: 1}
   pushImpulse: 0.5
+  pushTarget: {fileID: 0}
 --- !u!137 &-1663984738056357317
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 0

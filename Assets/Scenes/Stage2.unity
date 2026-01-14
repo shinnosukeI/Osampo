@@ -3956,8 +3956,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 80
   speed: 2
-  eventManager: {fileID: 0}
-  requiresEventCompletion: 1
 --- !u!4 &441854464
 Transform:
   m_ObjectHideFlags: 0
@@ -3988,8 +3986,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   speed: 2
-  eventManager: {fileID: 0}
-  requiresEventCompletion: 1
 --- !u!1 &451058426
 GameObject:
   m_ObjectHideFlags: 0
@@ -8405,8 +8401,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 90
   speed: 2
-  eventManager: {fileID: 0}
-  requiresEventCompletion: 1
 --- !u!65 &767345312
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -12258,8 +12252,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 45
   speed: 1
-  eventManager: {fileID: 0}
-  requiresEventCompletion: 0
 --- !u!4 &1071550489
 Transform:
   m_ObjectHideFlags: 0
@@ -16559,6 +16551,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorAutoCloseTrigger
   targetDoor: {fileID: 0}
+  targetAngleY: 90
+  checkAngleY: 180
+  angleTolerance: 5
+  rotateSpeed: 2
 --- !u!1 &1492325978
 GameObject:
   m_ObjectHideFlags: 0
@@ -16806,8 +16802,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 45
   speed: 1
-  eventManager: {fileID: 0}
-  requiresEventCompletion: 0
 --- !u!4 &1500718830
 Transform:
   m_ObjectHideFlags: 0
@@ -18457,8 +18451,8 @@ MonoBehaviour:
   - {fileID: 1880942594}
   - {fileID: 362575685}
   - {fileID: 1444981115}
-  debugSurveyResult: 4
-  debugStartCycle: 4
+  debugSurveyResult: 1
+  debugStartCycle: 2
   currentSurveyResult: -1
   eventDatabase: {fileID: 11400000, guid: cd95c981533df444aaccb542fbea63e9, type: 2}
   objectToFallTarget: {fileID: 0}
@@ -21827,8 +21821,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 45
   speed: 1
-  eventManager: {fileID: 0}
-  requiresEventCompletion: 0
 --- !u!4 &2080878056
 Transform:
   m_ObjectHideFlags: 0
