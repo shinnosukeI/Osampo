@@ -33,6 +33,10 @@ public class ApproachingPersonEvent : MonoBehaviour
     private FreeMoveInputSystem playerMove;
     private CameraLookInputSystem playerLook;
 
+    // ★ Rigidbody制御用フィールド
+    private Rigidbody playerRb;
+    private bool wasKinematic;
+
 
     void Start()
     {
@@ -98,6 +102,20 @@ public class ApproachingPersonEvent : MonoBehaviour
         // 1. 操作不能にする
         if (playerMove != null) playerMove.enabled = false;
         if (playerLook != null) playerLook.enabled = false;
+
+        // ★ Rigidbodyの無効化（ユーザー要望）
+        playerRb = null;
+        wasKinematic = false;
+        if (playerMove != null)
+        {
+            playerRb = playerMove.GetComponent<Rigidbody>();
+            if (playerRb != null)
+            {
+                wasKinematic = playerRb.isKinematic;
+                playerRb.isKinematic = true;
+                Debug.Log("🔒 [ApproachingPersonEvent] Player Rigidbody set to Kinematic.");
+            }
+        }
 
         // ★ クロスヘアを一時的に消す
         crosshairCanvas = GameObject.Find("CrosshairCanvas");
@@ -301,5 +319,11 @@ public class ApproachingPersonEvent : MonoBehaviour
         
         // ★ ResultSceneへ遷移
         UnityEngine.SceneManagement.SceneManager.LoadScene("ResultScene");
+        
+        // （シーン遷移するのでここでの復帰は必須ではないが、一応戻しておく）
+        if (playerRb != null)
+        {
+            playerRb.isKinematic = wasKinematic;
+        }
     }
 }
