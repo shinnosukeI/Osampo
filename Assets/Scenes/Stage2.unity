@@ -8253,7 +8253,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3307d2f6909b3e44f8e3183e6ac75e37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Footstep
-  audioSource: {fileID: 0}
+  audioSource: {fileID: 728530586}
   footstepSounds: []
   stepInterval: 0.5
   moveThreshold: 0.1
@@ -18813,8 +18813,8 @@ MonoBehaviour:
   - {fileID: 1880942594}
   - {fileID: 362575685}
   - {fileID: 1444981115}
-  debugSurveyResult: 1
-  debugStartCycle: 1
+  debugSurveyResult: 3
+  debugStartCycle: 4
   currentSurveyResult: -1
   eventDatabase: {fileID: 11400000, guid: cd95c981533df444aaccb542fbea63e9, type: 2}
   objectToFallTarget: {fileID: 0}
@@ -19001,10 +19001,10 @@ MonoBehaviour:
     - eventID: 35
       lighting: 0
       lightSettings: []
-      useGlobalLightSetting: 0
+      useGlobalLightSetting: 1
       globalLightSetting:
-        color: {r: 0, g: 0, b: 0, a: 0}
-        intensity: 0
+        color: {r: 0.735849, g: 0.14231041, b: 0.14231041, a: 0}
+        intensity: 5
     - eventID: 44
       lighting: 0
       lightSettings: []
