@@ -9,7 +9,7 @@ public class BoneTrigger : MonoBehaviour
     [SerializeField] private int targetCycle = 4;
 
     [Header("ログ用イベントID（骸骨）")]
-    [SerializeField] private int boneEventID = 33;
+    [SerializeField] private int boneEventID = 23; // ★ ID changed to 23
 
     [Header("天井アンカー")]
     [SerializeField] private Transform hangAnchor;

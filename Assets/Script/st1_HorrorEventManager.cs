@@ -32,6 +32,9 @@ public class st1_HorrorEventManager : MonoBehaviour
     [Header("11: ゴキブリイベント")]
     [SerializeField] private CockroachSwarm cockroachSwarmTarget;
 
+    [Header("23: 吊り骸骨イベント (BoneTriggerで制御)")]
+    // PrefabなどはBoneTrigger側で管理
+
     // ★ 周回カウント（ドア/ワープを通った回数）
     [Header("周回カウント")]
     [SerializeField] private int cycleCount = 1;
