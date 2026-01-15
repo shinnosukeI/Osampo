@@ -1290,6 +1290,7 @@ GameObject:
   - component: {fileID: 164521151}
   - component: {fileID: 164521150}
   - component: {fileID: 164521153}
+  - component: {fileID: 164521154}
   m_Layer: 0
   m_Name: 51
   m_TagString: Untagged
@@ -1363,6 +1364,103 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HorrorEventTrigger
   eventType: 51
   triggerOnce: 1
+--- !u!82 &164521154
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 164521149}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1001 &180169373
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -18711,8 +18809,8 @@ MonoBehaviour:
   - {fileID: 1880942594}
   - {fileID: 362575685}
   - {fileID: 1444981115}
-  debugSurveyResult: 2
-  debugStartCycle: 2
+  debugSurveyResult: 5
+  debugStartCycle: 1
   currentSurveyResult: -1
   eventDatabase: {fileID: 11400000, guid: cd95c981533df444aaccb542fbea63e9, type: 2}
   objectToFallTarget: {fileID: 0}
@@ -18762,6 +18860,8 @@ MonoBehaviour:
   clusterWallEvent: {fileID: 862705111}
   clusterWallRootObject: {fileID: 1956963636}
   walkingPersonEvent: {fileID: 164521151}
+  walkingPersonAudioSource: {fileID: 164521154}
+  walkingPersonSound: {fileID: 8300000, guid: 5e83586ce7f108b47b5d44f2508094e5, type: 3}
   doorGapEvent: {fileID: 72546085}
   mirrorGhostEvent: {fileID: 355610373}
   cycleCount: 0

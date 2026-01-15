@@ -136,6 +136,8 @@ public class HorrorEventManager : MonoBehaviour
     [Header("51: 通行人イベント")] // ★ 追加
     [SerializeField]
     private WalkingPersonEvent walkingPersonEvent;
+    [SerializeField] private AudioSource walkingPersonAudioSource; // ★ 追加
+    [SerializeField] private AudioClip walkingPersonSound;       // ★ 追加
 
     [Header("52: ドアの隙間から女")] // ★ 追加
     [SerializeField]
@@ -1336,11 +1338,66 @@ public class HorrorEventManager : MonoBehaviour
         {
             walkingPersonEvent.gameObject.SetActive(true);
             walkingPersonEvent.TriggerEvent();
+
+            // ★ 足音再生（フェードイン・アウト制御）
+            if (walkingPersonAudioSource != null && walkingPersonSound != null)
+            {
+                walkingPersonAudioSource.gameObject.SetActive(true);
+                StartCoroutine(WalkingPersonSoundSequence());
+            }
         }
         else
         {
              Debug.LogError("❌ [HorrorEventManager] walkingPersonEvent が割り当てられていません！Inspectorで設定してください。");
         }
+    }
+
+    private System.Collections.IEnumerator WalkingPersonSoundSequence()
+    {
+        walkingPersonAudioSource.clip = walkingPersonSound;
+        walkingPersonAudioSource.volume = 0f;
+        walkingPersonAudioSource.loop = true; // 途中で切れないようにループ設定
+        walkingPersonAudioSource.Play();
+
+        float timer = 0f;
+        float fadeInDuration = 2.0f;
+        float fadeOutStartTime = 5.0f;
+        float fadeOutDuration = 2.0f;
+
+        Debug.Log("👣 足音フェードイン開始");
+
+        // 0秒〜5秒のループ
+        while (timer < fadeOutStartTime + fadeOutDuration) // フェードアウト完了まで回す
+        {
+            timer += Time.deltaTime;
+
+            if (timer <= fadeInDuration)
+            {
+                // フェードイン (0 -> 1)
+                walkingPersonAudioSource.volume = Mathf.Clamp01(timer / fadeInDuration);
+            }
+            else if (timer >= fadeOutStartTime)
+            {
+                // フェードアウト開始 (1 -> 0)
+                // fadeOutStartTimeからの経過時間
+                float fadeOutTime = timer - fadeOutStartTime;
+                walkingPersonAudioSource.volume = Mathf.Clamp01(1.0f - (fadeOutTime / fadeOutDuration));
+                
+                if (walkingPersonAudioSource.volume <= 0f) break; // 完全に消えたら終了
+            }
+            else
+            {
+                // 2秒〜5秒の間は最大音量維持
+                walkingPersonAudioSource.volume = 1.0f;
+            }
+
+            yield return null;
+        }
+
+        walkingPersonAudioSource.Stop();
+        walkingPersonAudioSource.volume = 1.0f; // 次回のために戻しておく（必要なら）
+        // walkingPersonAudioSource.gameObject.SetActive(false); // 表示は維持するかもしれないのでコメントアウト、あるいは非表示にしてもよい
+        Debug.Log("👣 足音終了");
     }
 
     // 52: ドアの隙間から女
