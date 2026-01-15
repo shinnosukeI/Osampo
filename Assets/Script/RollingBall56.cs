@@ -1,11 +1,16 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class RollingBall : MonoBehaviour
+public class RollingBall56 : MonoBehaviour
 {
     [Header("転がる強さ")]
     [SerializeField]
     private float rollForce = 5.0f; // 数字が大きいほど速く転がる
+
+    [Header("効果音")]
+    [SerializeField]
+    private AudioClip rollSound;
+    private AudioSource audioSource;
 
     void Start()
     {
@@ -23,6 +28,17 @@ public class RollingBall : MonoBehaviour
 
             // 少し回転（スピン）も加えて、より自然に転がり始めるようにする
             rb.AddTorque(Random.insideUnitSphere * rollForce, ForceMode.Impulse);
+
+            // 音を鳴らす
+            if (rollSound != null)
+            {
+                audioSource = GetComponent<AudioSource>();
+                if (audioSource == null) audioSource = gameObject.AddComponent<AudioSource>();
+                
+                audioSource.clip = rollSound;
+                audioSource.spatialBlend = 1.0f; // 3D音響
+                audioSource.Play();
+            }
         }
     }
 }

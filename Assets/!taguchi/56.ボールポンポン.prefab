@@ -123,6 +123,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RollingBall
   rollForce: 5
+  rollSound: {fileID: 8300000, guid: d2c68c943d2de7148ad3b4b57ad52be1, type: 3}
 --- !u!135 &3901797069833345198
 SphereCollider:
   m_ObjectHideFlags: 0

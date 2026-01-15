@@ -1087,7 +1087,7 @@ public class HorrorEventManager : MonoBehaviour
             spawnedObjects.Add(ball); // 追跡リストに追加
             
             // RollingBallコンポーネントを取得して転がす
-            RollingBall rbScript = ball.GetComponent<RollingBall>();
+            RollingBall56 rbScript = ball.GetComponent<RollingBall56>();
             if (rbScript != null)
             {
                 rbScript.StartRoll();
