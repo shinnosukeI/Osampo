@@ -201,12 +201,17 @@ public class HorrorEventManager : MonoBehaviour
         public int eventID;
         public LightingType lighting;
         public List<LightSetting> lightSettings; // ★ 複数照明対応
+        // ★ 追加: 一括設定用
+        public bool useGlobalLightSetting;
+        public LightSetting globalLightSetting;
 
-        public StageLoopData(int id, LightingType light, List<LightSetting> settings = null)
+        public StageLoopData(int id, LightingType light, List<LightSetting> settings = null, bool useGlobal = false, LightSetting globalSet = default)
         {
             eventID = id;
             lighting = light;
             lightSettings = settings ?? new List<LightSetting>();
+            useGlobalLightSetting = useGlobal;
+            globalLightSetting = globalSet;
         }
     }
 
@@ -799,6 +804,17 @@ public class HorrorEventManager : MonoBehaviour
                         targetLights[i].color = initialLightSettings[i].color;
                         targetLights[i].intensity = initialLightSettings[i].intensity;
                     }
+                }
+            }
+
+            // ★ 一括設定があれば適用 (優先順位: 低)
+            if (data.useGlobalLightSetting)
+            {
+                for (int i = 0; i < targetLights.Count; i++)
+                {
+                    if (targetLights[i] == null) continue;
+                    targetLights[i].color = data.globalLightSetting.color;
+                    targetLights[i].intensity = data.globalLightSetting.intensity;
                 }
             }
 

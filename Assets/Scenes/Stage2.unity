@@ -18782,15 +18782,31 @@ MonoBehaviour:
       lightSettings:
       - color: {r: 0.8396226, g: 0.122774996, b: 0.122774996, a: 0}
         intensity: 2
+      useGlobalLightSetting: 0
+      globalLightSetting:
+        color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
     - eventID: 22
       lighting: 0
       lightSettings: []
+      useGlobalLightSetting: 0
+      globalLightSetting:
+        color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
     - eventID: 24
       lighting: 0
       lightSettings: []
+      useGlobalLightSetting: 0
+      globalLightSetting:
+        color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
     - eventID: 25
       lighting: 0
       lightSettings: []
+      useGlobalLightSetting: 0
+      globalLightSetting:
+        color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
     - eventID: 44
       lighting: 0
       lightSettings:
@@ -18814,71 +18830,151 @@ MonoBehaviour:
         intensity: 0
       - color: {r: 0, g: 0, b: 0, a: 0}
         intensity: 0
+      useGlobalLightSetting: 0
+      globalLightSetting:
+        color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
   - surveyResultID: 1
     loopSettings:
     - eventID: 13
       lighting: 3
       lightSettings: []
+      useGlobalLightSetting: 0
+      globalLightSetting:
+        color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
     - eventID: 14
       lighting: 0
       lightSettings: []
+      useGlobalLightSetting: 0
+      globalLightSetting:
+        color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
     - eventID: 12
       lighting: 0
       lightSettings: []
+      useGlobalLightSetting: 0
+      globalLightSetting:
+        color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
     - eventID: 15
       lighting: 0
       lightSettings: []
+      useGlobalLightSetting: 0
+      globalLightSetting:
+        color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
     - eventID: 44
       lighting: 0
       lightSettings: []
+      useGlobalLightSetting: 0
+      globalLightSetting:
+        color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
   - surveyResultID: 3
     loopSettings:
     - eventID: 31
       lighting: 0
       lightSettings: []
+      useGlobalLightSetting: 0
+      globalLightSetting:
+        color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
     - eventID: 34
       lighting: 0
       lightSettings: []
+      useGlobalLightSetting: 0
+      globalLightSetting:
+        color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
     - eventID: 32
       lighting: 0
       lightSettings: []
+      useGlobalLightSetting: 0
+      globalLightSetting:
+        color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
     - eventID: 35
       lighting: 0
       lightSettings: []
+      useGlobalLightSetting: 0
+      globalLightSetting:
+        color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
     - eventID: 44
       lighting: 0
       lightSettings: []
+      useGlobalLightSetting: 0
+      globalLightSetting:
+        color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
   - surveyResultID: 4
     loopSettings:
     - eventID: 43
       lighting: 0
       lightSettings: []
+      useGlobalLightSetting: 0
+      globalLightSetting:
+        color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
     - eventID: 41
       lighting: 0
       lightSettings: []
+      useGlobalLightSetting: 0
+      globalLightSetting:
+        color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
     - eventID: 42
       lighting: 0
       lightSettings: []
+      useGlobalLightSetting: 0
+      globalLightSetting:
+        color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
     - eventID: 46
       lighting: 0
       lightSettings: []
+      useGlobalLightSetting: 0
+      globalLightSetting:
+        color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
     - eventID: 44
       lighting: 0
       lightSettings: []
+      useGlobalLightSetting: 0
+      globalLightSetting:
+        color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
   - surveyResultID: 5
     loopSettings:
     - eventID: 51
       lighting: 0
       lightSettings: []
+      useGlobalLightSetting: 0
+      globalLightSetting:
+        color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
     - eventID: 52
       lighting: 0
       lightSettings: []
+      useGlobalLightSetting: 0
+      globalLightSetting:
+        color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
     - eventID: 56
       lighting: 0
       lightSettings: []
+      useGlobalLightSetting: 0
+      globalLightSetting:
+        color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
     - eventID: 53
       lighting: 0
       lightSettings: []
+      useGlobalLightSetting: 0
+      globalLightSetting:
+        color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
     - eventID: 44
       lighting: 0
       lightSettings:
@@ -18891,6 +18987,10 @@ MonoBehaviour:
       - color: {r: 0, g: 0, b: 0, a: 0}
         intensity: 0
       - color: {r: 0.17254902, g: 0.3647059, b: 0.5294118, a: 0}
+        intensity: 0
+      useGlobalLightSetting: 0
+      globalLightSetting:
+        color: {r: 0, g: 0, b: 0, a: 0}
         intensity: 0
 --- !u!4 &1697327540
 Transform:
