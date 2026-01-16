@@ -10816,6 +10816,7 @@ MonoBehaviour:
   cockroachSwarmTarget: {fileID: 1701761517}
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   cycleCount: 4
 =======
   cycleCount: 1
@@ -10823,6 +10824,9 @@ MonoBehaviour:
 =======
   cycleCount: 5
 >>>>>>> parent of ae0ba21 (ゴキブリ修正)
+=======
+  cycleCount: 1
+>>>>>>> 00a908630ae28f0324892b39813bdfe5c5d626fe
   cycleEventTypes: 2d000000360000000b000000170000003700000021000000
 --- !u!1 &690401339
 GameObject:
@@ -19435,7 +19439,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -19450,7 +19454,7 @@ Transform:
   m_GameObject: {fileID: 1154178093}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.59, y: 0.06, z: -5.70053}
+  m_LocalPosition: {x: -0.59, y: 0.438, z: -5.70053}
   m_LocalScale: {x: 4.2904363, y: 0.46524, z: 4.401767}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -20960,9 +20964,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4e981364c140d9469b989b6d64e5906, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GlassAreaFootstepPlayer
-  audioSource: {fileID: 0}
-  eventManager: {fileID: 0}
-  glassStepClip: {fileID: 0}
+  audioSource: {fileID: 1154178094}
+  eventManager: {fileID: 681097501}
+  glassStepClip: {fileID: 8300000, guid: 36adf7dbbf16c2247864d87fc5d13532, type: 3}
   volume: 1
   enableFromCycle: 5
   moveThreshold: 0.05
