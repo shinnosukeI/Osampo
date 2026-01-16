@@ -23,18 +23,7 @@ public class DoorController : MonoBehaviour, IFocusable
 
     void Update()
     {
-        // クリックで開閉（不要なら丸ごと消してOK）
-        if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
-        {
-            var cam = Camera.main;
-            if (cam != null)
-            {
-                Vector2 pos = Mouse.current.position.ReadValue();
-                Ray ray = cam.ScreenPointToRay(pos);
-                if (Physics.Raycast(ray, out RaycastHit hit) && hit.transform == transform)
-                    ToggleDoor();
-            }
-        }
+
 
         // スムーズ回転
         transform.localRotation = Quaternion.Slerp(
