@@ -18555,7 +18555,7 @@ MonoBehaviour:
   - {fileID: 1374540540}
   - {fileID: 1474540398}
   - {fileID: 362575685}
-  debugSurveyResult: 5
+  debugSurveyResult: 3
   debugStartCycle: 1
   currentSurveyResult: -1
   eventDatabase: {fileID: 11400000, guid: cd95c981533df444aaccb542fbea63e9, type: 2}
@@ -18626,33 +18626,37 @@ MonoBehaviour:
     - eventID: 21
       lighting: 0
       lightSettings:
-      - color: {r: 0.8396226, g: 0.122774996, b: 0.122774996, a: 0}
-        intensity: 2
-      useGlobalLightSetting: 0
+      - color: {r: 1, g: 1, b: 1, a: 0}
+        intensity: 10
+      useGlobalLightSetting: 1
       globalLightSetting:
-        color: {r: 0, g: 0, b: 0, a: 0}
+        color: {r: 1, g: 1, b: 1, a: 0}
         intensity: 0
     - eventID: 22
       lighting: 0
-      lightSettings: []
-      useGlobalLightSetting: 0
+      lightSettings:
+      - color: {r: 1, g: 1, b: 1, a: 0}
+        intensity: 10
+      useGlobalLightSetting: 1
       globalLightSetting:
         color: {r: 0, g: 0, b: 0, a: 0}
         intensity: 0
     - eventID: 24
       lighting: 0
-      lightSettings: []
-      useGlobalLightSetting: 0
+      lightSettings:
+      - color: {r: 1, g: 1, b: 1, a: 0}
+        intensity: 10
+      useGlobalLightSetting: 1
       globalLightSetting:
-        color: {r: 0, g: 0, b: 0, a: 0}
-        intensity: 0
+        color: {r: 1, g: 1, b: 1, a: 0}
+        intensity: 5
     - eventID: 25
       lighting: 0
       lightSettings: []
-      useGlobalLightSetting: 0
+      useGlobalLightSetting: 1
       globalLightSetting:
-        color: {r: 0, g: 0, b: 0, a: 0}
-        intensity: 0
+        color: {r: 1, g: 0, b: 0, a: 0}
+        intensity: 5
     - eventID: 44
       lighting: 0
       lightSettings:
@@ -18699,20 +18703,24 @@ MonoBehaviour:
       useGlobalLightSetting: 1
       globalLightSetting:
         color: {r: 1, g: 1, b: 1, a: 0}
-        intensity: 5
+        intensity: 0
     - eventID: 12
       lighting: 0
-      lightSettings: []
-      useGlobalLightSetting: 0
+      lightSettings:
+      - color: {r: 1, g: 1, b: 1, a: 0}
+        intensity: 10
+      useGlobalLightSetting: 1
       globalLightSetting:
-        color: {r: 0, g: 0, b: 0, a: 0}
-        intensity: 0
+        color: {r: 1, g: 1, b: 1, a: 0}
+        intensity: 4
     - eventID: 15
       lighting: 0
-      lightSettings: []
-      useGlobalLightSetting: 0
+      lightSettings:
+      - color: {r: 1, g: 1, b: 1, a: 0}
+        intensity: 10
+      useGlobalLightSetting: 1
       globalLightSetting:
-        color: {r: 0, g: 0, b: 0, a: 0}
+        color: {r: 1, g: 1, b: 1, a: 0}
         intensity: 0
     - eventID: 44
       lighting: 0
@@ -18723,17 +18731,21 @@ MonoBehaviour:
         intensity: 0
   - surveyResultID: 3
     loopSettings:
-    - eventID: 31
+    - eventID: 34
       lighting: 0
-      lightSettings: []
-      useGlobalLightSetting: 0
+      lightSettings:
+      - color: {r: 1, g: 1, b: 1, a: 0}
+        intensity: 10
+      useGlobalLightSetting: 1
       globalLightSetting:
         color: {r: 0, g: 0, b: 0, a: 0}
         intensity: 0
-    - eventID: 34
+    - eventID: 31
       lighting: 0
-      lightSettings: []
-      useGlobalLightSetting: 0
+      lightSettings:
+      - color: {r: 1, g: 1, b: 1, a: 0}
+        intensity: 10
+      useGlobalLightSetting: 1
       globalLightSetting:
         color: {r: 0, g: 0, b: 0, a: 0}
         intensity: 0
@@ -19955,7 +19967,7 @@ AudioSource:
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -20065,7 +20077,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProximityLogTrigger
   eventType: 34
-  detectionRadius: 10
+  detectionRadius: 3
   targetTag: Player
   logOnce: 1
 --- !u!1001 &1809288456
