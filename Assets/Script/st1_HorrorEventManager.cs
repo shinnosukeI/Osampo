@@ -39,6 +39,7 @@ public class st1_HorrorEventManager : MonoBehaviour
     [Header("周回カウント")]
     [SerializeField] private int cycleCount = 1;
     public int CycleCount => cycleCount;
+    
 
     // ★ 周回ごとのイベント設定
     // 例: [0, 45, 14] → 1周目=0(なし) / 2周目=45 / 3周目=14
