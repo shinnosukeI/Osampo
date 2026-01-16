@@ -1344,7 +1344,7 @@ Transform:
   m_GameObject: {fileID: 164521149}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.056, y: 0.28, z: -8.698}
+  m_LocalPosition: {x: 0.056, y: 0.28, z: -10.154}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4310,7 +4310,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 0a0244a80bbb35a4cbd566123c3d056d, type: 3}
       propertyPath: m_Name
-      value: brass_diya_lantern_4k (10)
+      value: brass_diya_lantern_4k(4)
       objectReference: {fileID: 0}
     - target: {fileID: 5541967198356900080, guid: 0a0244a80bbb35a4cbd566123c3d056d, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -8975,7 +8975,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 0a0244a80bbb35a4cbd566123c3d056d, type: 3}
       propertyPath: m_Name
-      value: brass_diya_lantern_4k (8)
+      value: brass_diya_lantern_4k(8)
       objectReference: {fileID: 0}
     - target: {fileID: 5541967198356900080, guid: 0a0244a80bbb35a4cbd566123c3d056d, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -12276,7 +12276,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 0a0244a80bbb35a4cbd566123c3d056d, type: 3}
       propertyPath: m_Name
-      value: brass_diya_lantern_4k (12)
+      value: brass_diya_lantern_4k(3)
       objectReference: {fileID: 0}
     - target: {fileID: 5541967198356900080, guid: 0a0244a80bbb35a4cbd566123c3d056d, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -14268,7 +14268,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 0a0244a80bbb35a4cbd566123c3d056d, type: 3}
       propertyPath: m_Name
-      value: brass_diya_lantern_4k (11)
+      value: brass_diya_lantern_4k(6)
       objectReference: {fileID: 0}
     - target: {fileID: 5541967198356900080, guid: 0a0244a80bbb35a4cbd566123c3d056d, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -14573,7 +14573,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 0a0244a80bbb35a4cbd566123c3d056d, type: 3}
       propertyPath: m_Name
-      value: brass_diya_lantern_4k (5)
+      value: brass_diya_lantern_4k(2)
       objectReference: {fileID: 0}
     - target: {fileID: 5541967198356900080, guid: 0a0244a80bbb35a4cbd566123c3d056d, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -14863,7 +14863,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 0a0244a80bbb35a4cbd566123c3d056d, type: 3}
       propertyPath: m_Name
-      value: brass_diya_lantern_4k (6)
+      value: brass_diya_lantern_4k(5)
       objectReference: {fileID: 0}
     - target: {fileID: 5541967198356900080, guid: 0a0244a80bbb35a4cbd566123c3d056d, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -16832,7 +16832,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 0a0244a80bbb35a4cbd566123c3d056d, type: 3}
       propertyPath: m_Name
-      value: brass_diya_lantern_4k
+      value: brass_diya_lantern_4k(0)
       objectReference: {fileID: 0}
     - target: {fileID: 5541967198356900080, guid: 0a0244a80bbb35a4cbd566123c3d056d, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -18544,19 +18544,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HorrorEventManager
   debugMode: 1
   targetLights:
+  - {fileID: 1444981115}
   - {fileID: 771996901}
+  - {fileID: 1057641419}
   - {fileID: 1381789435}
+  - {fileID: 1880942594}
+  - {fileID: 2082812210}
   - {fileID: 845097194}
+  - {fileID: 1022065484}
   - {fileID: 1374540540}
   - {fileID: 1474540398}
-  - {fileID: 1057641419}
-  - {fileID: 2082812210}
-  - {fileID: 1022065484}
-  - {fileID: 1880942594}
-  - {fileID: 1880942594}
-  - {fileID: 1444981115}
-  debugSurveyResult: 1
-  debugStartCycle: 2
+  - {fileID: 362575685}
+  debugSurveyResult: 5
+  debugStartCycle: 1
   currentSurveyResult: -1
   eventDatabase: {fileID: 11400000, guid: cd95c981533df444aaccb542fbea63e9, type: 2}
   objectToFallTarget: {fileID: 0}
@@ -18684,18 +18684,22 @@ MonoBehaviour:
     loopSettings:
     - eventID: 13
       lighting: 3
-      lightSettings: []
+      lightSettings:
+      - color: {r: 1, g: 1, b: 1, a: 0}
+        intensity: 10
       useGlobalLightSetting: 1
       globalLightSetting:
         color: {r: 1, g: 0, b: 0, a: 0}
-        intensity: 2
+        intensity: 5
     - eventID: 14
       lighting: 0
-      lightSettings: []
-      useGlobalLightSetting: 0
+      lightSettings:
+      - color: {r: 1, g: 1, b: 1, a: 0}
+        intensity: 10
+      useGlobalLightSetting: 1
       globalLightSetting:
-        color: {r: 0, g: 0, b: 0, a: 0}
-        intensity: 0
+        color: {r: 1, g: 1, b: 1, a: 0}
+        intensity: 5
     - eventID: 12
       lighting: 0
       lightSettings: []
@@ -18795,11 +18799,13 @@ MonoBehaviour:
     loopSettings:
     - eventID: 51
       lighting: 0
-      lightSettings: []
-      useGlobalLightSetting: 0
+      lightSettings:
+      - color: {r: 1, g: 1, b: 1, a: 0}
+        intensity: 10
+      useGlobalLightSetting: 1
       globalLightSetting:
-        color: {r: 0, g: 0, b: 0, a: 0}
-        intensity: 0
+        color: {r: 1, g: 1, b: 1, a: 0}
+        intensity: 2
     - eventID: 52
       lighting: 0
       lightSettings: []
@@ -20124,7 +20130,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 0a0244a80bbb35a4cbd566123c3d056d, type: 3}
       propertyPath: m_Name
-      value: brass_diya_lantern_4k (7)
+      value: brass_diya_lantern_4k(7)
       objectReference: {fileID: 0}
     - target: {fileID: 5541967198356900080, guid: 0a0244a80bbb35a4cbd566123c3d056d, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -22867,7 +22873,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 0a0244a80bbb35a4cbd566123c3d056d, type: 3}
       propertyPath: m_Name
-      value: brass_diya_lantern_4k (9)
+      value: brass_diya_lantern_4k(1)
       objectReference: {fileID: 0}
     - target: {fileID: 5541967198356900080, guid: 0a0244a80bbb35a4cbd566123c3d056d, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
