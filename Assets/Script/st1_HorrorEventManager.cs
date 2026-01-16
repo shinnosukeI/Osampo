@@ -205,6 +205,12 @@ public class st1_HorrorEventManager : MonoBehaviour
         cycleCount++;
         Debug.Log($"🚪 ドア/ワープで周期カウント: {cycleCount}");
 
+        // ★ ループしたらゴキブリを消す
+        if (cockroachSwarmTarget != null)
+        {
+            cockroachSwarmTarget.StopSwarm();
+        }
+
         // 6周目に入った瞬間だけ血を出す
         if (cycleCount == 6)
         {

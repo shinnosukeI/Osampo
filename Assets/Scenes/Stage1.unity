@@ -8873,7 +8873,7 @@ Transform:
   m_GameObject: {fileID: 465584954}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 10.851, y: 4.866, z: 17.82}
+  m_LocalPosition: {x: 10.851, y: 4.668, z: 17.82}
   m_LocalScale: {x: 5.5618696, y: 6.2539434, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -10814,7 +10814,11 @@ MonoBehaviour:
   normalWindowObject: {fileID: 733700193}
   brokenWindowObject: {fileID: 733700193}
   cockroachSwarmTarget: {fileID: 1701761517}
+<<<<<<< HEAD
+  cycleCount: 4
+=======
   cycleCount: 1
+>>>>>>> 6d0c916612eefc45f33a3dd781546a061bf6e493
   cycleEventTypes: 2d000000360000000b000000170000003700000021000000
 --- !u!1 &690401339
 GameObject:
@@ -21694,8 +21698,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 7971420d8442e7d4c86237095e0955dd, type: 2}
-  m_sharedMaterial: {fileID: -4319084813079036256, guid: 7971420d8442e7d4c86237095e0955dd, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
