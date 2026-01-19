@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[RequireComponent(typeof(AudioSource))] // ★ 追加
 public class BoneTrigger : MonoBehaviour
 {
     [Header("周回管理")]
@@ -9,7 +10,7 @@ public class BoneTrigger : MonoBehaviour
     [SerializeField] private int targetCycle = 4;
 
     [Header("ログ用イベントID（骸骨）")]
-    [SerializeField] private int boneEventID = 23; // ★ ID changed to 23
+    [SerializeField] private int boneEventID = 23;
 
     [Header("天井アンカー")]
     [SerializeField] private Transform hangAnchor;
@@ -20,12 +21,27 @@ public class BoneTrigger : MonoBehaviour
     [Header("一度きり")]
     [SerializeField] private bool onlyOnce = true;
 
+    [Header("発動音")]
+    [SerializeField] private AudioClip triggerSound;     // ★ 追加
+    [SerializeField] private float triggerVolume = 1.0f; // ★ 追加
+    [SerializeField] private bool playAtAnchor = true;   // ★ 追加（アンカー位置で鳴らすか）
+
     private bool triggered = false;
+
+    private AudioSource audioSource; // ★ 追加
 
     private void Awake()
     {
         if (eventManager == null)
             eventManager = FindObjectOfType<st1_HorrorEventManager>();
+
+        audioSource = GetComponent<AudioSource>(); // ★ 追加
+        audioSource.playOnAwake = false;
+
+        // 3D音にしたいならON（好みで）
+        audioSource.spatialBlend = 1f;
+        audioSource.minDistance = 1f;
+        audioSource.maxDistance = 12f;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -44,10 +60,13 @@ public class BoneTrigger : MonoBehaviour
 
         triggered = true;
 
-        // ★ 先にログだけ取る（仮）
+        // ★ ログ
         eventManager.LogOnly(boneEventID);
 
-        // ★ 骸骨生成（最初は非表示）
+        // ★ 先に音（発動瞬間）
+        PlayTriggerSound();
+
+        // ★ 骸骨生成
         HangingSkull skull = Instantiate(skullPrefab);
         skull.gameObject.SetActive(true);
 
@@ -56,6 +75,20 @@ public class BoneTrigger : MonoBehaviour
 
         Debug.Log($"☠️ [BoneTrigger] Cycle={current} 骸骨イベント発生（ID:{boneEventID}）");
     }
-}
 
-//test
+    private void PlayTriggerSound()
+    {
+        if (triggerSound == null) return;
+
+        // アンカー位置で鳴らしたい（上から鳴る感じ）
+        if (playAtAnchor && hangAnchor != null)
+        {
+            AudioSource.PlayClipAtPoint(triggerSound, hangAnchor.position, triggerVolume);
+        }
+        else
+        {
+            // トリガー位置で鳴らす
+            audioSource.PlayOneShot(triggerSound, triggerVolume);
+        }
+    }
+}

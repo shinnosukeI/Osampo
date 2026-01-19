@@ -10815,6 +10815,7 @@ MonoBehaviour:
   brokenWindowObject: {fileID: 733700193}
   cockroachSwarmTarget: {fileID: 1701761517}
   cycleCount: 1
+  cycleEventTypes: 
 --- !u!1 &690401339
 GameObject:
   m_ObjectHideFlags: 0
@@ -12086,12 +12087,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 820322526}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: -2.483, y: -0.29962993, z: -1.086}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.15635014, y: 1.6500001, z: -13.30912}
+  m_LocalScale: {x: -2.48516, y: 1.3786, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1665769220}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &820322528
 MonoBehaviour:
@@ -12105,7 +12106,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c9ff260df742614cb4dacaa51533673, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorAutoCloseTrigger
-  targetDoor: {fileID: 0}
+  targetDoor: {fileID: 1665769220}
   targetAngleY: 90
   checkAngleY: 180
   angleTolerance: 5
@@ -24322,7 +24323,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1673987020}
-  - {fileID: 820322527}
   m_Father: {fileID: 1250539471}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!65 &1665769221
@@ -28293,4 +28293,5 @@ SceneRoots:
   - {fileID: 1206002270}
   - {fileID: 1636899008}
   - {fileID: 1335157798}
+  - {fileID: 820322527}
   - {fileID: 1154178097}
