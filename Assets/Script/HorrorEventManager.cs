@@ -561,7 +561,11 @@ public class HorrorEventManager : MonoBehaviour
         }
 
         // 接近する人影
-        if (approachingPersonEvent != null) approachingPersonEvent.gameObject.SetActive(false);
+        if (approachingPersonEvent != null) 
+        {
+            approachingPersonEvent.gameObject.SetActive(false);
+            approachingPersonEvent.ResetEvent(); // ★ 重複発動防止のためにリセット
+        }
         
         // 追加オブジェクト
         if (mannequinTarget != null) mannequinTarget.SetActive(false);
