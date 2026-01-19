@@ -6,12 +6,17 @@ using UnityEngine.UI;
 public class PlayerFocusController : MonoBehaviour
 {
     [Header("設定")]
-    [SerializeField] private float focusDistance = 3.0f; // フォーカス可能な距離
+    [SerializeField] private float focusDistance = 5.0f; // フォーカス可能な距離
+    [SerializeField] private float focusRadius = 0.3f;   // 判定の太さ（半径）
     [SerializeField] private LayerMask focusLayer = ~0;  // 対象レイヤー（すべて）
     [SerializeField] private GameObject actionGuideUI; // カステムアクションガイドUI
 
     private Camera playerCamera;
     private HorrorEventManager horrorEventManager;
+
+    // ★ 現在ホバー中の（または直前までホバーしていた）ターゲットをキャッシュ
+    private IFocusable cachedFocusTarget = null;
+    private Collider cachedFocusCollider = null;
 
     void Start()
     {
@@ -31,143 +36,279 @@ public class PlayerFocusController : MonoBehaviour
         else
         {
             Debug.Log($"👁 [PlayerFocusController] Camera found: {playerCamera.name}");
+
+            // ★ カメラ位置の自動補正（ユーザーが手動で直せない場合用）
+            // ローカル座標のYが適切でない場合（1.5m未満なら補正）、強制的に1.0mに設定する
+            if (playerCamera.transform.localPosition.y < 1.5f)
+            {
+                Debug.LogWarning($"⚠ [PlayerFocusController] Camera height adjustment (Current: {playerCamera.transform.localPosition.y}). Auto-fixing to Y=1.0.");
+                Vector3 newPos = playerCamera.transform.localPosition;
+                newPos.y = 1.0f;
+                playerCamera.transform.localPosition = newPos;
+            }
         }
 
         SetupCrosshair();
     }
 
-
-
     private void TryFocus()
     {
-        if (playerCamera == null) return;
-
-        // 画面中央からレイを飛ばす（Triggerは無視する）
-        Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
-        RaycastHit hit;
-
-        if (Physics.Raycast(ray, out hit, focusDistance, focusLayer, QueryTriggerInteraction.Ignore))
+        // ★ レティクルが表示されている（=キャッシュが有効）なら、物理判定を飛ばしてそれを使う
+        // これにより「見た目」と「動作」の一致を保証する
+        if (isHoveringFocusable && cachedFocusTarget != null)
         {
-            Debug.Log($"🎯 [PlayerFocusController] Hit Raycast: {hit.collider.name} (Tag: {hit.collider.tag})");
+            Debug.Log($"🎯 [PlayerFocusController] Using Cached Target: {cachedFocusCollider.name}");
+            cachedFocusTarget.OnFocus();
+            return;
+        }
 
-            // IFocusableを持つオブジェクトか確認
+        // キャッシュがない場合（一応フォールバックとして通常のRaycastも残すが、基本は上の分岐に入るはず）
+        if (playerCamera == null) return;
+        Debug.Log("ℹ [PlayerFocusController] No cached target, trying Raycast fallback...");
+
+        Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+        RaycastHit hit = new RaycastHit();
+        bool foundValidTarget = false;
+
+        // 1. Raycast (点)
+        RaycastHit[] hitsPoint = Physics.RaycastAll(ray, focusDistance, focusLayer, QueryTriggerInteraction.Collide);
+        foundValidTarget = TryFindFocusable(hitsPoint, out hit);
+
+        // 2. SphereCast (円柱)
+        if (!foundValidTarget)
+        {
+            RaycastHit[] hitsSphere = Physics.SphereCastAll(ray, focusRadius, focusDistance, focusLayer, QueryTriggerInteraction.Collide);
+            foundValidTarget = TryFindFocusable(hitsSphere, out hit);
+        }
+
+        if (foundValidTarget)
+        {
+            Debug.Log($"🎯 [PlayerFocusController] Focused Target (Fallback): {hit.collider.name}");
+
             IFocusable focusable = hit.collider.GetComponent<IFocusable>();
-            
-            // 親オブジェクトにある場合も探す
-            if (focusable == null)
-            {
-                focusable = hit.collider.GetComponentInParent<IFocusable>();
-            }
+            if (focusable == null) focusable = hit.collider.GetComponentInParent<IFocusable>();
 
             if (focusable != null)
             {
-                 // コンポーネントがアタッチされているオブジェクトの名前を確認する
-                string objName = (focusable as Component).name.ToLower().Trim();
-
-                // 特定の名前のオブジェクトは除外
-                if (objName == "doorpovit" || objName == "doorprovit")
-                {
-                    Debug.Log($"ℹ [PlayerFocusController] Ignored target: {objName}");
-                    return;
-                }
-
-                // 特定のドア (doorpovit (3)) はCycleCountなどの条件で制御
-                if (objName.Contains("doorpovit (3)") || objName.Contains("doorprovit (3)"))
-                {
-                    // HorrorEventManagerが見つからない場合は安全のため通常のワンタイム動作とするか、デフォルトの挙動にする
-                    // CycleCount == 0 の時は反応しない
-                    if (horrorEventManager != null && horrorEventManager.CycleCount == 0)
-                    {
-                        Debug.Log($"ℹ [PlayerFocusController] Target {objName} ignored (Cycle 0).");
-                        return;
-                    }
-
-                    // CycleCount >= 1 または マネージャー不明時はワンタイム
-                    DoorController door = hit.collider.GetComponentInParent<DoorController>();
-                    if (door != null && door.HasBeenInteracted)
-                    {
-                         Debug.Log($"ℹ [PlayerFocusController] Target {hit.collider.name} has already been interacted with.");
-                         return;
-                    }
-                }
-
-                Debug.Log($"👁 [PlayerFocusController] Focused on target: {hit.collider.name}");
                 focusable.OnFocus();
             }
-            else
+        }
+    }
+
+    private void CheckFocusableHover()
+    {
+        if (playerCamera == null) return;
+        if (crosshairRect == null) return; 
+        
+        Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+        bool found = false;
+        RaycastHit hit = new RaycastHit();
+        
+        // 1. Raycast
+        RaycastHit[] hitsPoint = Physics.RaycastAll(ray, focusDistance, focusLayer, QueryTriggerInteraction.Collide);
+        found = TryFindFocusable(hitsPoint, out hit);
+
+        // 2. SphereCast
+        if (!found)
+        {
+            RaycastHit[] hitsSphere = Physics.SphereCastAll(ray, focusRadius, focusDistance, focusLayer, QueryTriggerInteraction.Collide);
+            found = TryFindFocusable(hitsSphere, out hit);
+        }
+
+        // ホバー状態の更新
+        if (found)
+        {
+            // 有効なターゲットを発見 -> キャッシュ更新
+            IFocusable focusable = hit.collider.GetComponent<IFocusable>();
+            if (focusable == null) focusable = hit.collider.GetComponentInParent<IFocusable>();
+
+            if (focusable != null)
             {
-                Debug.Log("ℹ [PlayerFocusController] Target is not IFocusable");
+                cachedFocusTarget = focusable;
+                cachedFocusCollider = hit.collider;
+            }
+        }
+
+        UpdateCrosshairState(found);
+    }
+
+    // ★ ヘルパーメソッド
+    private bool TryFindFocusable(RaycastHit[] hits, out RaycastHit resultHit)
+    {
+        resultHit = new RaycastHit();
+        if (hits == null || hits.Length == 0) return false;
+
+        System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+
+        foreach (var h in hits)
+        {
+            if (h.collider.gameObject == gameObject || h.collider.transform.IsChildOf(transform))
+                continue;
+
+            IFocusable checkFocus = h.collider.GetComponent<IFocusable>();
+            if (checkFocus == null) checkFocus = h.collider.GetComponentInParent<IFocusable>();
+
+            if (checkFocus != null)
+            {
+                if (IsValidTarget(h.collider, checkFocus))
+                {
+                    resultHit = h;
+                    return true; 
+                }
+                else
+                {
+                    Debug.Log($"ℹ [TryFindFocusable] Invalid target skipped: {h.collider.name}");
+                }
+            }
+        }
+        return false;
+    }
+
+    private bool IsValidTarget(Collider hitCollider, IFocusable focusable)
+    {
+         if (focusable == null || !(focusable is Component)) return false;
+
+         string objName = (focusable as Component).name.ToLower().Trim();
+
+         // 1. Name exclude
+         if (objName == "doorpovit" || objName == "doorprovit")
+         {
+             // Debug.Log($"   -> Ignored: Name match ({objName})");
+             return false;
+         }
+
+         // 2. Specific door control
+         if (objName.Contains("doorpovit (3)") || objName.Contains("doorprovit (3)"))
+         {
+             if (horrorEventManager != null && horrorEventManager.CycleCount == 0)
+             {
+                 // Debug.Log($"   -> Ignored: CycleCount 0");
+                 return false;
+             }
+             
+             DoorController door = hitCollider.GetComponentInParent<DoorController>();
+             if (door != null && door.HasBeenInteracted)
+             {
+                  // Debug.Log($"   -> Ignored: Already Interacted");
+                  return false;
+             }
+         }
+
+         return true;
+    }
+
+
+    // チラつき防止用のタイマー
+    private float hoverLostTimer = 0f;
+    private const float HOVER_LOST_DELAY = 0.15f; // 0.15秒猶予
+
+    private void UpdateCrosshairState(bool isRealtimeHit)
+    {
+        if (isRealtimeHit)
+        {
+            // ヒットしたら即時オン、タイマーリセット
+            hoverLostTimer = HOVER_LOST_DELAY;
+            
+            if (!isHoveringFocusable)
+            {
+                isHoveringFocusable = true;
+                SetCrosshairVisuals(true);
             }
         }
         else
         {
-            Debug.Log("💨 [PlayerFocusController] Raycast hit nothing");
+            // ヒットか外れてもタイマー内ならオン維持
+            if (hoverLostTimer > 0f)
+            {
+                hoverLostTimer -= Time.deltaTime;
+                // 維持中は isHoveringFocusable を true のままにする
+            }
+            else
+            {
+               // 完全にロスト
+               if (isHoveringFocusable)
+               {
+                   isHoveringFocusable = false;
+                   SetCrosshairVisuals(false);
+                   
+                   // ★ キャッシュもここでクリア
+                   cachedFocusTarget = null;
+                   cachedFocusCollider = null;
+               }
+            }
         }
     }
 
+    private void SetCrosshairVisuals(bool active)
+    {
+        if (active)
+        {
+            crosshairRect.localScale = Vector3.one * 1.5f;
+            if (activeActionUIObject) activeActionUIObject.SetActive(true);
+            foreach (var img in crosshairImages)
+            {
+                img.color = new Color(1f, 0.6f, 0.6f, 0.9f); 
+            }
+        }
+        else
+        {
+            crosshairRect.localScale = Vector3.one;
+            if (activeActionUIObject) activeActionUIObject.SetActive(false);
+            foreach (var img in crosshairImages)
+            {
+                img.color = new Color(1f, 1f, 1f, 0.5f); 
+            }
+        }
+    }
 
-    // デバッグ用にRayを表示
     void OnDrawGizmos()
     {
         if (playerCamera != null)
         {
             Gizmos.color = Color.cyan;
             Gizmos.DrawRay(playerCamera.transform.position, playerCamera.transform.forward * focusDistance);
+            Gizmos.DrawWireSphere(playerCamera.transform.position + playerCamera.transform.forward * focusDistance, focusRadius);
         }
     }
 
+    // UI参照用キャッシュ
+    private RectTransform crosshairRect;
+    private UnityEngine.UI.Image[] crosshairImages;
+    private GameObject activeActionUIObject; 
+    private bool isHoveringFocusable = false;
+
     private void SetupCrosshair()
     {
-        // シーン名による表示制限
         string sceneName = SceneManager.GetActiveScene().name;
-        Debug.Log($"👁 [SetupCrosshair] Current Scene: {sceneName}");
-
-        // Stage1, Stage2, およびそれらのBPMテストシーンでのみ表示
+        
         if (sceneName != "Stage1" && sceneName != "Stage2" && 
             sceneName != "99_BPMTestScene1" && sceneName != "99_BPMTestScene2")
         {
-            Debug.Log($"ℹ [SetupCrosshair] Skipping crosshair creation for this scene.");
             return;
         }
 
-        // 既にクロスヘアがある場合は作成しない（重複防止）
-        if (GameObject.Find("CrosshairCanvas") != null)
-        {
-            Debug.Log("ℹ [SetupCrosshair] CrosshairCanvas already exists.");
-            return;
-        }
+        if (GameObject.Find("CrosshairCanvas") != null) return;
 
-        Debug.Log("🔨 [SetupCrosshair] Creating CrosshairCanvas...");
-
-        // Canvas作成
         GameObject canvasObj = new GameObject("CrosshairCanvas");
         Canvas canvas = canvasObj.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        canvas.sortingOrder = 32767; // 最前面に表示 (Max)
+        canvas.sortingOrder = 32767;
         canvasObj.AddComponent<CanvasScaler>();
         canvasObj.AddComponent<UnityEngine.UI.GraphicRaycaster>();
-
-        // 親としてプレイヤーのライフサイクルに合わせたい場合、別オブジェクトにするか検討するが、
-        // ScreenSpaceOverlayはルートにおくのが一般的。
-        // シーン遷移で破棄されるように、プレイヤーの子にするか、DontDestroyOnLoadしないでおく。
-        // ここでは単純に生成し、シーン切り替えで破棄されるに任せる。
         
-        // クロスヘアの親オブジェクト（画面中央）
         GameObject crosshairObj = new GameObject("Crosshair");
         crosshairObj.transform.SetParent(canvasObj.transform, false);
         RectTransform rect = crosshairObj.AddComponent<RectTransform>();
-        rect.anchoredPosition = Vector2.zero; // 中央
+        rect.anchoredPosition = Vector2.zero;
 
-        // 画像の生成関数
         void CreateLine(string name, Vector2 size)
         {
             GameObject lineObj = new GameObject(name);
             lineObj.transform.SetParent(crosshairObj.transform, false);
             UnityEngine.UI.Image img = lineObj.AddComponent<UnityEngine.UI.Image>();
-            img.color = new Color(1f, 1f, 1f, 0.5f); // 半透明の白
-            img.raycastTarget = false; // レイキャストをブロックしない
+            img.color = new Color(1f, 1f, 1f, 0.5f);
+            img.raycastTarget = false;
             
-            // アウトラインを追加して視認性向上
             UnityEngine.UI.Outline outline = lineObj.AddComponent<UnityEngine.UI.Outline>();
             outline.effectColor = Color.black;
             outline.effectDistance = new Vector2(1f, -1f);
@@ -176,16 +317,12 @@ public class PlayerFocusController : MonoBehaviour
             lineRect.sizeDelta = size;
         }
 
-        // 横線 (幅20, 高さ2)
         CreateLine("H_Line", new Vector2(20f, 2f));
-        // 縦線 (幅2, 高さ20)
         CreateLine("V_Line", new Vector2(2f, 20f));
 
-        // キャッシュ
         crosshairRect = crosshairObj.GetComponent<RectTransform>();
         crosshairImages = crosshairObj.GetComponentsInChildren<UnityEngine.UI.Image>();
 
-        // ガイドUIのセットアップ
         if (actionGuideUI != null)
         {
             activeActionUIObject = actionGuideUI;
@@ -193,7 +330,6 @@ public class PlayerFocusController : MonoBehaviour
         }
         else
         {
-            // デフォルトのテキスト作成（フォールバック）
             GameObject textObj = new GameObject("ActionText");
             textObj.transform.SetParent(crosshairObj.transform, false);
             UnityEngine.UI.Text actionText = textObj.AddComponent<UnityEngine.UI.Text>();
@@ -201,13 +337,11 @@ public class PlayerFocusController : MonoBehaviour
             actionText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             if (actionText.font == null) actionText.font = Font.CreateDynamicFontFromOSFont("Arial", 24);
             actionText.fontSize = 24;
-            // テキストの色も少しマイルドな赤に
             actionText.color = Color.white; 
             actionText.alignment = TextAnchor.MiddleCenter;
             actionText.horizontalOverflow = HorizontalWrapMode.Overflow;
             actionText.verticalOverflow = VerticalWrapMode.Overflow;
 
-            // テキストにもアウトラインを追加して視認性向上
             UnityEngine.UI.Outline textOutline = textObj.AddComponent<UnityEngine.UI.Outline>();
             textOutline.effectColor = Color.black;
             textOutline.effectDistance = new Vector2(1f, -1f);
@@ -221,15 +355,8 @@ public class PlayerFocusController : MonoBehaviour
         }
     }
 
-    // UI参照用キャッシュ
-    private RectTransform crosshairRect;
-    private UnityEngine.UI.Image[] crosshairImages;
-    private GameObject activeActionUIObject; // 表示切り替え用オブジェクト
-    private bool isHoveringFocusable = false;
-
     void Update()
     {
-        // マウスの右クリック（Input System）
         if (Mouse.current != null && Mouse.current.rightButton.wasPressedThisFrame)
         {
             Debug.Log("🖱 [PlayerFocusController] Right Click Detected");
@@ -237,89 +364,5 @@ public class PlayerFocusController : MonoBehaviour
         }
 
         CheckFocusableHover();
-    }
-
-    private void CheckFocusableHover()
-    {
-        if (playerCamera == null) return;
-        if (crosshairRect == null) return; 
-
-        Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
-        bool hitFocusable = false;
-
-        if (Physics.Raycast(ray, out RaycastHit hit, focusDistance, focusLayer, QueryTriggerInteraction.Ignore))
-        {
-            IFocusable focusable = hit.collider.GetComponent<IFocusable>();
-            if (focusable == null) focusable = hit.collider.GetComponentInParent<IFocusable>();
-
-            if (focusable != null)
-            {
-                // コンポーネントがアタッチされているオブジェクトの名前を確認する
-                // (Colliderが子要素にある場合、hit.collider.nameでは親の名前が取れないため)
-                string objName = (focusable as Component).name.ToLower().Trim();
-
-                // 特定の名前のオブジェクトは除外（完全一致のみ除外して、(1)などは許可する）
-                if (objName == "doorpovit" || objName == "doorprovit")
-                {
-                    hitFocusable = false;
-                }
-                // 特定のドア (doorpovit (3)) はCycleCountなどの条件で制御
-                else if (objName.Contains("doorpovit (3)") || objName.Contains("doorprovit (3)"))
-                {
-                     // CycleCount == 0 の時は反応しない
-                     if (horrorEventManager != null && horrorEventManager.CycleCount == 0)
-                     {
-                         hitFocusable = false;
-                     }
-                     else
-                     {
-                         // CycleCount >= 1: ワンタイム
-                         DoorController door = hit.collider.GetComponentInParent<DoorController>();
-                         if (door != null && door.HasBeenInteracted)
-                         {
-                             hitFocusable = false;
-                         }
-                         else
-                         {
-                             hitFocusable = true;
-                         }
-                     }
-                }
-                else
-                {
-                    hitFocusable = true;
-                }
-            }
-        }
-
-        UpdateCrosshairState(hitFocusable);
-    }
-
-    private void UpdateCrosshairState(bool isHovering)
-    {
-        if (isHovering == isHoveringFocusable) return; // 状態変化なしなら何もしない
-        isHoveringFocusable = isHovering;
-
-        if (isHovering)
-        {
-            // ハイライト状態
-            crosshairRect.localScale = Vector3.one * 1.5f; // 1.5倍に拡大
-            if (activeActionUIObject) activeActionUIObject.SetActive(true);
-            foreach (var img in crosshairImages)
-            {
-                // 明度を上げたマイルドな赤 (白に近い赤)
-                img.color = new Color(1f, 0.6f, 0.6f, 0.9f); 
-            }
-        }
-        else
-        {
-            // 通常状態
-            crosshairRect.localScale = Vector3.one;
-            if (activeActionUIObject) activeActionUIObject.SetActive(false);
-            foreach (var img in crosshairImages)
-            {
-                img.color = new Color(1f, 1f, 1f, 0.5f); // 半透明の白
-            }
-        }
     }
 }
