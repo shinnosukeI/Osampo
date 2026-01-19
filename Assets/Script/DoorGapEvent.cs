@@ -11,6 +11,12 @@ public class DoorGapEvent : MonoBehaviour, IFocusable
     private float gapAngle = 20f; // 隙間の角度（度数）
 
     [SerializeField]
+    private AudioClip womanVoiceSound; // ★ 追加: 女の声
+
+    [SerializeField]
+    private AudioSource audioSource; // ★ 音源再生用
+
+    [SerializeField]
     private AudioClip slamSound; // バタンと閉まるときの音
 
     [SerializeField]
@@ -25,10 +31,15 @@ public class DoorGapEvent : MonoBehaviour, IFocusable
 
     private void Start()
     {
-        // ヒエラルキー上でゾンビが最初からいる場合、イベント発生まで非表示にしておく？
-        // ユーザーの指示次第だが、通常はTriggerまでは非表示が安全。
-        // ただし、もしユーザーがすでに非表示設定しているならそのままでOK。
-        
+        if (audioSource == null)
+        {
+            audioSource = GetComponent<AudioSource>();
+            if (audioSource == null)
+            {
+                audioSource = gameObject.AddComponent<AudioSource>();
+            }
+        }
+
         // 開始時にすでにイベント状態にする場合
         if (openOnStart)
         {
@@ -47,16 +58,8 @@ public class DoorGapEvent : MonoBehaviour, IFocusable
             return;
         }
 
-        // ゾンビを表示
-        if (zombieObject != null)
-        {
-            zombieObject.SetActive(true);
-        }
-        else
-        {
-            // 設定がなければ自分がゾンビとみなして表示
-            this.gameObject.SetActive(true);
-        }
+        // ★ 変更点: Renderersを使って表示/非表示を切り替える
+        SetVisualsActive(false);
 
         // DoorControllerを取得して無効化
         doorController = targetDoor.GetComponent<DoorController>();
@@ -71,7 +74,6 @@ public class DoorGapEvent : MonoBehaviour, IFocusable
         originalRotation = targetDoor.rotation;
 
         // ドアを少し開ける
-        // ドアの軸に合わせて回転させる（Y軸回転と仮定）
         targetDoor.rotation = originalRotation * Quaternion.Euler(0, gapAngle, 0);
 
         isEventActive = true;
@@ -82,18 +84,14 @@ public class DoorGapEvent : MonoBehaviour, IFocusable
     {
         if (!isEventActive) return;
 
-        Debug.Log("👁 [DoorGapEvent] Player Focused on Zombie! Slamming door.");
-        isEventActive = false;
+        Debug.Log("👁 [DoorGapEvent] Player Focused on DoorGap! Revealing Zombie...");
+        isEventActive = false; // 二重発動防止
 
-        // 音を鳴らす
-        if (slamSound != null)
-        {
-            AudioSource.PlayClipAtPoint(slamSound, targetDoor.position);
-        }
+        // ★ ここでゾンビを表示
+        SetVisualsActive(true);
 
-        // ドアを即座に閉める（またはアニメーションさせる）
-        // "急にゾンビがドアを閉める" なので即座 または 高速回転
-        StartCoroutine(SlamDoorCoroutine());
+        // コルーチンで「表示 -> 待機 -> ドア閉める」
+        StartCoroutine(ShockAndSlamSequence());
 
         // ログ保存 (52)
         HorrorEventManager hm = FindFirstObjectByType<HorrorEventManager>();
@@ -101,6 +99,34 @@ public class DoorGapEvent : MonoBehaviour, IFocusable
         {
             hm.LogEvent(52);
         }
+    }
+
+    private IEnumerator ShockAndSlamSequence()
+    {
+        // ★ 0. 女の声を再生（表示と同時）
+        if (womanVoiceSound != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(womanVoiceSound);
+        }
+
+        // ★ 1. ゾンビを見せる時間 (例: 0.5秒)
+        yield return new WaitForSeconds(0.5f);
+
+        // ★ 2. バタン音を鳴らす（ドア閉め開始時）
+        if (slamSound != null && audioSource != null)
+        {
+            // PlayOneShotを使えば声と被って再生される（声が長ければミックスされる）
+            // もし「声はここで止めたい」なら audioSource.Stop() を呼ぶが、
+            // 悲鳴とバタン音が重なる方が自然な場合が多いのでStopなしにする。
+            audioSource.PlayOneShot(slamSound);
+        }
+        else if (slamSound != null)
+        {
+             AudioSource.PlayClipAtPoint(slamSound, targetDoor.position);
+        }
+
+        // ★ 3. ドアを閉める
+        yield return SlamDoorCoroutine();
     }
 
     private IEnumerator SlamDoorCoroutine()
@@ -120,14 +146,7 @@ public class DoorGapEvent : MonoBehaviour, IFocusable
         targetDoor.rotation = originalRotation;
 
         // ゾンビを消す
-        if (zombieObject != null)
-        {
-            zombieObject.SetActive(false);
-        }
-        else
-        {
-            this.gameObject.SetActive(false);
-        }
+        SetVisualsActive(false);
 
         // DoorControllerを有効に戻す（プレイヤーが後で通れるように）
         if (doorController != null)
@@ -136,6 +155,22 @@ public class DoorGapEvent : MonoBehaviour, IFocusable
             doorController.enabled = true;
             // DoorControllerの状態整合性を取るためにCloseを呼んでおくのが無難
             doorController.CloseDoor(); 
+        }
+    }
+
+    private void SetVisualsActive(bool isActive)
+    {
+        if (zombieObject != null && zombieObject != gameObject)
+        {
+            zombieObject.SetActive(isActive);
+            return;
+        }
+
+        // zombieObjectがない、または自分自身の場合、MeshRenderer等を切り替える
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+        foreach (var r in renderers)
+        {
+            r.enabled = isActive;
         }
     }
 }
