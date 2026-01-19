@@ -178,7 +178,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: Status Txt
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 7971420d8442e7d4c86237095e0955dd, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -444,6 +444,10 @@ PrefabInstance:
     - target: {fileID: 6501445668984053774, guid: bdd5f1bfeca19e44cadfaa174cb06416, type: 3}
       propertyPath: m_Name
       value: FadeCanvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 6501445668984053774, guid: bdd5f1bfeca19e44cadfaa174cb06416, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6957114999365149334, guid: bdd5f1bfeca19e44cadfaa174cb06416, type: 3}
       propertyPath: fadeDuration
