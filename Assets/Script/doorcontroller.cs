@@ -15,6 +15,12 @@ public class DoorController : MonoBehaviour, IFocusable
     // ★一度でもインタラクトされたかを記録
     public bool HasBeenInteracted { get; private set; } = false;
 
+    public void ResetInteraction()
+    {
+        HasBeenInteracted = false;
+        // Debug.Log($"[DoorController] Interaction state reset for {name}");
+    }
+
     void Start()
     {
         closedRotation = transform.localRotation;

@@ -167,13 +167,27 @@ public class st2_warptrigger : MonoBehaviour, IFocusable
     {
         foreach (var door in allStage2Doors)
         {
-            if (door != null && door.isDoorOpen && door.targetDoor != null)
+            if (door != null)
             {
-                door.StartCoroutine(door.RotateDoor(door.targetDoor, door.doorOpenRot, door.doorClosedRot));
-                door.isDoorOpen = false;
+                // ドアが開いていれば閉じる
+                if (door.isDoorOpen && door.targetDoor != null)
+                {
+                    door.StartCoroutine(door.RotateDoor(door.targetDoor, door.doorOpenRot, door.doorClosedRot));
+                    door.isDoorOpen = false;
+                }
+
+                // ★ ドアのインタラクト状態もリセットする (DoorControllerを持っている場合)
+                if (door.targetDoor != null)
+                {
+                    var doorCtrl = door.targetDoor.GetComponent<DoorController>();
+                    if (doorCtrl == null) doorCtrl = door.targetDoor.GetComponentInParent<DoorController>();
+                    
+                    if (doorCtrl != null)
+                    {
+                        doorCtrl.ResetInteraction();
+                    }
+                }
             }
         }
-
-        
-    }
+    }      
 }
