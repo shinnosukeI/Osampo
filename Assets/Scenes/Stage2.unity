@@ -8468,7 +8468,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Footstep
   audioSource: {fileID: 728530586}
-  footstepSounds: []
+  footstepSounds:
+  - {fileID: 8300000, guid: 3ce8af9942fe97c42890e9044a7ae7e6, type: 3}
   stepInterval: 0.5
   moveThreshold: 0.1
 --- !u!82 &728530586
@@ -8482,7 +8483,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 0}
+  m_Resource: {fileID: 8300000, guid: 3ce8af9942fe97c42890e9044a7ae7e6, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -8528,7 +8529,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -8587,7 +8588,7 @@ MonoBehaviour:
   jumpPower: 5.5
   gravity: -9.81
   groundSnap: -2
-  groundCheck: {fileID: 416510907}
+  groundCheck: {fileID: 0}
   groundCheckRadius: 0.2
   groundMask:
     serializedVersion: 2
@@ -19249,32 +19250,40 @@ MonoBehaviour:
     loopSettings:
     - eventID: 43
       lighting: 0
-      lightSettings: []
-      useGlobalLightSetting: 0
+      lightSettings:
+      - color: {r: 1, g: 1, b: 1, a: 0}
+        intensity: 10
+      useGlobalLightSetting: 1
       globalLightSetting:
         color: {r: 0, g: 0, b: 0, a: 0}
         intensity: 0
     - eventID: 41
       lighting: 0
-      lightSettings: []
-      useGlobalLightSetting: 0
+      lightSettings:
+      - color: {r: 1, g: 1, b: 1, a: 0}
+        intensity: 10
+      useGlobalLightSetting: 1
       globalLightSetting:
         color: {r: 0, g: 0, b: 0, a: 0}
         intensity: 0
     - eventID: 42
       lighting: 0
-      lightSettings: []
-      useGlobalLightSetting: 0
+      lightSettings:
+      - color: {r: 1, g: 1, b: 1, a: 0}
+        intensity: 10
+      useGlobalLightSetting: 1
       globalLightSetting:
         color: {r: 0, g: 0, b: 0, a: 0}
         intensity: 0
     - eventID: 46
       lighting: 0
-      lightSettings: []
-      useGlobalLightSetting: 0
+      lightSettings:
+      - color: {r: 1, g: 1, b: 1, a: 0}
+        intensity: 10
+      useGlobalLightSetting: 1
       globalLightSetting:
-        color: {r: 0, g: 0, b: 0, a: 0}
-        intensity: 0
+        color: {r: 1, g: 1, b: 1, a: 0}
+        intensity: 4
     - eventID: 44
       lighting: 0
       lightSettings: []
@@ -19295,25 +19304,31 @@ MonoBehaviour:
         intensity: 2
     - eventID: 52
       lighting: 0
-      lightSettings: []
-      useGlobalLightSetting: 0
+      lightSettings:
+      - color: {r: 1, g: 1, b: 1, a: 0}
+        intensity: 10
+      useGlobalLightSetting: 1
       globalLightSetting:
         color: {r: 0, g: 0, b: 0, a: 0}
         intensity: 0
     - eventID: 56
       lighting: 0
-      lightSettings: []
-      useGlobalLightSetting: 0
+      lightSettings:
+      - color: {r: 1, g: 1, b: 1, a: 0}
+        intensity: 10
+      useGlobalLightSetting: 1
       globalLightSetting:
-        color: {r: 0, g: 0, b: 0, a: 0}
-        intensity: 0
+        color: {r: 1, g: 1, b: 1, a: 0}
+        intensity: 3
     - eventID: 53
       lighting: 0
-      lightSettings: []
-      useGlobalLightSetting: 0
+      lightSettings:
+      - color: {r: 1, g: 1, b: 1, a: 0}
+        intensity: 10
+      useGlobalLightSetting: 1
       globalLightSetting:
-        color: {r: 0, g: 0, b: 0, a: 0}
-        intensity: 0
+        color: {r: 1, g: 1, b: 1, a: 0}
+        intensity: 4
     - eventID: 44
       lighting: 0
       lightSettings:
