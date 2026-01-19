@@ -10815,6 +10815,7 @@ MonoBehaviour:
   brokenWindowObject: {fileID: 733700193}
   cockroachSwarmTarget: {fileID: 1701761517}
   cycleCount: 1
+  cycleEventTypes: 2d000000360000000b000000170000003700000021000000
 --- !u!1 &690401339
 GameObject:
   m_ObjectHideFlags: 0
