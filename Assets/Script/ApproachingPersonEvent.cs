@@ -91,11 +91,36 @@ public class ApproachingPersonEvent : MonoBehaviour
 
     public void TriggerEvent()
     {
-        if (isEventActive) return;
+        if (isEventActive) 
+        {
+            Debug.LogWarning("👻 [ApproachingPersonEvent] TriggerEvent呼び出しをスキップ（すでにActiveです）");
+            return;
+        }
+        
+        // ★ 依存関係の再取得（nullの場合）
+        if (playerCamera == null) playerCamera = Camera.main;
+        if (playerMove == null)
+        {
+             GameObject p = GameObject.FindGameObjectWithTag("Player");
+             if (p != null) playerMove = p.GetComponent<FreeMoveInputSystem>();
+        }
+        if (playerLook == null)
+        {
+             GameObject p = GameObject.FindGameObjectWithTag("Player");
+             if (p != null) playerLook = p.GetComponentInChildren<CameraLookInputSystem>();
+             if (playerLook == null) playerLook = FindObjectOfType<CameraLookInputSystem>();
+        }
+
+        if (playerMove == null || playerCamera == null)
+        {
+            Debug.LogError($"❌ [ApproachingPersonEvent] プレイヤーまたはカメラが見つかりません！ Move: {playerMove}, Cam: {playerCamera}");
+            return;
+        }
+
         isEventActive = true;
         hasLookedAt = false;
 
-        Debug.Log("👻 [ApproachingPersonEvent] イベント開始 - 強制振り向きシーケンス");
+        Debug.Log($"👻 [ApproachingPersonEvent] イベント開始 - 強制振り向きシーケンス PlayMove:{playerMove.name}");
 
         // 強制振り向きコルーチン開始
         StartCoroutine(ForceTurnSequence());
