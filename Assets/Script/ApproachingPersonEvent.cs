@@ -3,6 +3,15 @@ using UnityEngine;
 
 public class ApproachingPersonEvent : MonoBehaviour
 {
+    // ★ リセット機能
+    public void ResetEvent()
+    {
+        isEventActive = false;
+        hasLookedAt = false;
+        if (personObject != null) personObject.SetActive(false);
+        Debug.Log("🔄 [ApproachingPersonEvent] State Reset.");
+    }
+
     [Header("設定")]
     [SerializeField] private GameObject personObject; // 人のモデル
     [SerializeField] private AudioClip glassSound;    // 最初のガラス音
