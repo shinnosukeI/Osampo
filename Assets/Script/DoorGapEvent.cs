@@ -23,11 +23,21 @@ public class DoorGapEvent : MonoBehaviour, IFocusable
     private GameObject zombieObject; // ゾンビ本体（イベント終了時に消すため）
 
     [SerializeField]
-    private bool openOnStart = true; // ゲーム開始時にドアを開けて待機するか
+    // 変数名を変更してInspectorの値をリセット（旧openOnStartがtrueのまま残っている可能性があるため）
+    private bool startActive = false; 
 
     private bool isEventActive = false;
     private DoorController doorController;
     private Quaternion originalRotation; // ドアの初期回転
+
+    private void Awake()
+    {
+        // ★ Awakeで初期回転（閉じた状態）を確保
+        if (targetDoor != null)
+        {
+            originalRotation = targetDoor.rotation;
+        }
+    }
 
     private void Start()
     {
@@ -40,8 +50,32 @@ public class DoorGapEvent : MonoBehaviour, IFocusable
             }
         }
 
-        // 開始時にすでにイベント状態にする場合
-        if (openOnStart)
+        // ★ 開始時にドアを完全にロック（閉じて固定）
+        if (targetDoor != null)
+        {
+             doorController = targetDoor.GetComponent<DoorController>();
+             
+             // 強制的に閉じた回転にする（少しでも開いていたら閉じる）
+             if (originalRotation != Quaternion.identity)
+             {
+                targetDoor.rotation = originalRotation;
+             }
+             else
+             {
+                // originalRotationが取れていない場合、ローカル回転0を信じる
+                targetDoor.localRotation = Quaternion.identity;
+                originalRotation = targetDoor.rotation;
+             }
+
+             if (doorController != null)
+             {
+                 doorController.CloseDoor(); // 論理状態も閉じる
+                 doorController.enabled = false; // 無効化
+             }
+        }
+
+        // 必要ならイベント開始（指定がある場合のみ）
+        if (startActive)
         {
             TriggerEvent();
         }
@@ -58,26 +92,39 @@ public class DoorGapEvent : MonoBehaviour, IFocusable
             return;
         }
 
-        // ★ 変更点: Renderersを使って表示/非表示を切り替える
+        // ★ Renderersを使って表示/非表示を切り替え
         SetVisualsActive(false);
 
-        // DoorControllerを取得して無効化
-        doorController = targetDoor.GetComponent<DoorController>();
+        // DoorControllerを取得
+        if (doorController == null)
+            doorController = targetDoor.GetComponent<DoorController>();
+
         if (doorController != null)
         {
-            doorController.enabled = false;
-            // ドアを見てもこのイベントが発動するようにする
+            // ★変更: イベント待機中はフォーカス可能にする（そうしないとイベント発動できない）
+            doorController.enabled = true;
             doorController.FocusOverride = this;
         }
 
-        // 現在の回転を保存（閉まっている前提）
-        originalRotation = targetDoor.rotation;
+        // Awakeで取れなかった場合の保険
+        if (originalRotation == Quaternion.identity)
+        {
+            originalRotation = targetDoor.rotation;
+        }
 
         // ドアを少し開ける
         targetDoor.rotation = originalRotation * Quaternion.Euler(0, gapAngle, 0);
 
         isEventActive = true;
     }
+
+    // ... (OnFocus methods unchanged) ...
+    // Note: Since I am replacing Start and TriggerEvent, I have to be careful with line numbers.
+    // I will target Start and TriggerEvent block.
+
+    // ... 
+
+
 
     // プレイヤーがフォーカスした（PlayerFocusControllerから呼ばれる）
     public void OnFocus()
@@ -160,20 +207,16 @@ public class DoorGapEvent : MonoBehaviour, IFocusable
         // ゾンビを消す
         SetVisualsActive(false);
 
-        // DoorControllerを有効に戻す
+        // DoorControllerの設定復帰
         if (doorController != null)
         {
             doorController.FocusOverride = null; 
-            doorController.enabled = true;
             
-            // DoorControllerの状態も「閉」にする
+            // ★変更: イベント終了後は無効化（ロック）してフォーカス不可にする
+            doorController.enabled = false; 
+            
+            // 状態も「閉」にする
             doorController.CloseDoor(); 
-            
-            // DoorControllerのUpdateで補間されないように、現在回転を強制適用しておく
-            // （DoorControllerはUpdateでSlerpしているので、即座に合わせる必要がある）
-            // ただしDoorControllerの変数はprivateなので直接isOpen=falseだけでは足りないかも？
-            // Start()でclosedRotation取ってるので、CloseDoor()すればtargetがclosedRotationになり、
-            // 現在位置もそこに近いので問題ないはず。
         }
     }
 

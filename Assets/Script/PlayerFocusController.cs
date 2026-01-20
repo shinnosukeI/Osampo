@@ -168,6 +168,12 @@ public class PlayerFocusController : MonoBehaviour
     {
          if (focusable == null || !(focusable is Component)) return false;
 
+         // ★ 追加: MonoBehaviourの場合は enabled でなければ無視する
+         if (focusable is MonoBehaviour mb && !mb.enabled)
+         {
+             return false;
+         }
+
          string objName = (focusable as Component).name.ToLower().Trim();
 
          // 1. Name exclude
