@@ -113,8 +113,10 @@ public class CockroachSwarm : MonoBehaviour
     {
         if (particleSystem.isPlaying)
         {
-            particleSystem.Stop();
-            Debug.Log("ゴキブリが消えました。");
+            // ★ Stop logic: Clear immediately
+            particleSystem.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            particleSystem.Clear(); // Double check
+            Debug.Log("ゴキブリが消えました（即時削除）。");
         }
 
         if (audioSource != null && audioSource.isPlaying)

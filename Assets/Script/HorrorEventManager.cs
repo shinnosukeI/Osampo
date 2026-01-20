@@ -476,6 +476,18 @@ public class HorrorEventManager : MonoBehaviour
                      continue;
                  }
 
+                 // ★ Event 52 (DoorGap) の場合: 開始直後から隙間を開けておきたい
+                 if (item.id == 52)
+                 {
+                     if (doorGapEvent != null)
+                     {
+                         doorGapEvent.gameObject.SetActive(true);
+                         doorGapEvent.TriggerEvent(); // ★ ここで開く処理を呼ぶ
+                     }
+                     // これで処理完了
+                     continue;
+                 }
+
                  // ★ アクティブなイベントのオブジェクトは、ループ開始時から表示しておく
                  if (item.comp != null) item.comp.gameObject.SetActive(true);
                  if (item.obj != null) item.obj.SetActive(true);

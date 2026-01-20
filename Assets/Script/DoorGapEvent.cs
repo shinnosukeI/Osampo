@@ -23,11 +23,21 @@ public class DoorGapEvent : MonoBehaviour, IFocusable
     private GameObject zombieObject; // ゾンビ本体（イベント終了時に消すため）
 
     [SerializeField]
-    private bool openOnStart = true; // ゲーム開始時にドアを開けて待機するか
+    // 変数名を変更してInspectorの値をリセット（旧openOnStartがtrueのまま残っている可能性があるため）
+    private bool startActive = false; 
 
     private bool isEventActive = false;
     private DoorController doorController;
     private Quaternion originalRotation; // ドアの初期回転
+
+    private void Awake()
+    {
+        // ★ Awakeで初期回転（閉じた状態）を確保
+        if (targetDoor != null)
+        {
+            originalRotation = targetDoor.rotation;
+        }
+    }
 
     private void Start()
     {
@@ -40,8 +50,32 @@ public class DoorGapEvent : MonoBehaviour, IFocusable
             }
         }
 
-        // 開始時にすでにイベント状態にする場合
-        if (openOnStart)
+        // ★ 開始時にドアを完全にロック（閉じて固定）
+        if (targetDoor != null)
+        {
+             doorController = targetDoor.GetComponent<DoorController>();
+             
+             // 強制的に閉じた回転にする（少しでも開いていたら閉じる）
+             if (originalRotation != Quaternion.identity)
+             {
+                targetDoor.rotation = originalRotation;
+             }
+             else
+             {
+                // originalRotationが取れていない場合、ローカル回転0を信じる
+                targetDoor.localRotation = Quaternion.identity;
+                originalRotation = targetDoor.rotation;
+             }
+
+             if (doorController != null)
+             {
+                 doorController.CloseDoor(); // 論理状態も閉じる
+                 doorController.enabled = false; // 無効化
+             }
+        }
+
+        // 必要ならイベント開始（指定がある場合のみ）
+        if (startActive)
         {
             TriggerEvent();
         }
@@ -58,26 +92,39 @@ public class DoorGapEvent : MonoBehaviour, IFocusable
             return;
         }
 
-        // ★ 変更点: Renderersを使って表示/非表示を切り替える
+        // ★ Renderersを使って表示/非表示を切り替え
         SetVisualsActive(false);
 
-        // DoorControllerを取得して無効化
-        doorController = targetDoor.GetComponent<DoorController>();
+        // DoorControllerを取得
+        if (doorController == null)
+            doorController = targetDoor.GetComponent<DoorController>();
+
         if (doorController != null)
         {
-            doorController.enabled = false;
-            // ドアを見てもこのイベントが発動するようにする
+            // ★変更: イベント待機中はフォーカス可能にする（そうしないとイベント発動できない）
+            doorController.enabled = true;
             doorController.FocusOverride = this;
         }
 
-        // 現在の回転を保存（閉まっている前提）
-        originalRotation = targetDoor.rotation;
+        // Awakeで取れなかった場合の保険
+        if (originalRotation == Quaternion.identity)
+        {
+            originalRotation = targetDoor.rotation;
+        }
 
         // ドアを少し開ける
         targetDoor.rotation = originalRotation * Quaternion.Euler(0, gapAngle, 0);
 
         isEventActive = true;
     }
+
+    // ... (OnFocus methods unchanged) ...
+    // Note: Since I am replacing Start and TriggerEvent, I have to be careful with line numbers.
+    // I will target Start and TriggerEvent block.
+
+    // ... 
+
+
 
     // プレイヤーがフォーカスした（PlayerFocusControllerから呼ばれる）
     public void OnFocus()
@@ -112,27 +159,25 @@ public class DoorGapEvent : MonoBehaviour, IFocusable
         // ★ 1. ゾンビを見せる時間 (例: 0.5秒)
         yield return new WaitForSeconds(0.5f);
 
-        // ★ 2. バタン音を鳴らす（ドア閉め開始時）
-        if (slamSound != null && audioSource != null)
+        // ★ 2. バタン音を鳴らす前に、声を止める（ピタッと止める演出）
+        if (audioSource != null)
         {
-            // PlayOneShotを使えば声と被って再生される（声が長ければミックスされる）
-            // もし「声はここで止めたい」なら audioSource.Stop() を呼ぶが、
-            // 悲鳴とバタン音が重なる方が自然な場合が多いのでStopなしにする。
-            audioSource.PlayOneShot(slamSound);
-        }
-        else if (slamSound != null)
-        {
-             AudioSource.PlayClipAtPoint(slamSound, targetDoor.position);
+            audioSource.Stop();
         }
 
-        // ★ 3. ドアを閉める
+        // ★ 3. ドアを閉める（ここでバタンと閉めるアニメーション開始）
+        // 音は「閉まりきった瞬間」に鳴らすのが自然なので、コルーチン内で鳴らすか、タイミング合わせる
+        // ここではSlamDoorCoroutine内で完了時に鳴らすように変更、または直後に鳴らす
         yield return SlamDoorCoroutine();
+        
+        // （SlamDoorCoroutine内で音を鳴らすよう変更するため、ここは削除）
     }
 
     private IEnumerator SlamDoorCoroutine()
     {
-        // 少しだけ時間をかけて閉める演出（0.1秒など）
-        float duration = 0.1f;
+        // 「勢いよく閉まる」演出：加速して閉じる
+        // 時間をさらに短くして「バタン！」感を出す
+        float duration = 0.05f; 
         Quaternion startRot = targetDoor.rotation;
         float elapsed = 0f;
 
@@ -140,34 +185,56 @@ public class DoorGapEvent : MonoBehaviour, IFocusable
         {
             elapsed += Time.deltaTime;
             float t = elapsed / duration;
+            // t*t で加速させる（EaseIn）
+            t = t * t; 
+            
             targetDoor.rotation = Quaternion.Lerp(startRot, originalRotation, t);
             yield return null;
         }
+        // ループ後に確実に閉める（しっかり閉める）
         targetDoor.rotation = originalRotation;
+
+        // ★ 閉じた瞬間に音を鳴らす（衝撃音）
+        if (slamSound != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(slamSound);
+        }
+        else if (slamSound != null)
+        {
+            AudioSource.PlayClipAtPoint(slamSound, targetDoor.position);
+        }
 
         // ゾンビを消す
         SetVisualsActive(false);
 
-        // DoorControllerを有効に戻す（プレイヤーが後で通れるように）
+        // DoorControllerの設定復帰
         if (doorController != null)
         {
-            doorController.FocusOverride = null; // 上書き解除
-            doorController.enabled = true;
-            // DoorControllerの状態整合性を取るためにCloseを呼んでおくのが無難
+            doorController.FocusOverride = null; 
+            
+            // ★変更: イベント終了後は無効化（ロック）してフォーカス不可にする
+            doorController.enabled = false; 
+            
+            // 状態も「閉」にする
             doorController.CloseDoor(); 
         }
     }
 
     private void SetVisualsActive(bool isActive)
     {
+        Debug.Log($"👁 [DoorGapEvent] SetVisualsActive({isActive}) called.");
+
         if (zombieObject != null && zombieObject != gameObject)
         {
+            Debug.Log($"   -> Toggling zombieObject: {zombieObject.name}");
             zombieObject.SetActive(isActive);
             return;
         }
 
         // zombieObjectがない、または自分自身の場合、MeshRenderer等を切り替える
         Renderer[] renderers = GetComponentsInChildren<Renderer>();
+        Debug.Log($"   -> Toggling {renderers.Length} renderers on {gameObject.name} (ZombieObject is null or self)");
+        
         foreach (var r in renderers)
         {
             r.enabled = isActive;
