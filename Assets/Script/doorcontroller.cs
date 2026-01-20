@@ -18,14 +18,24 @@ public class DoorController : MonoBehaviour, IFocusable
 
     public void ResetInteraction() => HasBeenInteracted = false;
 
-    void Start()
+    // ★ Awakeに変更: 他のスクリプトより先に初期位置を確保するため
+    void Awake()
     {
         closedRotation = transform.localRotation;
         openRotation = Quaternion.Euler(transform.localEulerAngles + new Vector3(0f, openAngle, 0f));
     }
 
+    void Start()
+    {
+        // Startは空でも良い、あるいは初期化ロジックがあれば書く
+    }
+
+    public bool SkipUpdate { get; set; } = false; // ★外部制御用: Updateをスキップするか
+
     void Update()
     {
+        if (SkipUpdate) return; // ★スキップフラグが立っていたら何もしない（他のスクリプトで制御中）
+
         transform.localRotation = Quaternion.Slerp(
             transform.localRotation,
             isOpen ? openRotation : closedRotation,

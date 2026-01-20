@@ -30,6 +30,11 @@ public class DoorGapEvent : MonoBehaviour, IFocusable
     private DoorController doorController;
     private Quaternion originalRotation; // ドアの初期回転
 
+    private Rigidbody doorRigidbody; 
+    private HorrorEventTrigger myTrigger; 
+    
+    private bool hasTriggered = false; // ★ 追加: 二重発動防止用フラグ
+
     private void Awake()
     {
         // ★ Awakeで初期回転（閉じた状態）を確保
@@ -50,10 +55,20 @@ public class DoorGapEvent : MonoBehaviour, IFocusable
             }
         }
 
+        // ★Triggerコンポーネント取得
+        myTrigger = GetComponent<HorrorEventTrigger>();
+        if (myTrigger == null && targetDoor != null)
+        {
+             // 親や子にあるかもしれないので探す
+             myTrigger = targetDoor.GetComponent<HorrorEventTrigger>();
+             if (myTrigger == null) myTrigger = GetComponentInChildren<HorrorEventTrigger>();
+        }
+
         // ★ 開始時にドアを完全にロック（閉じて固定）
         if (targetDoor != null)
         {
              doorController = targetDoor.GetComponent<DoorController>();
+             doorRigidbody = targetDoor.GetComponent<Rigidbody>(); // ★RB取得
              
              // 強制的に閉じた回転にする（少しでも開いていたら閉じる）
              if (originalRotation != Quaternion.identity)
@@ -72,6 +87,12 @@ public class DoorGapEvent : MonoBehaviour, IFocusable
                  doorController.CloseDoor(); // 論理状態も閉じる
                  doorController.enabled = false; // 無効化
              }
+
+             // ★物理挙動もロック（プレイヤーが押して開かないようにする）
+             if (doorRigidbody != null)
+             {
+                 doorRigidbody.isKinematic = true;
+             }
         }
 
         // 必要ならイベント開始（指定がある場合のみ）
@@ -79,12 +100,28 @@ public class DoorGapEvent : MonoBehaviour, IFocusable
         {
             TriggerEvent();
         }
+        else
+        {
+            // イベント開始しないなら、自分自身(DoorGapEvent)も無効化してフォーカス対象外にする
+            this.enabled = false;
+        }
     }
 
     // イベント開始（Managerから呼ばれる）
     public void TriggerEvent()
     {
         Debug.Log("🌑 [DoorGapEvent] TriggerEvent called");
+        
+        // ★ 自分自身を有効化
+        this.enabled = true;
+
+        // ★ トラブル防止のため、トリガーコンポーネントがあれば最初は有効化し、
+        //    重複発動を防ぐためにResetする（またはTriggerOnceに任せる）が、
+        //    ここでは「イベント開始時は有効」にしておく
+        if (myTrigger != null)
+        {
+            myTrigger.enabled = true;
+        }
 
         if (targetDoor == null)
         {
@@ -99,11 +136,22 @@ public class DoorGapEvent : MonoBehaviour, IFocusable
         if (doorController == null)
             doorController = targetDoor.GetComponent<DoorController>();
 
+        if (doorRigidbody == null)
+            doorRigidbody = targetDoor.GetComponent<Rigidbody>();
+
         if (doorController != null)
         {
             // ★変更: イベント待機中はフォーカス可能にする（そうしないとイベント発動できない）
             doorController.enabled = true;
+            doorController.SkipUpdate = true; // ★追加: DoorControllerの自動回転を停止（隙間を維持するため）
             doorController.FocusOverride = this;
+        }
+
+        // ★イベント中は物理挙動をKinematicにして固定（変な動きを防ぐ）
+        // ただしSlamアニメーションはTransform直接操作なのでKinematicでOK
+        if (doorRigidbody != null)
+        {
+            doorRigidbody.isKinematic = true; 
         }
 
         // Awakeで取れなかった場合の保険
@@ -116,28 +164,38 @@ public class DoorGapEvent : MonoBehaviour, IFocusable
         targetDoor.rotation = originalRotation * Quaternion.Euler(0, gapAngle, 0);
 
         isEventActive = true;
+        hasTriggered = false; // ★ リセット
     }
-
-    // ... (OnFocus methods unchanged) ...
-    // Note: Since I am replacing Start and TriggerEvent, I have to be careful with line numbers.
-    // I will target Start and TriggerEvent block.
-
-    // ... 
-
-
 
     // プレイヤーがフォーカスした（PlayerFocusControllerから呼ばれる）
     public void OnFocus()
     {
         if (!isEventActive) return;
+        if (hasTriggered) return; // ★ 既に発動済みなら無視
 
         Debug.Log("👁 [DoorGapEvent] Player Focused on DoorGap! Revealing Zombie...");
-        isEventActive = false; // 二重発動防止
+        isEventActive = false; 
+        hasTriggered = true; // ★ 即座にフラグを立てる
+
+        // ★ 即座に無効化して、二度押しや連打を完全に防ぐ
+        if (doorController != null)
+        {
+            doorController.FocusOverride = null;
+            doorController.enabled = false;
+        }
+        this.enabled = false; // 自分自身も無効化（PlayerFocusControllerから無視される）
+
+        // ★ フォーカスされた時点で、接近トリガーも無効化して再発動（再オープン）を即座に防ぐ
+        if (myTrigger != null)
+        {
+            myTrigger.enabled = false;
+        }
 
         // ★ ここでゾンビを表示
         SetVisualsActive(true);
 
         // コルーチンで「表示 -> 待機 -> ドア閉める」
+        // コンポーネントが無効でもGameObjectがActiveならコルーチンは走る
         StartCoroutine(ShockAndSlamSequence());
 
         // ログ保存 (52)
@@ -166,11 +224,7 @@ public class DoorGapEvent : MonoBehaviour, IFocusable
         }
 
         // ★ 3. ドアを閉める（ここでバタンと閉めるアニメーション開始）
-        // 音は「閉まりきった瞬間」に鳴らすのが自然なので、コルーチン内で鳴らすか、タイミング合わせる
-        // ここではSlamDoorCoroutine内で完了時に鳴らすように変更、または直後に鳴らす
         yield return SlamDoorCoroutine();
-        
-        // （SlamDoorCoroutine内で音を鳴らすよう変更するため、ここは削除）
     }
 
     private IEnumerator SlamDoorCoroutine()
@@ -194,6 +248,16 @@ public class DoorGapEvent : MonoBehaviour, IFocusable
         // ループ後に確実に閉める（しっかり閉める）
         targetDoor.rotation = originalRotation;
 
+         // もしDoorControllerがあれば、そちらのClosedRotationを使うのが確実
+        if (doorController != null)
+        {
+            targetDoor.localRotation = doorController.ClosedRotation; // ★ 確実な閉鎖位置
+        }
+        else
+        {
+             targetDoor.rotation = originalRotation;
+        }
+
         // ★ 閉じた瞬間に音を鳴らす（衝撃音）
         if (slamSound != null && audioSource != null)
         {
@@ -207,34 +271,34 @@ public class DoorGapEvent : MonoBehaviour, IFocusable
         // ゾンビを消す
         SetVisualsActive(false);
 
-        // DoorControllerの設定復帰
+        // DoorControllerの設定復帰（念のためCloseだけ確認）
         if (doorController != null)
         {
-            doorController.FocusOverride = null; 
-            
-            // ★変更: イベント終了後は無効化（ロック）してフォーカス不可にする
-            doorController.enabled = false; 
-            
-            // 状態も「閉」にする
+             // 既に無効化されているはずだが、状態整合性のためCloseDoorは呼んでおく
             doorController.CloseDoor(); 
         }
+
+        // ★ 物理挙動も完全に固定（念押し）
+        if (doorRigidbody != null)
+        {
+            doorRigidbody.isKinematic = true;
+        }
+        
+        // ★ 自分自身も無効化して、PlayerFocusControllerに見つからないようにする
+        this.enabled = false;
     }
 
     private void SetVisualsActive(bool isActive)
     {
-        Debug.Log($"👁 [DoorGapEvent] SetVisualsActive({isActive}) called.");
-
+        // Debug.Log($"👁 [DoorGapEvent] SetVisualsActive({isActive}) called.");
         if (zombieObject != null && zombieObject != gameObject)
         {
-            Debug.Log($"   -> Toggling zombieObject: {zombieObject.name}");
             zombieObject.SetActive(isActive);
             return;
         }
 
         // zombieObjectがない、または自分自身の場合、MeshRenderer等を切り替える
         Renderer[] renderers = GetComponentsInChildren<Renderer>();
-        Debug.Log($"   -> Toggling {renderers.Length} renderers on {gameObject.name} (ZombieObject is null or self)");
-        
         foreach (var r in renderers)
         {
             r.enabled = isActive;

@@ -179,6 +179,12 @@ public class PlayerFocusController : MonoBehaviour
          // 1. Name exclude
          if (objName == "doorpovit" || objName == "doorprovit")
          {
+             // ★ 例外: DoorGapEventがついている場合は許可する
+             if (focusable is DoorGapEvent)
+             {
+                 return true;
+             }
+
              // Debug.Log($"   -> Ignored: Name match ({objName})");
              return false;
          }
