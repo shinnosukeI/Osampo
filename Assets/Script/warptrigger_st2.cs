@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;   // ★ 新Input System用
 
+[RequireComponent(typeof(AudioSource))]
 public class warptrigger_st2 : MonoBehaviour
 {
     [Header("ワープ設定")]
@@ -12,6 +13,10 @@ public class warptrigger_st2 : MonoBehaviour
     public Transform targetDoor;       // 開きたいドア
     public float openAngle = 90f;      // 開く角度
     public float doorOpenSpeed = 3f;   // 開閉の速さ
+
+    [Header("ドア音")]
+    [SerializeField] private AudioClip doorOpenSE;   // ★開く音
+    [SerializeField] private float seVolume = 1f;    // ★音量
 
     [Header("ステージ2用ホラーイベント連携")]
     [SerializeField] private HorrorEventManager stage2EventManager; // ★ 型修正: 本来のマネージャを参照
@@ -24,11 +29,16 @@ public class warptrigger_st2 : MonoBehaviour
     private Quaternion doorOpenRot;
     private bool isMoving = false;
 
+    private AudioSource audioSource;
+
     // ★ 全ての warptrigger_st2 を管理するリスト
     private static List<warptrigger_st2> allStage2Doors = new List<warptrigger_st2>();
 
     private void Awake()
     {
+        audioSource = GetComponent<AudioSource>();
+        audioSource.playOnAwake = false;
+
         // シーンにある warptrigger_st2 をリストに登録
         if (!allStage2Doors.Contains(this))
             allStage2Doors.Add(this);
@@ -77,7 +87,6 @@ public class warptrigger_st2 : MonoBehaviour
                 // このドア自身がクリックされたか？
                 if (hit.transform == transform)
                 {
-                    
                     OnDoorClicked();
                 }
             }
@@ -104,7 +113,6 @@ public class warptrigger_st2 : MonoBehaviour
 
         if (stage2EventManager != null)
         {
-            // ★ 新しいマネージャーのメソッドを呼び出し: ここでループが進み、イベントが適用される
             stage2EventManager.OnDoorClicked();
         }
         else
@@ -121,22 +129,13 @@ public class warptrigger_st2 : MonoBehaviour
             return;
         }
 
-        Vector3 before = player.position;
-
         // CharacterController が付いている場合は一旦無効化してから動かす
         var cc = player.GetComponent<CharacterController>();
-        if (cc != null)
-        {
-            cc.enabled = false;
-        }
+        if (cc != null) cc.enabled = false;
 
         player.position = teleportPosition;
 
-        if (cc != null)
-        {
-            cc.enabled = true;
-        }
-
+        if (cc != null) cc.enabled = true;
     }
 
     private void OpenDoor()
@@ -149,8 +148,21 @@ public class warptrigger_st2 : MonoBehaviour
 
         if (isMoving) return;
 
+        // ★ 既に開いてるなら二重再生しない
+        if (isDoorOpen) return;
+
         isDoorOpen = true;
+
+        // ★ 開き始めに音を鳴らす
+        PlayOpenSE();
+
         StartCoroutine(RotateDoor(targetDoor, doorClosedRot, doorOpenRot));
+    }
+
+    private void PlayOpenSE()
+    {
+        if (doorOpenSE == null || audioSource == null) return;
+        audioSource.PlayOneShot(doorOpenSE, seVolume);
     }
 
     private System.Collections.IEnumerator RotateDoor(Transform door, Quaternion from, Quaternion to)
