@@ -11,6 +11,75 @@ public class MirrorCameraController : MonoBehaviour
     [Header("鏡用カメラ")]
     public Camera mirrorCamera;     // MirrorCamera
 
+    [Header("レイヤー設定")]
+    [SerializeField] private string mirrorLayerName = "MirrorOnly";
+
+    void Start()
+    {
+        // カメラが未設定ならMainCameraを取得
+        if (playerCamera == null)
+        {
+            if (Camera.main != null)
+            {
+                playerCamera = Camera.main.transform;
+                Debug.Log("📸 [MirrorCameraController] playerCamera was null, auto-assigned from Camera.main.");
+            }
+            else
+            {
+                Debug.LogError("❌ [MirrorCameraController] Main Camera not found!");
+                return;
+            }
+        }
+
+        int layerIndex = LayerMask.NameToLayer(mirrorLayerName);
+        if (layerIndex == -1)
+        {
+            Debug.LogError($"❌ [MirrorCameraController] Layer '{mirrorLayerName}' not found. Please create it in Project Settings.");
+            return;
+        }
+
+        // Main Camera: MirrorOnlyレイヤーを非表示にする
+        if (playerCamera != null)
+        {
+            Camera cam = playerCamera.GetComponent<Camera>();
+            if (cam != null)
+            {
+                // ビット演算前の状態をログ
+                // Debug.Log($"[MirrorInfo] Before Mask: {cam.cullingMask = Convert.ToString(cam.cullingMask, 2)}");
+                
+                cam.cullingMask &= ~(1 << layerIndex);
+                
+                Debug.Log($"✅ [MirrorCameraController] HIDDEN layer '{mirrorLayerName}' (Index {layerIndex}) from Main Camera.");
+            }
+        }
+
+        // Mirror Camera: MirrorOnlyレイヤーを表示する
+        if (mirrorCamera != null)
+        {
+            mirrorCamera.cullingMask |= (1 << layerIndex);
+            Debug.Log($"✅ [MirrorCameraController] SHOWN layer '{mirrorLayerName}' (Index {layerIndex}) in Mirror Camera.");
+        }
+    }
+
+    void Update()
+    {
+        // 1秒に1回など、定期的にチェックしてマスクが外れていたら強制適用する（他のスクリプトによる上書き対策）
+        if (Time.frameCount % 60 == 0 && playerCamera != null)
+        {
+             Camera cam = playerCamera.GetComponent<Camera>();
+             int layerIndex = LayerMask.NameToLayer(mirrorLayerName);
+             if (cam != null && layerIndex != -1)
+             {
+                 // もしマスクに含まれてしまっていたら（ビットが立っていたら）
+                 if ((cam.cullingMask & (1 << layerIndex)) != 0)
+                 {
+                      Debug.LogWarning($"⚠ [MirrorCameraController] Mask reset detected! Re-hiding layer '{mirrorLayerName}'");
+                      cam.cullingMask &= ~(1 << layerIndex);
+                 }
+             }
+        }
+    }
+
     void LateUpdate()
     {
         if (playerCamera == null || mirror == null || mirrorCamera == null)

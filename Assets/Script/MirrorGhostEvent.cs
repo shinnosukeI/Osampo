@@ -25,6 +25,13 @@ public class MirrorGhostEvent : MonoBehaviour, IFocusable
         if (ghostObject != null)
         {
             ghostObject.SetActive(false);
+            
+        // ★ スタート時にレイヤーを適用しておく（表示された一瞬が見えないように）
+            int startLayer = LayerMask.NameToLayer(mirrorLayerName);
+            if (startLayer != -1)
+            {
+                SetLayerRecursively(ghostObject, startLayer);
+            }
         }
     }
 
@@ -70,6 +77,14 @@ public class MirrorGhostEvent : MonoBehaviour, IFocusable
         {
             Debug.Log($"👻 [MirrorGhostEvent] Layer found: {layer}. Setting object to this layer.");
             SetLayerRecursively(ghostObject, layer);
+
+            // ★ 追加: メインカメラがこのレイヤーを映さないように強制設定
+            if (Camera.main != null)
+            {
+                // ビットを落とす（非表示）
+                Camera.main.cullingMask &= ~(1 << layer);
+                Debug.Log($"👁 [MirrorGhostEvent] Main Camera CullingMask updated to HIDE layer {layer}.");
+            }
         }
         else
         {
