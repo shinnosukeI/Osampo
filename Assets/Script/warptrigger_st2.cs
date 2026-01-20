@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;   // ★ 新Input System用
 
 [RequireComponent(typeof(AudioSource))]
-public class warptrigger_st2 : MonoBehaviour
+public class warptrigger_st2 : MonoBehaviour, IFocusable // ★ IFocusable追加
 {
     [Header("ワープ設定")]
     public Transform player;           // プレイヤー
@@ -17,6 +17,7 @@ public class warptrigger_st2 : MonoBehaviour
     [Header("ドア音")]
     [SerializeField] private AudioClip doorOpenSE;   // ★開く音
     [SerializeField] private float seVolume = 1f;    // ★音量
+    [SerializeField] private AudioClip lockedSE;     // ★追加: ロック音
 
     [Header("ステージ2用ホラーイベント連携")]
     [SerializeField] private HorrorEventManager stage2EventManager; // ★ 型修正: 本来のマネージャを参照
@@ -76,10 +77,9 @@ public class warptrigger_st2 : MonoBehaviour
         // マウスがない環境なら何もしない
         if (Mouse.current == null) return;
 
-        // 左クリックが押された瞬間
+        // 左クリックでレイキャスト判定（既存仕様の互換）
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
-            // 画面上のマウス位置からレイを飛ばす
             Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
 
             if (Physics.Raycast(ray, out RaycastHit hit))
@@ -87,14 +87,19 @@ public class warptrigger_st2 : MonoBehaviour
                 // このドア自身がクリックされたか？
                 if (hit.transform == transform)
                 {
-                    OnDoorClicked();
+                    TryOpenDoor(); // ★ 左クリックでもロック判定を通す
                 }
             }
         }
     }
 
-    // ★ クリック時の一連の処理
-    private void OnDoorClicked()
+    // ★ IFocusable実装: 右クリック（フォーカス）用
+    public void OnFocus()
+    {
+        TryOpenDoor();
+    }
+
+    private void TryOpenDoor()
     {
         // ★ 進行判定: イベントを見ていない(ログがない)場合は進めない
         if (stage2EventManager != null)
@@ -102,11 +107,18 @@ public class warptrigger_st2 : MonoBehaviour
             if (!stage2EventManager.CanProceedToNextLoop())
             {
                 Debug.Log("🔒 [warptrigger_st2] イベント未確認のためドアを開けません。");
-                // ここで「鍵がかかっている」音などを鳴らすと親切
+                ShowLockedMessage(); // ★ メッセージ表示
+                PlayLockedSE();      // ★ ロック音
                 return;
             }
         }
 
+        OnDoorClicked();
+    }
+
+    // ドアを開けてワープする（ロック判定通過後の処理）
+    private void OnDoorClicked()
+    {
         TeleportPlayer();
         OpenDoor();
         teleportCount++;
@@ -118,6 +130,42 @@ public class warptrigger_st2 : MonoBehaviour
         else
         {
             Debug.LogWarning("[warptrigger_st2] stage2EventManager がアサインされていません。");
+        }
+    }
+
+    // ★ ロック時のメッセージ表示
+    private void ShowLockedMessage()
+    {
+        // PlayerFocusControllerが生成する "ActionText" を探して書き換える、または独自のUIを出す
+        // ここでは簡易的に ActionText を拝借して "開かない・・・" にし、数秒後に戻す
+        var canvas = GameObject.Find("CrosshairCanvas");
+        if (canvas != null)
+        {
+            var textComp = canvas.GetComponentInChildren<UnityEngine.UI.Text>();
+            if (textComp != null)
+            {
+                StartCoroutine(ShowMessageCoroutine(textComp, "開かない・・・"));
+            }
+        }
+    }
+
+    private System.Collections.IEnumerator ShowMessageCoroutine(UnityEngine.UI.Text textUI, string message)
+    {
+        string originalText = "右クリックでアクション"; // デフォルト
+        textUI.text = message;
+        textUI.color = Color.red; // 赤色で強調
+        
+        yield return new WaitForSeconds(2.0f);
+
+        textUI.text = originalText;
+        textUI.color = Color.white;
+    }
+
+    private void PlayLockedSE()
+    {
+        if (lockedSE != null && audioSource != null)
+        {
+             audioSource.PlayOneShot(lockedSE);
         }
     }
 
