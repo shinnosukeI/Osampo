@@ -1,10 +1,12 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class DoorController : MonoBehaviour, IFocusable
 {
     public float openAngle = 90f;
     public float speed = 2f;
+
+    [Header("Manual Control")]
+    [SerializeField] private bool disableManualControl = false; // ★チェックで手動無効
 
     private bool isOpen = false;
     private Quaternion closedRotation;
@@ -12,14 +14,9 @@ public class DoorController : MonoBehaviour, IFocusable
 
     private Coroutine autoCloseCoroutine;
 
-    // ★一度でもインタラクトされたかを記録
     public bool HasBeenInteracted { get; private set; } = false;
 
-    public void ResetInteraction()
-    {
-        HasBeenInteracted = false;
-        // Debug.Log($"[DoorController] Interaction state reset for {name}");
-    }
+    public void ResetInteraction() => HasBeenInteracted = false;
 
     void Start()
     {
@@ -29,9 +26,6 @@ public class DoorController : MonoBehaviour, IFocusable
 
     void Update()
     {
-
-
-        // スムーズ回転
         transform.localRotation = Quaternion.Slerp(
             transform.localRotation,
             isOpen ? openRotation : closedRotation,
@@ -45,18 +39,22 @@ public class DoorController : MonoBehaviour, IFocusable
     {
         if (FocusOverride != null) { FocusOverride.OnFocus(); return; }
         if (!enabled) return;
+
+        // ★手動操作禁止なら反応しない
+        if (disableManualControl) return;
+
         ToggleDoor();
     }
 
     public void ToggleDoor()
     {
+        // ★念のためここでもブロック（外部からToggle呼ばれても無効）
+        if (disableManualControl) return;
+
+        HasBeenInteracted = true;
         isOpen = !isOpen;
 
-        if (autoCloseCoroutine != null)
-        {
-            StopCoroutine(autoCloseCoroutine);
-            autoCloseCoroutine = null;
-        }
+        StopAutoCloseIfNeeded();
 
         if (isOpen)
             autoCloseCoroutine = StartCoroutine(AutoClose());
@@ -64,16 +62,25 @@ public class DoorController : MonoBehaviour, IFocusable
 
     public void OpenDoor()
     {
+        HasBeenInteracted = true;
+        if (isOpen) return;
         isOpen = true;
 
-        if (autoCloseCoroutine != null) StopCoroutine(autoCloseCoroutine);
+        StopAutoCloseIfNeeded();
         autoCloseCoroutine = StartCoroutine(AutoClose());
     }
 
     public void CloseDoor()
     {
+        HasBeenInteracted = true;
+        if (!isOpen) return;
         isOpen = false;
 
+        StopAutoCloseIfNeeded();
+    }
+
+    private void StopAutoCloseIfNeeded()
+    {
         if (autoCloseCoroutine != null)
         {
             StopCoroutine(autoCloseCoroutine);
@@ -86,5 +93,16 @@ public class DoorController : MonoBehaviour, IFocusable
         yield return new WaitForSeconds(3f);
         isOpen = false;
         autoCloseCoroutine = null;
+    }
+
+    public Quaternion ClosedRotation => closedRotation;
+    public Quaternion OpenRotation => openRotation;
+    public bool IsOpen => isOpen;
+
+    // （任意）外部から切り替えたい時用
+    public bool DisableManualControl
+    {
+        get => disableManualControl;
+        set => disableManualControl = value;
     }
 }

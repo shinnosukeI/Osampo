@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(AudioSource))]
 public class DoorTeleporter : MonoBehaviour, IFocusable
 {
     private void OnMouseDown()
@@ -23,6 +24,10 @@ public class DoorTeleporter : MonoBehaviour, IFocusable
     public float secondOpenAngle = 180f;   // 2段階目（90→180）
     public float angleTolerance = 5f;      // 角度判定の許容誤差（±）
 
+    [Header("ドア音")]
+    [SerializeField] private AudioClip doorOpenSE;   // ★開く音
+    [SerializeField] private float seVolume = 1f;    // ★音量
+
     [Header("ホラーイベント連携")]
     [SerializeField] private st1_HorrorEventManager eventManager;
 
@@ -33,11 +38,16 @@ public class DoorTeleporter : MonoBehaviour, IFocusable
     private Quaternion doorClosedRot;
     private bool isMoving = false;
 
+    private AudioSource audioSource;
+
     // ★ 全ての DoorTeleporter を管理するリスト
     private static List<DoorTeleporter> allDoors = new List<DoorTeleporter>();
 
     private void Awake()
     {
+        audioSource = GetComponent<AudioSource>();
+        audioSource.playOnAwake = false;
+
         // シーンにある DoorTeleporter をリストに登録
         if (!allDoors.Contains(this))
             allDoors.Add(this);
@@ -107,8 +117,6 @@ public class DoorTeleporter : MonoBehaviour, IFocusable
         {
             float currentY = NormalizeAngle(targetDoor.eulerAngles.y);
 
-            // 90度付近なら → 180度へ
-            // それ以外（閉じてる想定）→ 90度へ
             float targetY;
 
             if (IsNearAngle(currentY, firstOpenAngle, angleTolerance))
@@ -117,7 +125,6 @@ public class DoorTeleporter : MonoBehaviour, IFocusable
             }
             else if (IsNearAngle(currentY, secondOpenAngle, angleTolerance))
             {
-                // すでに180付近なら何もしない（必要ならここで戻すなども可能）
                 targetY = secondOpenAngle;
             }
             else
@@ -131,11 +138,25 @@ public class DoorTeleporter : MonoBehaviour, IFocusable
                 targetDoor.eulerAngles.z
             );
 
+            // ★「開く動作」になる時だけ音を鳴らす
+            // 0→90, 90→180 の時は開く音。180のままなら鳴らさない。
+            bool willOpenMove = !IsNearAngle(currentY, targetY, angleTolerance);
+            if (willOpenMove)
+            {
+                PlayOpenSE();
+            }
+
             StopAllCoroutines();
             StartCoroutine(MoveDoor(targetRot));
 
             isDoorOpen = !IsNearAngle(targetY, 0f, angleTolerance);
         }
+    }
+
+    private void PlayOpenSE()
+    {
+        if (doorOpenSE == null || audioSource == null) return;
+        audioSource.PlayOneShot(doorOpenSE, seVolume);
     }
 
     // ★ 全ドアを閉じる static 関数
@@ -144,10 +165,7 @@ public class DoorTeleporter : MonoBehaviour, IFocusable
         foreach (var door in allDoors)
         {
             if (door == null) continue;
-
-            // ★ これから開く予定の targetDoor を持つ DoorTeleporter は閉じない
             if (door.targetDoor == excludeTargetDoor) continue;
-
             door.CloseDoor();
         }
     }
@@ -157,7 +175,7 @@ public class DoorTeleporter : MonoBehaviour, IFocusable
     {
         if (targetDoor == null) return;
 
-        StopAllCoroutines();                  // 開き途中でも一旦止める
+        StopAllCoroutines();
         StartCoroutine(MoveDoor(doorClosedRot));
         isDoorOpen = false;
     }
@@ -205,7 +223,7 @@ public class DoorTeleporter : MonoBehaviour, IFocusable
         target = NormalizeAngle(target);
 
         float diff = Mathf.Abs(angle - target);
-        diff = Mathf.Min(diff, 360f - diff); // 0/360の近さを考慮
+        diff = Mathf.Min(diff, 360f - diff);
         return diff <= tol;
     }
 }
