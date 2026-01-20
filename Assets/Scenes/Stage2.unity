@@ -19027,8 +19027,8 @@ MonoBehaviour:
   - {fileID: 1374540540}
   - {fileID: 1474540398}
   - {fileID: 362575685}
-  debugSurveyResult: 4
-  debugStartCycle: 1
+  debugSurveyResult: 5
+  debugStartCycle: 2
   currentSurveyResult: -1
   eventDatabase: {fileID: 11400000, guid: cd95c981533df444aaccb542fbea63e9, type: 2}
   objectToFallTarget: {fileID: 0}

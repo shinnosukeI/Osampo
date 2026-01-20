@@ -112,27 +112,25 @@ public class DoorGapEvent : MonoBehaviour, IFocusable
         // ★ 1. ゾンビを見せる時間 (例: 0.5秒)
         yield return new WaitForSeconds(0.5f);
 
-        // ★ 2. バタン音を鳴らす（ドア閉め開始時）
-        if (slamSound != null && audioSource != null)
+        // ★ 2. バタン音を鳴らす前に、声を止める（ピタッと止める演出）
+        if (audioSource != null)
         {
-            // PlayOneShotを使えば声と被って再生される（声が長ければミックスされる）
-            // もし「声はここで止めたい」なら audioSource.Stop() を呼ぶが、
-            // 悲鳴とバタン音が重なる方が自然な場合が多いのでStopなしにする。
-            audioSource.PlayOneShot(slamSound);
-        }
-        else if (slamSound != null)
-        {
-             AudioSource.PlayClipAtPoint(slamSound, targetDoor.position);
+            audioSource.Stop();
         }
 
-        // ★ 3. ドアを閉める
+        // ★ 3. ドアを閉める（ここでバタンと閉めるアニメーション開始）
+        // 音は「閉まりきった瞬間」に鳴らすのが自然なので、コルーチン内で鳴らすか、タイミング合わせる
+        // ここではSlamDoorCoroutine内で完了時に鳴らすように変更、または直後に鳴らす
         yield return SlamDoorCoroutine();
+        
+        // （SlamDoorCoroutine内で音を鳴らすよう変更するため、ここは削除）
     }
 
     private IEnumerator SlamDoorCoroutine()
     {
-        // 少しだけ時間をかけて閉める演出（0.1秒など）
-        float duration = 0.1f;
+        // 「勢いよく閉まる」演出：加速して閉じる
+        // 時間をさらに短くして「バタン！」感を出す
+        float duration = 0.05f; 
         Quaternion startRot = targetDoor.rotation;
         float elapsed = 0f;
 
@@ -140,34 +138,60 @@ public class DoorGapEvent : MonoBehaviour, IFocusable
         {
             elapsed += Time.deltaTime;
             float t = elapsed / duration;
+            // t*t で加速させる（EaseIn）
+            t = t * t; 
+            
             targetDoor.rotation = Quaternion.Lerp(startRot, originalRotation, t);
             yield return null;
         }
+        // ループ後に確実に閉める（しっかり閉める）
         targetDoor.rotation = originalRotation;
+
+        // ★ 閉じた瞬間に音を鳴らす（衝撃音）
+        if (slamSound != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(slamSound);
+        }
+        else if (slamSound != null)
+        {
+            AudioSource.PlayClipAtPoint(slamSound, targetDoor.position);
+        }
 
         // ゾンビを消す
         SetVisualsActive(false);
 
-        // DoorControllerを有効に戻す（プレイヤーが後で通れるように）
+        // DoorControllerを有効に戻す
         if (doorController != null)
         {
-            doorController.FocusOverride = null; // 上書き解除
+            doorController.FocusOverride = null; 
             doorController.enabled = true;
-            // DoorControllerの状態整合性を取るためにCloseを呼んでおくのが無難
+            
+            // DoorControllerの状態も「閉」にする
             doorController.CloseDoor(); 
+            
+            // DoorControllerのUpdateで補間されないように、現在回転を強制適用しておく
+            // （DoorControllerはUpdateでSlerpしているので、即座に合わせる必要がある）
+            // ただしDoorControllerの変数はprivateなので直接isOpen=falseだけでは足りないかも？
+            // Start()でclosedRotation取ってるので、CloseDoor()すればtargetがclosedRotationになり、
+            // 現在位置もそこに近いので問題ないはず。
         }
     }
 
     private void SetVisualsActive(bool isActive)
     {
+        Debug.Log($"👁 [DoorGapEvent] SetVisualsActive({isActive}) called.");
+
         if (zombieObject != null && zombieObject != gameObject)
         {
+            Debug.Log($"   -> Toggling zombieObject: {zombieObject.name}");
             zombieObject.SetActive(isActive);
             return;
         }
 
         // zombieObjectがない、または自分自身の場合、MeshRenderer等を切り替える
         Renderer[] renderers = GetComponentsInChildren<Renderer>();
+        Debug.Log($"   -> Toggling {renderers.Length} renderers on {gameObject.name} (ZombieObject is null or self)");
+        
         foreach (var r in renderers)
         {
             r.enabled = isActive;
