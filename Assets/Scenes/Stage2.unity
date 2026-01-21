@@ -19656,7 +19656,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b0cd99ec2c206348900fb6790453a1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HorrorEventManager
-  debugMode: 1
+  debugMode: 0
   targetLights:
   - {fileID: 1444981115}
   - {fileID: 771996901}
@@ -19669,7 +19669,7 @@ MonoBehaviour:
   - {fileID: 1374540540}
   - {fileID: 1474540398}
   - {fileID: 362575685}
-  debugSurveyResult: 4
+  debugSurveyResult: 1
   debugStartCycle: 1
   currentSurveyResult: -1
   eventDatabase: {fileID: 11400000, guid: cd95c981533df444aaccb542fbea63e9, type: 2}
@@ -19911,7 +19911,15 @@ MonoBehaviour:
       lightSettings:
       - color: {r: 1, g: 1, b: 1, a: 0}
         intensity: 10
-      useGlobalLightSetting: 0
+      - color: {r: 1, g: 1, b: 1, a: 0}
+        intensity: 0
+      - color: {r: 1, g: 1, b: 1, a: 0}
+        intensity: 0
+      - color: {r: 1, g: 1, b: 1, a: 0}
+        intensity: 0
+      - color: {r: 1, g: 1, b: 1, a: 0}
+        intensity: 1
+      useGlobalLightSetting: 1
       globalLightSetting:
         color: {r: 0, g: 0, b: 0, a: 0}
         intensity: 0
