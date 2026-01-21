@@ -787,7 +787,7 @@ public class HorrorEventManager : MonoBehaviour
         PruneUnusedObjects(data.eventID);
 
         // ★ トリガーが見つからない（配置していない）場合、ループ開始と同時にイベントを即時実行する
-        if (!triggerFound)
+             if (!triggerFound)
         {
              Debug.Log($"⚡ [HorrorEventManager] イベント {data.eventID} のトリガーが見つからないため、即時実行します。");
              if (eventActionMap.ContainsKey(data.eventID))
@@ -798,6 +798,13 @@ public class HorrorEventManager : MonoBehaviour
              {
                  Debug.LogWarning($"⚠ イベント {data.eventID} のアクションが登録されていません。");
              }
+        }
+
+        // ★ Event 34 (特定の場所から鳴る音) の場合、ループに入った時点でログ取得扱いにする (ユーザー要望)
+        if (data.eventID == 34)
+        {
+            Debug.Log("📝 [HorrorEventManager] Note: Event 34 is auto-logged upon loop entry.");
+            LogEvent(34);
         }
 
         // 3. 照明設定

@@ -9,11 +9,17 @@ public class MirrorGhostEvent : MonoBehaviour, IFocusable
     [SerializeField]
     private string mirrorLayerName = "MirrorOnly"; // 鏡専用レイヤーの名前
 
+    [Header("音効")]
+    [SerializeField] private AudioClip zombieSound; // ★ 追加: ゾンビの声
+    [SerializeField] private AudioSource audioSource; // ★ 追加
+
     private bool hasTriggered = false;
     private bool isReady = false; // トリガー済みで、フォーカス待機中か？
 
     private void Start()
     {
+        if (audioSource == null) audioSource = GetComponent<AudioSource>();
+
         // レイヤーが存在するかチェック（警告用）
         int layer = LayerMask.NameToLayer(mirrorLayerName);
         if (layer == -1)
@@ -49,13 +55,13 @@ public class MirrorGhostEvent : MonoBehaviour, IFocusable
 
         if (!isReady)
         {
-            Debug.LogWarning("⚠ [MirrorGhostEvent] OnFocus ignored because isReady is FALSE. (TriggerEvent was not called?)");
+            // まだイベントループに入っていない、または順番待ち
             return;
         }
 
         if (hasTriggered)
         {
-            Debug.Log("ℹ [MirrorGhostEvent] OnFocus ignored because hasTriggered is TRUE.");
+             // 既に発動済みなら何度もしない
             return;
         }
 
@@ -70,6 +76,13 @@ public class MirrorGhostEvent : MonoBehaviour, IFocusable
 
         // ゴーストを表示
         ghostObject.SetActive(true);
+
+        // ★ 音を鳴らす
+        if (audioSource != null && zombieSound != null)
+        {
+            audioSource.PlayOneShot(zombieSound);
+            Debug.Log("🔊 [MirrorGhostEvent] Playing Zombie Sound.");
+        }
 
         // レイヤー設定の確認と適用（念のため）
         int layer = LayerMask.NameToLayer(mirrorLayerName);

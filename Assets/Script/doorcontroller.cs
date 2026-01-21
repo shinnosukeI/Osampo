@@ -61,6 +61,9 @@ public class DoorController : MonoBehaviour, IFocusable
         // ★念のためここでもブロック（外部からToggle呼ばれても無効）
         if (disableManualControl) return;
 
+        // ★ イベントロック確認
+        if (!CheckEventLock()) return;
+
         HasBeenInteracted = true;
         isOpen = !isOpen;
 
@@ -72,6 +75,9 @@ public class DoorController : MonoBehaviour, IFocusable
 
     public void OpenDoor()
     {
+        // ★ イベントロック確認
+        if (!CheckEventLock()) return;
+
         HasBeenInteracted = true;
         if (isOpen) return;
         isOpen = true;
@@ -114,5 +120,70 @@ public class DoorController : MonoBehaviour, IFocusable
     {
         get => disableManualControl;
         set => disableManualControl = value;
+    }
+
+    // ★ 追加: イベントログがないと開かない機能
+    [Header("Event Lock Settings")]
+    [SerializeField] private bool requireEventLogged = false; // ★ これをONにすると、その周のイベントを見ていないと開かない
+    [SerializeField] private HorrorEventManager eventManager; // ★ マネージャー参照
+
+    // ★ 外部からセットアップできるようにする
+    public void SetupEventLock(HorrorEventManager manager, bool require)
+    {
+        eventManager = manager;
+        requireEventLogged = require;
+    }
+
+    private bool CheckEventLock()
+    {
+        if (!requireEventLogged) return true; // 制限なしならOK
+
+        if (eventManager == null)
+        {
+            // マネージャーが見つからない場合は自動検索してみる
+            eventManager = FindAnyObjectByType<HorrorEventManager>();
+        }
+
+        if (eventManager != null)
+        {
+            if (!eventManager.CanProceedToNextLoop())
+            {
+                Debug.Log("🔒 [DoorController] イベント未確認のためドアを開けません。");
+                ShowLockedMessage(); // ★ メッセージ表示
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // ★ ロック時のメッセージ表示
+    private void ShowLockedMessage()
+    {
+        // 簡易的に CrosshairCanvas のテキストを使用
+        var canvas = GameObject.Find("CrosshairCanvas");
+        if (canvas != null)
+        {
+            var textComp = canvas.GetComponentInChildren<UnityEngine.UI.Text>();
+            if (textComp != null)
+            {
+                // コルーチンで表示制御
+                StopCoroutine("ShowMessageCoroutine"); // 既存があれば止める (名前指定停止は推奨されないが簡易実装)
+                StartCoroutine(ShowMessageCoroutine(textComp, "開かない・・・"));
+            }
+        }
+    }
+
+    private System.Collections.IEnumerator ShowMessageCoroutine(UnityEngine.UI.Text textUI, string message)
+    {
+        string originalText = "右クリックでアクション"; // デフォルト
+        textUI.text = message;
+        textUI.color = Color.red; // 赤色で強調
+        
+        yield return new WaitForSeconds(2.0f);
+
+        // 元に戻す（ただし、他の要因でテキストが変わっている可能性もあるので注意）
+        // 今回はシンプルにデフォルトに戻す
+        textUI.text = originalText;
+        textUI.color = Color.white;
     }
 }
