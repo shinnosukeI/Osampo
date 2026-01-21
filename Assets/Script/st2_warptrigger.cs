@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;   // ★ 新Input System用
 
@@ -32,15 +31,6 @@ public class st2_warptrigger : MonoBehaviour, IFocusable
     private Quaternion doorOpenRot;
     private bool isMoving = false;
 
-    // ★ 全ての st2_warptrigger を管理するリスト
-    private static List<st2_warptrigger> allStage2Doors = new List<st2_warptrigger>();
-
-    private void Awake()
-    {
-        if (!allStage2Doors.Contains(this))
-            allStage2Doors.Add(this);
-    }
-
     private void Start()
     {
         // ★ 自動取得（イベントマネージャ）
@@ -53,14 +43,11 @@ public class st2_warptrigger : MonoBehaviour, IFocusable
                 Debug.LogError("[st2_warptrigger] Critical: HorrorEventManager not found in scene!");
         }
 
-        // ★ AudioSource 自動取得（なければこのオブジェクトから取る）
+        // ★ AudioSource 自動取得（なければ追加）
         if (doorAudioSource == null)
         {
             doorAudioSource = GetComponent<AudioSource>();
-            if (doorAudioSource == null)
-            {
-                doorAudioSource = gameObject.AddComponent<AudioSource>();
-            }
+            if (doorAudioSource == null) doorAudioSource = gameObject.AddComponent<AudioSource>();
         }
 
         if (targetDoor != null)
@@ -70,7 +57,7 @@ public class st2_warptrigger : MonoBehaviour, IFocusable
             doorClosedRot = Quaternion.Euler(e.x, closedY, e.z);
             doorOpenRot   = Quaternion.Euler(e.x, openedY, e.z);
 
-            // もし初期状態を「閉じ(90)」に揃えたいなら↓をON
+            // 初期状態を必ず閉じ(90)にしたいならON
             // targetDoor.rotation = doorClosedRot;
         }
         else
@@ -97,10 +84,7 @@ public class st2_warptrigger : MonoBehaviour, IFocusable
     }
 
     // IFocusableの実装
-    public void OnFocus()
-    {
-        OnDoorClicked();
-    }
+    public void OnFocus() => OnDoorClicked();
 
     private void OnDoorClicked()
     {
@@ -137,15 +121,14 @@ public class st2_warptrigger : MonoBehaviour, IFocusable
             Debug.LogWarning("[Stage2][WarpTrigger] targetDoor が設定されていません。");
             return;
         }
-
         if (isMoving) return;
 
         isDoorOpen = true;
         StartCoroutine(RotateDoor(targetDoor, doorClosedRot, doorOpenRot, true));
     }
 
-    // ★ 閉じる処理（必要なときに呼ぶ）
-    private void CloseDoor()
+    // ★ 必要なら他から閉じたい時に呼べる（勝手に閉まることはない）
+    public void CloseDoorManual()
     {
         if (targetDoor == null) return;
         if (isMoving) return;
@@ -158,7 +141,6 @@ public class st2_warptrigger : MonoBehaviour, IFocusable
     {
         isMoving = true;
 
-        // ★ 回転開始時にSE
         PlayDoorSE(opening);
 
         float t = 0f;
@@ -169,45 +151,16 @@ public class st2_warptrigger : MonoBehaviour, IFocusable
             yield return null;
         }
 
-        door.rotation = to; // 誤差止め
+        door.rotation = to;
         isMoving = false;
     }
 
     private void PlayDoorSE(bool opening)
     {
         if (doorAudioSource == null) return;
-
         AudioClip clip = opening ? openSE : closeSE;
         if (clip == null) return;
 
         doorAudioSource.PlayOneShot(clip);
-    }
-
-    // ★ 開いているドアを全部閉じたいとき用
-    public void CloseAllOpenedDoors()
-    {
-        foreach (var door in allStage2Doors)
-        {
-            if (door == null) continue;
-
-            if (door.isDoorOpen && door.targetDoor != null)
-            {
-                // ★ 閉まる音も鳴る
-                door.StartCoroutine(door.RotateDoor(door.targetDoor, door.doorOpenRot, door.doorClosedRot, false));
-                door.isDoorOpen = false;
-            }
-
-            // ★ ドアのインタラクト状態もリセットする
-            if (door.targetDoor != null)
-            {
-                var doorCtrl = door.targetDoor.GetComponent<DoorController>();
-                if (doorCtrl == null) doorCtrl = door.targetDoor.GetComponentInParent<DoorController>();
-
-                if (doorCtrl != null)
-                {
-                    doorCtrl.ResetInteraction();
-                }
-            }
-        }
     }
 }
