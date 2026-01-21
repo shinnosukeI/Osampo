@@ -19656,7 +19656,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b0cd99ec2c206348900fb6790453a1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HorrorEventManager
-  debugMode: 1
+  debugMode: 0
   targetLights:
   - {fileID: 1444981115}
   - {fileID: 771996901}
