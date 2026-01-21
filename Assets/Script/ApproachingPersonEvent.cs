@@ -312,6 +312,12 @@ public class ApproachingPersonEvent : MonoBehaviour
         return false;
     }
 
+    [Header("ライト演出")]
+    [SerializeField] private Light[] targetLights; // ★ 追加: バン！の瞬間に明るくするライト
+    [SerializeField] private float bangLightIntensity = 5.0f; // ★ 指定された明るさ5
+
+
+
     private IEnumerator ApproachSequence()
     {
         // ★ 追加: 3秒待ってから移動開始
@@ -335,6 +341,19 @@ public class ApproachingPersonEvent : MonoBehaviour
                     {
                         // ★ 専用の音量で再生
                         audioSource.PlayOneShot(lastMoveSound, lastSoundVolume);
+                    }
+
+                    // ★ ライトの明るさを5にする演出
+                    if (targetLights != null)
+                    {
+                        foreach (var light in targetLights)
+                        {
+                            if (light != null)
+                            {
+                                light.intensity = bangLightIntensity;
+                                light.enabled = true; // 念のため有効化
+                            }
+                        }
                     }
                 }
             }

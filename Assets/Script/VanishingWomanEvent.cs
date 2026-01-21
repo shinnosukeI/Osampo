@@ -68,11 +68,6 @@ public class VanishingWomanEvent : MonoBehaviour
 
         Debug.Log("👻 消える女イベント開始");
 
-        // 4. 女性を消す (ノイズはまだ残す?) -> 画像乱れ中に消えるのが自然なので
-        womanObject.SetActive(false);
-        
-        Debug.Log("👻 女性消失 -> 音量フェード開始");
-
         // ★ 音量フェード（消えた瞬間から照明が消えるまで大きくする）
         if (audioSource != null && vanishSound != null)
         {
@@ -93,7 +88,12 @@ public class VanishingWomanEvent : MonoBehaviour
             yield return null;
         }
 
-        // 5. 照明OFF ＆ ノイズOFF ＆ 音停止
+        // 5. 照明OFF ＆ ノイズOFF ＆ 音停止 ＆ 女性消失
+        if (womanObject != null)
+        {
+            womanObject.SetActive(false); // ★ ここに移動: 照明が消えるタイミングと合わせる
+        }
+        
         if (noiseEffectUI != null)
         {
             noiseEffectUI.SetActive(false);
@@ -110,7 +110,7 @@ public class VanishingWomanEvent : MonoBehaviour
         {
              audioSource.Stop();
         }
-        Debug.Log("🌑 照明OFF");
+        Debug.Log("🌑 照明OFF & 女性消失");
 
         // 5. 暗闇で待機
         yield return new WaitForSeconds(darknessDuration);

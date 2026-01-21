@@ -1330,20 +1330,32 @@ public class HorrorEventManager : MonoBehaviour
             // 3D設定を強制
             soundFromLocationSource.spatialBlend = 1.0f; // 1.0 = 完全3D
             soundFromLocationSource.loop = true;
+            soundFromLocationSource.dopplerLevel = 0f;
+            soundFromLocationSource.spread = 0f;
+            
+            // ★ リバーブやバイパス設定を確認
+            soundFromLocationSource.bypassListenerEffects = false;
+            soundFromLocationSource.bypassEffects = false;
 
-            // ★ 範囲設定 (ユーザー要望: さらに半減 0.25m-2.5m)
-            soundFromLocationSource.minDistance = 0.25f;  // 0.25m以内なら最大音量
-            soundFromLocationSource.maxDistance = 2.5f;   // 2.5m離れると聞こえなくなる
-            soundFromLocationSource.rolloffMode = AudioRolloffMode.Logarithmic; // 自然な減衰
+            // ★ 範囲設定 (Linearに変更して減衰を明確にする)
+            soundFromLocationSource.minDistance = 1.0f;  
+            soundFromLocationSource.maxDistance = 15.0f;   
+            soundFromLocationSource.rolloffMode = AudioRolloffMode.Linear; // Linearの方が変化が分かりやすい
 
             if (!soundFromLocationSource.isPlaying)
             {
                 soundFromLocationSource.gameObject.SetActive(true);
                 soundFromLocationSource.Play();
-                Debug.Log("🔊 特定の場所からの音(34)を再生開始しました（範囲縮小版）。");
+                
+                string camInfo = (Camera.main != null) ? Camera.main.transform.position.ToString() : "No Camera";
+                Debug.Log($"🔊 [Event34] Audio Started. Source Pos: {soundFromLocationSource.transform.position}, Player(Cam) Pos: {camInfo}");
+                
+                if (Camera.main != null && Vector3.Distance(soundFromLocationSource.transform.position, Camera.main.transform.position) < 0.1f)
+                {
+                    Debug.LogWarning("⚠ [Event34] AudioSource is at the same position as Camera! It might be attached to the player or not positioned.");
+                }
             }
         }
-        // 設定されていない場合は何もしない（エラーログは出さない、必須ではないかもしれないため）
     }
 
     // 51: 通行人
