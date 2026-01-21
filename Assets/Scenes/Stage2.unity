@@ -3474,6 +3474,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7d2bef75eb15f9241a477f7810c94995, type: 3}
       insertIndex: -1
       addedObject: {fileID: 355610375}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7d2bef75eb15f9241a477f7810c94995, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 355610377}
   m_SourcePrefab: {fileID: 100100000, guid: 7d2bef75eb15f9241a477f7810c94995, type: 3}
 --- !u!1 &355610369 stripped
 GameObject:
@@ -3516,6 +3519,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MirrorGhostEvent
   ghostObject: {fileID: 355610369}
   mirrorLayerName: MirrorOnly
+  zombieSound: {fileID: 8300000, guid: bf7f05eb53b39ac49b9d28f649e2f8fc, type: 3}
+  audioSource: {fileID: 355610377}
 --- !u!95 &355610375
 Animator:
   serializedVersion: 7
@@ -3538,6 +3543,103 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!82 &355610377
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 355610369}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &362575680 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 0c3de52ac434780458fcab4365608771, type: 3}
@@ -19672,6 +19774,8 @@ MonoBehaviour:
     - eventID: 44
       lighting: 0
       lightSettings:
+      - color: {r: 1, g: 1, b: 1, a: 0}
+        intensity: 10
       - color: {r: 0, g: 0, b: 0, a: 0}
         intensity: 0
       - color: {r: 0, g: 0, b: 0, a: 0}
@@ -19680,22 +19784,12 @@ MonoBehaviour:
         intensity: 0
       - color: {r: 0, g: 0, b: 0, a: 0}
         intensity: 0
-      - color: {r: 0, g: 0, b: 0, a: 0}
-        intensity: 0
-      - color: {r: 0, g: 0, b: 0, a: 0}
-        intensity: 0
-      - color: {r: 0, g: 0, b: 0, a: 0}
-        intensity: 0
-      - color: {r: 0, g: 0, b: 0, a: 0}
-        intensity: 0
-      - color: {r: 0, g: 0, b: 0, a: 0}
-        intensity: 0
-      - color: {r: 0, g: 0, b: 0, a: 0}
-        intensity: 0
-      useGlobalLightSetting: 0
+      - color: {r: 1, g: 1, b: 1, a: 0}
+        intensity: 10
+      useGlobalLightSetting: 1
       globalLightSetting:
-        color: {r: 0, g: 0, b: 0, a: 0}
-        intensity: 0
+        color: {r: 1, g: 1, b: 1, a: 0}
+        intensity: 1
   - surveyResultID: 1
     loopSettings:
     - eventID: 13
@@ -19793,11 +19887,23 @@ MonoBehaviour:
         intensity: 5
     - eventID: 44
       lighting: 0
-      lightSettings: []
-      useGlobalLightSetting: 0
-      globalLightSetting:
-        color: {r: 0, g: 0, b: 0, a: 0}
+      lightSettings:
+      - color: {r: 1, g: 1, b: 1, a: 0}
+        intensity: 10
+      - color: {r: 1, g: 1, b: 1, a: 0}
         intensity: 0
+      - color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
+      - color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
+      - color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
+      - color: {r: 1, g: 1, b: 1, a: 0}
+        intensity: 10
+      useGlobalLightSetting: 1
+      globalLightSetting:
+        color: {r: 1, g: 1, b: 1, a: 0}
+        intensity: 1
   - surveyResultID: 4
     loopSettings:
     - eventID: 43
@@ -19838,11 +19944,23 @@ MonoBehaviour:
         intensity: 4
     - eventID: 44
       lighting: 0
-      lightSettings: []
-      useGlobalLightSetting: 0
-      globalLightSetting:
-        color: {r: 0, g: 0, b: 0, a: 0}
+      lightSettings:
+      - color: {r: 1, g: 1, b: 1, a: 0}
+        intensity: 10
+      - color: {r: 1, g: 1, b: 1, a: 0}
         intensity: 0
+      - color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
+      - color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
+      - color: {r: 0, g: 0, b: 0, a: 0}
+        intensity: 0
+      - color: {r: 1, g: 1, b: 1, a: 0}
+        intensity: 10
+      useGlobalLightSetting: 1
+      globalLightSetting:
+        color: {r: 1, g: 1, b: 1, a: 0}
+        intensity: 1
   - surveyResultID: 5
     loopSettings:
     - eventID: 51
@@ -19884,9 +20002,9 @@ MonoBehaviour:
     - eventID: 44
       lighting: 0
       lightSettings:
-      - color: {r: 0, g: 0, b: 0, a: 0}
-        intensity: 0
-      - color: {r: 0, g: 0, b: 0, a: 0}
+      - color: {r: 1, g: 1, b: 1, a: 0}
+        intensity: 10
+      - color: {r: 1, g: 1, b: 1, a: 0}
         intensity: 0
       - color: {r: 0, g: 0, b: 0, a: 0}
         intensity: 0
@@ -19894,10 +20012,12 @@ MonoBehaviour:
         intensity: 0
       - color: {r: 0.17254902, g: 0.3647059, b: 0.5294118, a: 0}
         intensity: 0
-      useGlobalLightSetting: 0
+      - color: {r: 1, g: 1, b: 1, a: 0}
+        intensity: 10
+      useGlobalLightSetting: 1
       globalLightSetting:
-        color: {r: 0, g: 0, b: 0, a: 0}
-        intensity: 0
+        color: {r: 1, g: 1, b: 1, a: 0}
+        intensity: 1
 --- !u!4 &1697327540
 Transform:
   m_ObjectHideFlags: 0
