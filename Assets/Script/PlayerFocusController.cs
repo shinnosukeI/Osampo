@@ -177,6 +177,9 @@ public class PlayerFocusController : MonoBehaviour
          string objName = (focusable as Component).name.ToLower().Trim();
 
          // 1. Name exclude
+         // ★ 修正: "doorpovit" などの名前チェックが厳しすぎてフォーカスが不安定になる可能性があるため、チェックを緩和・削除する
+         // もし特定のオブジェクトを除外したい場合はTagやLayerで制御することを推奨
+         /*
          if (objName == "doorpovit" || objName == "doorprovit")
          {
              // ★ 例外: DoorGapEventがついている場合は許可する
@@ -188,6 +191,7 @@ public class PlayerFocusController : MonoBehaviour
              // Debug.Log($"   -> Ignored: Name match ({objName})");
              return false;
          }
+         */
 
          // 2. Specific door control
          if (objName.Contains("doorpovit (3)") || objName.Contains("doorprovit (3)"))
