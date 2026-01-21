@@ -46,11 +46,24 @@ public class MirrorGhostEvent : MonoBehaviour, IFocusable
     {
         Debug.Log("🌑 [MirrorGhostEvent] TriggerEvent called (Waiting for Focus)");
         isReady = true;
+
+        // ★ 安全策: イベント開始時は確実に非表示にする
+        if (ghostObject != null)
+        {
+            ghostObject.SetActive(false);
+        }
     }
 
     // プレイヤーが鏡を見たときに呼ばれる
     public void OnFocus()
     {
+        // ★ 追加ガード: 本当に右クリックされたか確認
+        // (他から呼ばれた場合や、Hoverだけで呼ばれてしまった場合の防止)
+        if (UnityEngine.InputSystem.Mouse.current != null && !UnityEngine.InputSystem.Mouse.current.rightButton.wasPressedThisFrame)
+        {
+            return;
+        }
+
         Debug.Log($"👁 [MirrorGhostEvent] OnFocus called. isReady: {isReady}, hasTriggered: {hasTriggered}");
 
         if (!isReady)
