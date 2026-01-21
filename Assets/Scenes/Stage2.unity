@@ -3565,7 +3565,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 500
+  MaxDistance: 20
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
@@ -3600,7 +3600,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -23916,8 +23916,12 @@ MonoBehaviour:
   player: {fileID: 728530583}
   teleportPosition: {x: 0.16, y: 0.5, z: -20}
   targetDoor: {fileID: 1500718830}
-  openAngle: 90
   doorOpenSpeed: 1
+  closedY: 90
+  openedY: 180
+  doorAudioSource: {fileID: 0}
+  openSE: {fileID: 0}
+  closeSE: {fileID: 0}
   stage2EventManager: {fileID: 0}
   isDoorOpen: 0
 --- !u!1001 &2103579292
