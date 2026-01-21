@@ -5014,6 +5014,7 @@ MonoBehaviour:
   disableManualControl: 0
   requireEventLogged: 1
   eventManager: {fileID: 0}
+  restrictedToEventID: 0
 --- !u!4 &441854464
 Transform:
   m_ObjectHideFlags: 0
@@ -5047,6 +5048,7 @@ MonoBehaviour:
   disableManualControl: 0
   requireEventLogged: 0
   eventManager: {fileID: 0}
+  restrictedToEventID: 0
 --- !u!114 &441854466
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9529,6 +9531,7 @@ MonoBehaviour:
   disableManualControl: 0
   requireEventLogged: 0
   eventManager: {fileID: 0}
+  restrictedToEventID: 0
 --- !u!65 &767345312
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -13417,6 +13420,7 @@ MonoBehaviour:
   disableManualControl: 0
   requireEventLogged: 0
   eventManager: {fileID: 0}
+  restrictedToEventID: 0
 --- !u!4 &1071550489
 Transform:
   m_ObjectHideFlags: 0
@@ -18020,6 +18024,7 @@ MonoBehaviour:
   disableManualControl: 1
   requireEventLogged: 0
   eventManager: {fileID: 0}
+  restrictedToEventID: 0
 --- !u!4 &1500718830
 Transform:
   m_ObjectHideFlags: 0
@@ -19656,7 +19661,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b0cd99ec2c206348900fb6790453a1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HorrorEventManager
-  debugMode: 0
+  debugMode: 1
   targetLights:
   - {fileID: 1444981115}
   - {fileID: 771996901}
@@ -23282,6 +23287,7 @@ MonoBehaviour:
   disableManualControl: 0
   requireEventLogged: 0
   eventManager: {fileID: 0}
+  restrictedToEventID: 43
 --- !u!4 &2080878056
 Transform:
   m_ObjectHideFlags: 0

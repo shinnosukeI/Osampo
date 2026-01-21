@@ -134,6 +134,33 @@ public class DoorController : MonoBehaviour, IFocusable
         requireEventLogged = require;
     }
 
+    // ★ 追加: 特定のイベント中のみ有効（それ以外はフォーカス不可＝Script Disabled）にする
+    [Header("Event Restriction")]
+    [SerializeField] private int restrictedToEventID = 0; // 0なら制限なし
+
+    public void UpdateEventRestriction(int currentEventID)
+    {
+        if (restrictedToEventID == 0) return; // 制限なし
+
+        if (restrictedToEventID == currentEventID)
+        {
+            // 指定イベント中なので有効化
+            this.enabled = true;
+        }
+        else
+        {
+            // 指定イベントではないので無効化（フォーカスも外れる）
+            // 開いていたら閉じる
+            if (isOpen)
+            {
+                isOpen = false;
+                transform.localRotation = closedRotation;
+                StopAutoCloseIfNeeded();
+            }
+            this.enabled = false;
+        }
+    }
+
     private bool CheckEventLock()
     {
         if (!requireEventLogged) return true; // 制限なしならOK

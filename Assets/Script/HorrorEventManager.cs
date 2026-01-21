@@ -810,6 +810,16 @@ public class HorrorEventManager : MonoBehaviour
         // 3. 照明設定
         SetLighting(data);
 
+        // ★ 4. 全てのドアに対してイベント制限を更新
+        DoorController[] allDoors = FindObjectsByType<DoorController>(FindObjectsSortMode.None);
+        foreach (var door in allDoors)
+        {
+            if (door != null)
+            {
+                door.UpdateEventRestriction(data.eventID);
+            }
+        }
+
     }
 
     private void SetLighting(StageLoopData data)
