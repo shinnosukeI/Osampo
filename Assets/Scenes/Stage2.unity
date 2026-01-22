@@ -13420,10 +13420,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 45
   speed: 1
-  disableManualControl: 0
+  disableManualControl: 1
   requireEventLogged: 0
   eventManager: {fileID: 0}
-  restrictedToEventID: 0
+  restrictedToEventID: 52
 --- !u!4 &1071550489
 Transform:
   m_ObjectHideFlags: 0
@@ -19907,7 +19907,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b0cd99ec2c206348900fb6790453a1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HorrorEventManager
-  debugMode: 0
+  debugMode: 1
   targetLights:
   - {fileID: 1444981115}
   - {fileID: 771996901}
@@ -19920,8 +19920,8 @@ MonoBehaviour:
   - {fileID: 1374540540}
   - {fileID: 1474540398}
   - {fileID: 362575685}
-  debugSurveyResult: 3
-  debugStartCycle: 1
+  debugSurveyResult: 5
+  debugStartCycle: 2
   currentSurveyResult: -1
   eventDatabase: {fileID: 11400000, guid: cd95c981533df444aaccb542fbea63e9, type: 2}
   objectToFallTarget: {fileID: 0}
