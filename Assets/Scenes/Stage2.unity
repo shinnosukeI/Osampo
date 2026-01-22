@@ -10423,6 +10423,8 @@ MonoBehaviour:
   maxAttempts: 10
   scaleRange: {x: 0.8, y: 1.2}
   randomRotationZ: 1
+  spawnOnSurface: 1
+  alignToNormal: 1
 --- !u!65 &862705112
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -19674,8 +19676,8 @@ MonoBehaviour:
   - {fileID: 1374540540}
   - {fileID: 1474540398}
   - {fileID: 362575685}
-  debugSurveyResult: 4
-  debugStartCycle: 1
+  debugSurveyResult: 3
+  debugStartCycle: 4
   currentSurveyResult: -1
   eventDatabase: {fileID: 11400000, guid: cd95c981533df444aaccb542fbea63e9, type: 2}
   objectToFallTarget: {fileID: 0}
@@ -22401,13 +22403,37 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a25107b7efe4e0941bed4252077d72c1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1956963637}
   m_SourcePrefab: {fileID: 100100000, guid: a25107b7efe4e0941bed4252077d72c1, type: 3}
 --- !u!1 &1956963636 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: a25107b7efe4e0941bed4252077d72c1, type: 3}
   m_PrefabInstance: {fileID: 1956963635}
   m_PrefabAsset: {fileID: 0}
+--- !u!135 &1956963637
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1956963636}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.0001183381
+  m_Center: {x: 2.5063757e-10, y: -0.0000042855363, z: 0.0000000011936869}
 --- !u!1 &1966074516
 GameObject:
   m_ObjectHideFlags: 0
