@@ -38,9 +38,43 @@ public class GraphRenderer : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        if (bpmList == null || bpmList.Count < 2)
+        // 先頭の連続する60(デフォルト値)をトリミングするか判定
+        int startIndex = 0;
+        for (int i = 0; i < bpmList.Count; i++)
+        {
+            if (bpmList[i] != 60)
+            {
+                // 最初の非60の値を見つけた
+                // その値と60の差が5以上(<=55 or >=65)なら、そこまでをデフォルト値とみなしてスキップ
+                if (Mathf.Abs(bpmList[i] - 60) >= 5)
+                {
+                    startIndex = i;
+                }
+                break;
+            }
+        }
+
+        // 描画用のリストを作成
+        var drawList = bpmList.Skip(startIndex).ToList();
+
+        if (drawList == null || drawList.Count < 2)
         {
             return;
+        }
+
+        // イベントインデックスの調整
+        List<(int index, int eventId)> adjustedEvents = null;
+        if (events != null)
+        {
+            adjustedEvents = new List<(int index, int eventId)>();
+            foreach (var evt in events)
+            {
+                int newIndex = evt.index - startIndex;
+                if (newIndex >= 0 && newIndex < drawList.Count)
+                {
+                    adjustedEvents.Add((newIndex, evt.eventId));
+                }
+            }
         }
 
         // sizeDeltaではなくrect.width/heightを使う (Anchor設定に依存せず正しいサイズを取得するため)
@@ -48,23 +82,49 @@ public class GraphRenderer : MonoBehaviour
         float graphWidth = graphContainer.rect.width;
 
         // Y軸の範囲設定
-        int maxBpm = bpmList.Max();
-        int minBpm = bpmList.Min();
+        // MyMin/Maxの計算（0以下は除外するが、トリミング後に残った60は有効な値とする）
+        var validBpmList = drawList.Where(x => x > 0).ToList();
         
-        float yMax = maxBpm + 10f;
-        float yMin = Mathf.Max(0, minBpm - 10f);
+        int maxBpm;
+        int minBpm;
+
+        if (validBpmList.Count > 0)
+        {
+            maxBpm = validBpmList.Max();
+            minBpm = validBpmList.Min();
+        }
+        else
+        {
+            // 有効な値がない場合は元のリスト全体から算出
+            maxBpm = drawList.Max();
+            minBpm = drawList.Min();
+        }
+        
+        // 変動を見やすくするためにパディングを小さくする (例: +/- 2)
+        float padding = 2f;
+        float yMax = maxBpm + padding;
+        float yMin = Mathf.Max(0, minBpm - padding);
+        
         float yDifference = yMax - yMin;
-        if (yDifference <= 0) yDifference = 1f;
+        
+        // 差が小さすぎる場合（例：平坦なグラフ）は少し範囲を広げて見栄えを調整
+        if (yDifference < 5f) 
+        {
+            float center = (yMax + yMin) / 2f;
+            yMax = center + 2.5f;
+            yMin = Mathf.Max(0, center - 2.5f);
+            yDifference = yMax - yMin;
+        }
 
         // X軸の間隔
-        float xSize = graphWidth / (bpmList.Count - 1);
+        float xSize = graphWidth / (drawList.Count - 1);
 
         GameObject lastCircleGameObject = null;
 
-        for (int i = 0; i < bpmList.Count; i++)
+        for (int i = 0; i < drawList.Count; i++)
         {
             float xPosition = i * xSize;
-            float yPosition = ((bpmList[i] - yMin) / yDifference) * graphHeight;
+            float yPosition = ((drawList[i] - yMin) / yDifference) * graphHeight;
             Vector2 pos = new Vector2(xPosition, yPosition);
 
             // 通常のドット描画
@@ -78,9 +138,9 @@ public class GraphRenderer : MonoBehaviour
             lastCircleGameObject = circleGameObject;
 
             // イベントマーカーのチェック
-            if (events != null)
+            if (adjustedEvents != null)
             {
-                foreach (var evt in events)
+                foreach (var evt in adjustedEvents)
                 {
                     if (evt.index == i)
                     {
