@@ -95,6 +95,68 @@ public class DoorController : MonoBehaviour, IFocusable
         StopAutoCloseIfNeeded();
     }
 
+    // ★ 強制ロック（トリガーなどで使用）
+    public void LockDoor()
+    {
+        // 手動操作を無効化
+        disableManualControl = true;
+
+        // ★ 変更: 論理的に開いている(isOpen)か、見た目が開いている(角度差がある)場合は閉じる処理へ
+        if (isOpen || Quaternion.Angle(transform.localRotation, closedRotation) > 1.0f)
+        {
+            isOpen = false;
+            StopAutoCloseIfNeeded();
+            StartCoroutine(CloseAndDisable());
+        }
+        else
+        {
+            // 既に閉まりきっている
+            this.enabled = false;
+        }
+        
+        Debug.Log("🔒 [DoorController] Door has been locked and disabled by external trigger.");
+    }
+
+    private System.Collections.IEnumerator CloseAndDisable()
+    {
+        // ドアが閉まる時間（speed=2だと減衰するので実はもっと時間がかかるかもしれない。余裕を持つ）
+        // 1.5秒では閉まりきらないとの報告あり -> 3.0秒に変更
+        yield return new WaitForSeconds(3.0f);
+        
+        // 念のため角度をリセット
+        transform.localRotation = closedRotation;
+        
+        // コンポーネント自体を無効化（これでフォーカスも出なくなる）
+        this.enabled = false;
+    }
+
+    // ★ ロック解除・リセット（周回時など）
+    public void ResetLock()
+    {
+        disableManualControl = false;
+        
+        // ドアは閉じた状態に戻す
+        if (isOpen)
+        {
+            isOpen = false;
+            transform.localRotation = closedRotation;
+            StopAutoCloseIfNeeded();
+        }
+
+        // ★ コンポーネントを有効化（再びフォーカス可能にする）
+        // ただし、EventRestrictionで制限されている場合はその限りではないため、
+        // 単純に有効化してよいか確認が必要だが、ResetLock後にUpdateEventRestrictionが走る想定であればOK。
+        // ※ HorrorEventManagerの実装では UpdateEventRestriction -> ResetLock の順なので、
+        // ここで enabled = true にするとイベント制限を上書きしてしまう可能性がある。
+        // -> eventID == 0 (制限なし) の場合のみ有効化するのが安全。
+        if (restrictedToEventID == 0)
+        {
+            this.enabled = true;
+        }
+
+        Debug.Log("🔓 [DoorController] Door lock reset.");
+    }
+
     private void StopAutoCloseIfNeeded()
     {
         if (autoCloseCoroutine != null)

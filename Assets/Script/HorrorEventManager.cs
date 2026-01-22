@@ -816,7 +816,21 @@ public class HorrorEventManager : MonoBehaviour
         {
             if (door != null)
             {
+                // イベントIDによる制限更新
                 door.UpdateEventRestriction(data.eventID);
+                
+                // ★ 周回またぎでロックを解除（手動操作ロックのリセット）
+                door.ResetLock();
+            }
+        }
+
+        // ★ 5. DoorLockTriggerのリセット（通り過ぎ検知を初期化）
+        DoorLockTrigger[] allTriggers = FindObjectsByType<DoorLockTrigger>(FindObjectsSortMode.None);
+        foreach (var trig in allTriggers)
+        {
+            if (trig != null)
+            {
+                trig.ResetTrigger();
             }
         }
 
