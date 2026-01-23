@@ -77,13 +77,49 @@ public class st1_HorrorEventManager : MonoBehaviour
         }
 
         // ★ 血のオブジェクトは最初は非表示
-        if (bloodOnFloor != null) bloodOnFloor.SetActive(false);
+        if (bloodOnFloor != null)
+        {
+            // ★ 透明度・テカリ対策のマテリアル修正を適用
+            ApplyMaterialFixes(bloodOnFloor);
+            bloodOnFloor.SetActive(false);
+        }
 
         // ★ 1周目だけ雨の音を止める
         if (cycleCount == 1 && rainAudio != null)
         {
             rainAudio.Stop();
             Debug.Log("🌧️ 1周目なので雨の音を停止しました");
+        }
+    }
+
+    // ★ マテリアル修正用ヘルパーメソッド
+    private void ApplyMaterialFixes(GameObject target)
+    {
+        if (target == null) return;
+
+        var renderers = target.GetComponentsInChildren<Renderer>(true); // 非表示のものも含める
+        foreach (var r in renderers)
+        {
+            // 影設定
+            r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            r.receiveShadows = false;
+
+            // マテリアル設定
+            foreach (var mat in r.materials)
+            {
+                // テカリ防止
+                if (mat.HasProperty("_Glossiness")) mat.SetFloat("_Glossiness", 0f);
+                if (mat.HasProperty("_Metallic")) mat.SetFloat("_Metallic", 0f);
+
+                // スペキュラーハイライト・反射無効化
+                mat.DisableKeyword("_SPECULARHIGHLIGHTS_OFF");
+                mat.EnableKeyword("_SPECULARHIGHLIGHTS_OFF");
+                mat.SetFloat("_SpecularHighlights", 0f);
+
+                mat.DisableKeyword("_GLOSSYREFLECTIONS_OFF");
+                mat.EnableKeyword("_GLOSSYREFLECTIONS_OFF");
+                mat.SetFloat("_GlossyReflections", 0f);
+            }
         }
     }
 
