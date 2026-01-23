@@ -1956,10 +1956,111 @@ MonoBehaviour:
   player: {fileID: 0}
   teleportPosition: {x: 0, y: 0, z: 0}
   targetDoor: {fileID: 0}
-  openAngle: 90
   doorOpenSpeed: 3
+  firstOpenAngle: 90
+  secondOpenAngle: 180
+  angleTolerance: 5
+  doorOpenSE: {fileID: 0}
+  seVolume: 1
   eventManager: {fileID: 0}
   isDoorOpen: 0
+--- !u!82 &232013997
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 232013991}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1001 &257531427
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2763,6 +2864,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 80
   speed: 1
+  disableManualControl: 0
+  requireEventLogged: 0
+  eventManager: {fileID: 0}
+  restrictedToEventID: 0
 --- !u!1 &416510906
 GameObject:
   m_ObjectHideFlags: 0
@@ -3130,6 +3235,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 739472c7ea2effd42a30a60232a54100, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CockroachSwarm
+  swarmSound: {fileID: 0}
 --- !u!199 &434243307
 ParticleSystemRenderer:
   serializedVersion: 6
@@ -7933,6 +8039,103 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     vectorLabel1_3: W
+--- !u!82 &434243309
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 434243297}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1001 &453199524
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9370,6 +9573,7 @@ MonoBehaviour:
   playerCamera: {fileID: 636954082}
   mirror: {fileID: 653713957}
   mirrorCamera: {fileID: 2056831413}
+  mirrorLayerName: MirrorOnly
 --- !u!64 &653713954
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -9642,6 +9846,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b0cd99ec2c206348900fb6790453a1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HorrorEventManager
+  debugMode: 0
+  targetLights: []
+  debugSurveyResult: 1
+  debugStartCycle: 0
+  currentSurveyResult: -1
   eventDatabase: {fileID: 0}
   objectToFallTarget: {fileID: 0}
   cockroachSwarmTarget: {fileID: 0}
@@ -9659,18 +9868,40 @@ MonoBehaviour:
   ballSpawnPoint: {fileID: 0}
   handprintEventTarget: {fileID: 0}
   wallEyesEventTarget: {fileID: 0}
+  wallEyesRootObject: {fileID: 0}
   bearMoveEventTarget: {fileID: 0}
+  bearMoveRootObject: {fileID: 0}
   vanishingWomanEventTarget: {fileID: 0}
+  vanishingWomanRootObject: {fileID: 0}
   zombieChaseEventTarget: {fileID: 0}
   thunderAudioSource: {fileID: 0}
   thunderSound: {fileID: 0}
+  thunderVolume: 1
+  thunderLights: []
+  thunderIntensityMultiplier: 5
+  flashCount: 10
   laughAudioSource: {fileID: 0}
   laughSound: {fileID: 0}
   footstepsSound: {fileID: 0}
   approachingPersonEvent: {fileID: 0}
   clusterWallEvent: {fileID: 0}
+  clusterWallRootObject: {fileID: 0}
+  walkingPersonEvent: {fileID: 0}
+  walkingPersonAudioSource: {fileID: 0}
+  walkingPersonSound: {fileID: 0}
+  doorGapEvent: {fileID: 0}
+  mirrorGhostEvent: {fileID: 0}
   cycleCount: 0
   cycleEventTypes: 
+  spiderWallEvent: {fileID: 0}
+  spiderWallRootObject: {fileID: 0}
+  corpseRotTarget: {fileID: 0}
+  mannequinTarget: {fileID: 0}
+  hairTarget: {fileID: 0}
+  event31StaticObject: {fileID: 0}
+  bloodAndGlassTarget: {fileID: 0}
+  polePonPonTarget: {fileID: 0}
+  scenarioSettings: []
 --- !u!1 &690401339
 GameObject:
   m_ObjectHideFlags: 0
@@ -10127,10 +10358,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FallingCorpse
   impactSound: {fileID: 8300000, guid: fe2e9ccca2f75ad488668a4fc01fe58a, type: 3}
   minImpactVelocity: 5
+  enableRotation: 0
   localTorqueDir: {x: 1, y: 0, z: 0}
   torqueImpulse: 0.3
   localPushDir: {x: 0, y: -0.3, z: 1}
   pushImpulse: 1
+  pushTarget: {fileID: 0}
 --- !u!65 &722817349
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -10800,7 +11033,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c9ff260df742614cb4dacaa51533673, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorAutoCloseTrigger
-  targetDoor: {fileID: 1665769222}
+  targetDoor: {fileID: 0}
+  targetAngleY: 90
+  checkAngleY: 180
+  angleTolerance: 5
+  rotateSpeed: 2
+  closeSE: {fileID: 0}
+  seVolume: 1
 --- !u!65 &820322529
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -12130,6 +12369,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 46242999c0aa0b44195b6a4a954eeba2, type: 3}
       insertIndex: -1
       addedObject: {fileID: 232013996}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 46242999c0aa0b44195b6a4a954eeba2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 232013997}
   m_SourcePrefab: {fileID: 100100000, guid: 46242999c0aa0b44195b6a4a954eeba2, type: 3}
 --- !u!1 &981016349
 GameObject:
@@ -13146,6 +13388,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 45
   speed: 1
+  disableManualControl: 0
+  requireEventLogged: 0
+  eventManager: {fileID: 0}
+  restrictedToEventID: 0
 --- !u!4 &1071550489
 Transform:
   m_ObjectHideFlags: 0
@@ -14705,6 +14951,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a18ae20d4ee529c4e8a2046857ad78cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FreeMoveInputSystem
+  animator: {fileID: 0}
   walkSpeed: 4
   runSpeed: 7
   accel: 12
@@ -15888,6 +16135,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 46242999c0aa0b44195b6a4a954eeba2, type: 3}
       insertIndex: -1
       addedObject: {fileID: 434243306}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 46242999c0aa0b44195b6a4a954eeba2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 434243309}
   m_SourcePrefab: {fileID: 100100000, guid: 46242999c0aa0b44195b6a4a954eeba2, type: 3}
 --- !u!1001 &1418127479
 PrefabInstance:
@@ -17649,6 +17899,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 45
   speed: 1
+  disableManualControl: 0
+  requireEventLogged: 0
+  eventManager: {fileID: 0}
+  restrictedToEventID: 0
 --- !u!1 &1668622782
 GameObject:
   m_ObjectHideFlags: 0
@@ -20385,6 +20639,7 @@ GameObject:
   - component: {fileID: 2080878055}
   - component: {fileID: 2080878054}
   - component: {fileID: 2080878057}
+  - component: {fileID: 2080878058}
   m_Layer: 0
   m_Name: doorpovit (1)
   m_TagString: Untagged
@@ -20427,6 +20682,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 45
   speed: 1
+  disableManualControl: 0
+  requireEventLogged: 0
+  eventManager: {fileID: 0}
+  restrictedToEventID: 0
 --- !u!4 &2080878056
 Transform:
   m_ObjectHideFlags: 0
@@ -20458,10 +20717,111 @@ MonoBehaviour:
   player: {fileID: 0}
   teleportPosition: {x: 0, y: 0, z: 0}
   targetDoor: {fileID: 0}
-  openAngle: 90
   doorOpenSpeed: 3
+  firstOpenAngle: 90
+  secondOpenAngle: 180
+  angleTolerance: 5
+  doorOpenSE: {fileID: 0}
+  seVolume: 1
   eventManager: {fileID: 0}
   isDoorOpen: 0
+--- !u!82 &2080878058
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2080878053}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1001 &2086102909
 PrefabInstance:
   m_ObjectHideFlags: 0
