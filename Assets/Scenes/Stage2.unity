@@ -1772,7 +1772,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: c194482bce6475a47b39bd82ec6ad0a8, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.109
+  m_Volume: 0.06
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -5928,6 +5928,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 0.12
       objectReference: {fileID: 0}
+    - target: {fileID: 8712536725461427, guid: 30556ba4f1496094daca858c7888acd5, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: -2330459799870164738, guid: 4e4e9cc3c34b3aa4fb8883066822c191, type: 3}
     - target: {fileID: 11444907904713647, guid: 30556ba4f1496094daca858c7888acd5, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1.51
@@ -6008,6 +6012,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 316542367965376867, guid: 30556ba4f1496094daca858c7888acd5, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: -2330459799870164738, guid: 4e4e9cc3c34b3aa4fb8883066822c191, type: 3}
     - target: {fileID: 319551592119274228, guid: 30556ba4f1496094daca858c7888acd5, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.2
@@ -6120,6 +6128,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 643231538960055971, guid: 30556ba4f1496094daca858c7888acd5, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: -2330459799870164738, guid: 4e4e9cc3c34b3aa4fb8883066822c191, type: 3}
     - target: {fileID: 690813016836397558, guid: 30556ba4f1496094daca858c7888acd5, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.1
@@ -6292,10 +6304,18 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: -1797268278630580995, guid: 0de0a3c45a51d914f94a18e1371b0cff, type: 3}
+    - target: {fileID: 1631767139493755149, guid: 30556ba4f1496094daca858c7888acd5, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: -2330459799870164738, guid: 4e4e9cc3c34b3aa4fb8883066822c191, type: 3}
     - target: {fileID: 1648602649888038720, guid: 30556ba4f1496094daca858c7888acd5, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1691530228053205238, guid: 30556ba4f1496094daca858c7888acd5, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: -2330459799870164738, guid: 4e4e9cc3c34b3aa4fb8883066822c191, type: 3}
     - target: {fileID: 1733946535157754679, guid: 30556ba4f1496094daca858c7888acd5, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -6920,6 +6940,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 1.24
       objectReference: {fileID: 0}
+    - target: {fileID: 3914419945120970725, guid: 30556ba4f1496094daca858c7888acd5, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: -2330459799870164738, guid: 4e4e9cc3c34b3aa4fb8883066822c191, type: 3}
     - target: {fileID: 3937526282205462363, guid: 30556ba4f1496094daca858c7888acd5, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -6944,6 +6968,10 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: -1797268278630580995, guid: 0de0a3c45a51d914f94a18e1371b0cff, type: 3}
+    - target: {fileID: 4289319429773741128, guid: 30556ba4f1496094daca858c7888acd5, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: -2330459799870164738, guid: 4e4e9cc3c34b3aa4fb8883066822c191, type: 3}
     - target: {fileID: 4301284595598131828, guid: 30556ba4f1496094daca858c7888acd5, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -7148,6 +7176,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5411429240918501704, guid: 30556ba4f1496094daca858c7888acd5, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: -2330459799870164738, guid: 4e4e9cc3c34b3aa4fb8883066822c191, type: 3}
     - target: {fileID: 5412992380774592413, guid: 30556ba4f1496094daca858c7888acd5, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -7312,6 +7344,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 0.43
       objectReference: {fileID: 0}
+    - target: {fileID: 6703037462604106025, guid: 30556ba4f1496094daca858c7888acd5, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: -2330459799870164738, guid: 4e4e9cc3c34b3aa4fb8883066822c191, type: 3}
     - target: {fileID: 6716975578494797748, guid: 30556ba4f1496094daca858c7888acd5, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -9082,6 +9118,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 3ce8af9942fe97c42890e9044a7ae7e6, type: 3}
   stepInterval: 0.5
   moveThreshold: 0.1
+  volume: 1
 --- !u!82 &728530586
 AudioSource:
   m_ObjectHideFlags: 0
@@ -12147,6 +12184,14 @@ PrefabInstance:
     - target: {fileID: 4157033448544210643, guid: e3a188554c3d8c64a8059c9636b8607c, type: 3}
       propertyPath: m_Name
       value: "56.\u30DC\u30FC\u30EB\u30DD\u30F3\u30DD\u30F3"
+      objectReference: {fileID: 0}
+    - target: {fileID: 5903446015849387502, guid: e3a188554c3d8c64a8059c9636b8607c, type: 3}
+      propertyPath: maxDistance
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 5903446015849387502, guid: e3a188554c3d8c64a8059c9636b8607c, type: 3}
+      propertyPath: minDistance
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -19923,7 +19968,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b0cd99ec2c206348900fb6790453a1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HorrorEventManager
-  debugMode: 1
+  debugMode: 0
   targetLights:
   - {fileID: 1444981115}
   - {fileID: 771996901}

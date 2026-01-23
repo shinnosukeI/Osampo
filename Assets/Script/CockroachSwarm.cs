@@ -124,4 +124,9 @@ public class CockroachSwarm : MonoBehaviour
             audioSource.Stop();
         }
     }
+
+    void OnDisable()
+    {
+        StopSwarm();
+    }
 }

@@ -116,6 +116,7 @@ public class DecayingCorpseEvent : MonoBehaviour, IFocusable
         // ユーザーの意図としては「このイベント発生タイミングになったよ」という合図なので、
         // もしオブジェクトが非表示なら表示する、などの初期化を行うのが適切。
         this.gameObject.SetActive(true);
+        this.enabled = true; // ★ リセット時にコンポーネントも有効化（フォーカス可能に）
         hasTriggered = false; // リセット
         
         // もし即座に腐敗させるなら TriggerDecay() だが、
@@ -126,13 +127,14 @@ public class DecayingCorpseEvent : MonoBehaviour, IFocusable
     private void TriggerDecay()
     {
         hasTriggered = true;
-        Debug.Log("🧟 [DecayingCorpseEvent] 腐敗イベント開始");
+        this.enabled = false; // ★ 一度発動したら無効化してフォーカス不可にする
+        // Debug.Log("🧟 [DecayingCorpseEvent] 腐敗イベント開始");
 
         // スクリプトを有効化して再生開始
         if (scriptToEnable != null)
         {
             scriptToEnable.enabled = true;
-            Debug.Log($"🧟 [DecayingCorpseEvent] {scriptToEnable.GetType().Name} を有効化しました");
+            // Debug.Log($"🧟 [DecayingCorpseEvent] {scriptToEnable.GetType().Name} を有効化しました");
         }
 
         // Animatorがあれば制御
@@ -151,7 +153,7 @@ public class DecayingCorpseEvent : MonoBehaviour, IFocusable
         // 音再生（アニメーション終了に合わせて止める）
         if (decaySound != null && audioSource != null)
         {
-            Debug.Log($"🔊 [DecayingCorpseEvent] Play: {decaySound.name} on {gameObject.name}");
+            // Debug.Log($"🔊 [DecayingCorpseEvent] Play: {decaySound.name} on {gameObject.name}");
             
             audioSource.clip = decaySound;
             audioSource.loop = false; // ★ ループしないように明示的に設定
@@ -204,7 +206,7 @@ public class DecayingCorpseEvent : MonoBehaviour, IFocusable
             {
                  length /= animator.speed;
             }
-            Debug.Log($"⏳ [DecayingCorpseEvent] Auto-Detected Animation Length: {length}s");
+            // Debug.Log($"⏳ [DecayingCorpseEvent] Auto-Detected Animation Length: {length}s");
         }
         else
         {
