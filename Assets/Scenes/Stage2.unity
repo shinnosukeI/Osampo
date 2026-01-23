@@ -13448,7 +13448,7 @@ MonoBehaviour:
   disableManualControl: 0
   requireEventLogged: 0
   eventManager: {fileID: 0}
-  restrictedToEventID: 0
+  restrictedToEventID: 52
 --- !u!4 &1071550489
 Transform:
   m_ObjectHideFlags: 0
@@ -20085,7 +20085,7 @@ MonoBehaviour:
   - {fileID: 1474540398}
   - {fileID: 362575685}
   debugSurveyResult: 2
-  debugStartCycle: 5
+  debugStartCycle: 1
   currentSurveyResult: -1
   eventDatabase: {fileID: 11400000, guid: cd95c981533df444aaccb542fbea63e9, type: 2}
   objectToFallTarget: {fileID: 0}
@@ -20156,7 +20156,7 @@ MonoBehaviour:
       lighting: 0
       lightSettings:
       - color: {r: 1, g: 1, b: 1, a: 0}
-        intensity: 10
+        intensity: 20
       useGlobalLightSetting: 1
       globalLightSetting:
         color: {r: 1, g: 1, b: 1, a: 0}
@@ -20165,7 +20165,7 @@ MonoBehaviour:
       lighting: 0
       lightSettings:
       - color: {r: 1, g: 1, b: 1, a: 0}
-        intensity: 10
+        intensity: 20
       useGlobalLightSetting: 1
       globalLightSetting:
         color: {r: 0, g: 0, b: 0, a: 0}
@@ -20174,7 +20174,7 @@ MonoBehaviour:
       lighting: 0
       lightSettings:
       - color: {r: 1, g: 1, b: 1, a: 0}
-        intensity: 10
+        intensity: 20
       useGlobalLightSetting: 1
       globalLightSetting:
         color: {r: 1, g: 1, b: 1, a: 0}
@@ -20220,7 +20220,7 @@ MonoBehaviour:
       lighting: 0
       lightSettings:
       - color: {r: 1, g: 1, b: 1, a: 0}
-        intensity: 10
+        intensity: 20
       useGlobalLightSetting: 1
       globalLightSetting:
         color: {r: 1, g: 1, b: 1, a: 0}
@@ -20229,7 +20229,7 @@ MonoBehaviour:
       lighting: 0
       lightSettings:
       - color: {r: 1, g: 1, b: 1, a: 0}
-        intensity: 10
+        intensity: 20
       useGlobalLightSetting: 1
       globalLightSetting:
         color: {r: 1, g: 1, b: 1, a: 0}
@@ -20238,7 +20238,7 @@ MonoBehaviour:
       lighting: 0
       lightSettings:
       - color: {r: 1, g: 1, b: 1, a: 0}
-        intensity: 10
+        intensity: 20
       useGlobalLightSetting: 1
       globalLightSetting:
         color: {r: 1, g: 1, b: 1, a: 0}
@@ -20268,7 +20268,7 @@ MonoBehaviour:
       lighting: 0
       lightSettings:
       - color: {r: 1, g: 1, b: 1, a: 0}
-        intensity: 10
+        intensity: 20
       useGlobalLightSetting: 1
       globalLightSetting:
         color: {r: 0, g: 0, b: 0, a: 0}
@@ -20277,7 +20277,7 @@ MonoBehaviour:
       lighting: 0
       lightSettings:
       - color: {r: 1, g: 1, b: 1, a: 0}
-        intensity: 10
+        intensity: 20
       useGlobalLightSetting: 1
       globalLightSetting:
         color: {r: 0, g: 0, b: 0, a: 0}
@@ -20286,7 +20286,7 @@ MonoBehaviour:
       lighting: 0
       lightSettings:
       - color: {r: 1, g: 1, b: 1, a: 0}
-        intensity: 10
+        intensity: 20
       useGlobalLightSetting: 1
       globalLightSetting:
         color: {r: 0, g: 0, b: 0, a: 0}
@@ -20295,7 +20295,7 @@ MonoBehaviour:
       lighting: 0
       lightSettings:
       - color: {r: 0, g: 0, b: 0, a: 0}
-        intensity: 10
+        intensity: 20
       useGlobalLightSetting: 1
       globalLightSetting:
         color: {r: 1, g: 0, b: 0, a: 0}
@@ -20325,7 +20325,7 @@ MonoBehaviour:
       lighting: 0
       lightSettings:
       - color: {r: 1, g: 1, b: 1, a: 0}
-        intensity: 10
+        intensity: 20
       - color: {r: 1, g: 1, b: 1, a: 0}
         intensity: 0
       - color: {r: 1, g: 1, b: 1, a: 0}
@@ -20342,7 +20342,7 @@ MonoBehaviour:
       lighting: 0
       lightSettings:
       - color: {r: 1, g: 1, b: 1, a: 0}
-        intensity: 10
+        intensity: 20
       useGlobalLightSetting: 1
       globalLightSetting:
         color: {r: 0, g: 0, b: 0, a: 0}
@@ -20351,7 +20351,7 @@ MonoBehaviour:
       lighting: 0
       lightSettings:
       - color: {r: 1, g: 1, b: 1, a: 0}
-        intensity: 10
+        intensity: 20
       useGlobalLightSetting: 1
       globalLightSetting:
         color: {r: 0, g: 0, b: 0, a: 0}
@@ -20360,7 +20360,7 @@ MonoBehaviour:
       lighting: 0
       lightSettings:
       - color: {r: 1, g: 1, b: 1, a: 0}
-        intensity: 10
+        intensity: 20
       useGlobalLightSetting: 1
       globalLightSetting:
         color: {r: 1, g: 1, b: 1, a: 0}
@@ -20390,7 +20390,7 @@ MonoBehaviour:
       lighting: 0
       lightSettings:
       - color: {r: 1, g: 1, b: 1, a: 0}
-        intensity: 10
+        intensity: 20
       useGlobalLightSetting: 1
       globalLightSetting:
         color: {r: 1, g: 1, b: 1, a: 0}
@@ -20399,7 +20399,7 @@ MonoBehaviour:
       lighting: 0
       lightSettings:
       - color: {r: 1, g: 1, b: 1, a: 0}
-        intensity: 10
+        intensity: 20
       useGlobalLightSetting: 1
       globalLightSetting:
         color: {r: 0, g: 0, b: 0, a: 0}
@@ -20408,7 +20408,7 @@ MonoBehaviour:
       lighting: 0
       lightSettings:
       - color: {r: 1, g: 1, b: 1, a: 0}
-        intensity: 10
+        intensity: 20
       useGlobalLightSetting: 1
       globalLightSetting:
         color: {r: 1, g: 1, b: 1, a: 0}
@@ -20417,7 +20417,7 @@ MonoBehaviour:
       lighting: 0
       lightSettings:
       - color: {r: 1, g: 1, b: 1, a: 0}
-        intensity: 10
+        intensity: 20
       useGlobalLightSetting: 1
       globalLightSetting:
         color: {r: 1, g: 1, b: 1, a: 0}
