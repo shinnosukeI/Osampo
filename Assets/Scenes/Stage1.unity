@@ -982,7 +982,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8417af29570220a4299ef2787a73f563, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -34.94
+      value: -38.66
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8417af29570220a4299ef2787a73f563, type: 3}
       propertyPath: m_LocalRotation.w
@@ -3473,7 +3473,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -9328,6 +9328,10 @@ PrefabInstance:
       propertyPath: MinDistance
       value: 1.3131771
       objectReference: {fileID: 0}
+    - target: {fileID: 2716764714470170684, guid: dfb11464ce99b1042829a19fd213735a, type: 3}
+      propertyPath: panLevelCustomCurve.m_Curve.Array.data[0].value
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6923351618720081513, guid: dfb11464ce99b1042829a19fd213735a, type: 3}
       propertyPath: m_LocalScale.x
       value: 3
@@ -13948,6 +13952,7 @@ GameObject:
   - component: {fileID: 1008614467}
   - component: {fileID: 1008614466}
   - component: {fileID: 1008614469}
+  - component: {fileID: 1008614470}
   m_Layer: 0
   m_Name: doorpovit (4)
   m_TagString: Untagged
@@ -13978,7 +13983,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1008614464}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 35c53bdb47028354fac2ab296218ebb6, type: 3}
   m_Name: 
@@ -14032,6 +14037,7 @@ MonoBehaviour:
   disableManualControl: 0
   requireEventLogged: 0
   eventManager: {fileID: 0}
+  restrictedToEventID: 0
 --- !u!82 &1008614469
 AudioSource:
   m_ObjectHideFlags: 0
@@ -14089,7 +14095,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -14129,6 +14135,23 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &1008614470
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1008614464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f697da7d3c459d04aa531f7653c02864, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DoorSoundPlayer
+  door: {fileID: 1008614468}
+  openSE: {fileID: 8300000, guid: eca3c1a8510afbc4ca2285509dc45a05, type: 3}
+  closeSE: {fileID: 8300000, guid: f5e1b2cf173278a448d5afd5cdd4c581, type: 3}
+  volume: 1
+  arrivedAngleEpsilon: 1
 --- !u!1001 &1015515738
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -14937,6 +14960,7 @@ MonoBehaviour:
   disableManualControl: 0
   requireEventLogged: 0
   eventManager: {fileID: 0}
+  restrictedToEventID: 0
 --- !u!4 &1071550489
 Transform:
   m_ObjectHideFlags: 0
@@ -20807,8 +20831,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\u79FB\u52D5"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 7971420d8442e7d4c86237095e0955dd, type: 2}
+  m_sharedMaterial: {fileID: -4319084813079036256, guid: 7971420d8442e7d4c86237095e0955dd, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -22118,8 +22142,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 7971420d8442e7d4c86237095e0955dd, type: 2}
+  m_sharedMaterial: {fileID: -4319084813079036256, guid: 7971420d8442e7d4c86237095e0955dd, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -24787,6 +24811,7 @@ MonoBehaviour:
   disableManualControl: 0
   requireEventLogged: 0
   eventManager: {fileID: 0}
+  restrictedToEventID: 0
 --- !u!1 &1668622782
 GameObject:
   m_ObjectHideFlags: 0
@@ -25886,8 +25911,12 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1969173514744084753, guid: 04a7135ac67fab543ae5364a83365ad9, type: 3}
+      propertyPath: talkVolume
+      value: 0.783
+      objectReference: {fileID: 0}
+    - target: {fileID: 1969173514744084753, guid: 04a7135ac67fab543ae5364a83365ad9, type: 3}
       propertyPath: noiseVolume
-      value: 0.647
+      value: 0.263
       objectReference: {fileID: 0}
     - target: {fileID: 1969173514744084753, guid: 04a7135ac67fab543ae5364a83365ad9, type: 3}
       propertyPath: subtitleText
@@ -25981,10 +26010,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -207.691
       objectReference: {fileID: 0}
+    - target: {fileID: 6337464876718325774, guid: 04a7135ac67fab543ae5364a83365ad9, type: 3}
+      propertyPath: radioSoundClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 3d20526011c744d4989fb18590d5c21e, type: 3}
     - target: {fileID: 6896324143990888603, guid: 04a7135ac67fab543ae5364a83365ad9, type: 3}
       propertyPath: m_Resource
       value: 
       objectReference: {fileID: 8300000, guid: 3d20526011c744d4989fb18590d5c21e, type: 3}
+    - target: {fileID: 6896324143990888603, guid: 04a7135ac67fab543ae5364a83365ad9, type: 3}
+      propertyPath: MaxDistance
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 6896324143990888603, guid: 04a7135ac67fab543ae5364a83365ad9, type: 3}
+      propertyPath: panLevelCustomCurve.m_Curve.Array.data[0].value
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -27912,6 +27953,7 @@ GameObject:
   - component: {fileID: 2080878054}
   - component: {fileID: 2080878057}
   - component: {fileID: 2080878058}
+  - component: {fileID: 2080878059}
   m_Layer: 0
   m_Name: doorpovit (1)
   m_TagString: Untagged
@@ -27957,6 +27999,7 @@ MonoBehaviour:
   disableManualControl: 0
   requireEventLogged: 0
   eventManager: {fileID: 0}
+  restrictedToEventID: 0
 --- !u!4 &2080878056
 Transform:
   m_ObjectHideFlags: 0
@@ -28053,7 +28096,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -28093,6 +28136,23 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &2080878059
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2080878053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f697da7d3c459d04aa531f7653c02864, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DoorSoundPlayer
+  door: {fileID: 2080878055}
+  openSE: {fileID: 8300000, guid: eca3c1a8510afbc4ca2285509dc45a05, type: 3}
+  closeSE: {fileID: 8300000, guid: c8f87e69dc77a464b80bc287a4cd7939, type: 3}
+  volume: 1
+  arrivedAngleEpsilon: 3
 --- !u!1001 &2086102909
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -28729,7 +28789,7 @@ Transform:
   m_GameObject: {fileID: 2139724783}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 15, y: -0.2781, z: -5.07}
+  m_LocalPosition: {x: 15, y: -0.2781, z: -5.29}
   m_LocalScale: {x: 0.094408795, y: 4.9470224, z: 10.48352}
   m_ConstrainProportionsScale: 0
   m_Children: []
