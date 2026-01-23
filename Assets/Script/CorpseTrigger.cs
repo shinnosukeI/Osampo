@@ -18,7 +18,6 @@ public class FallingCorpseTrigger : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log($"[CorpseTrigger] OnTriggerEnter hit: {other.name} tag={other.tag}");
 
         if (!other.CompareTag("Player")) return;
         if (used) return;
@@ -30,7 +29,6 @@ public class FallingCorpseTrigger : MonoBehaviour
         }
 
         int current = eventManager.CycleCount;
-        Debug.Log($"[CorpseTrigger] CycleCount={current}, required={requiredCycle}");
 
         if (current < requiredCycle)
         {
@@ -44,7 +42,6 @@ public class FallingCorpseTrigger : MonoBehaviour
             return;
         }
 
-        Debug.Log("[CorpseTrigger] 条件OK → StartFalling()");
         eventManager.TriggerEventFromTrigger(54);
         used = true;
     }
