@@ -11033,7 +11033,7 @@ MonoBehaviour:
   normalWindowObject: {fileID: 733700193}
   brokenWindowObject: {fileID: 733700193}
   cockroachSwarmTarget: {fileID: 1701761517}
-  cycleCount: 5
+  cycleCount: 1
   cycleEventTypes: 
 --- !u!1 &690401339
 GameObject:
@@ -20833,8 +20833,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\u79FB\u52D5"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 7971420d8442e7d4c86237095e0955dd, type: 2}
+  m_sharedMaterial: {fileID: -4319084813079036256, guid: 7971420d8442e7d4c86237095e0955dd, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -22145,8 +22145,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 7971420d8442e7d4c86237095e0955dd, type: 2}
+  m_sharedMaterial: {fileID: -4319084813079036256, guid: 7971420d8442e7d4c86237095e0955dd, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -27999,7 +27999,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorController
   openAngle: 45
   speed: 1
-  disableManualControl: 0
+  disableManualControl: 1
   requireEventLogged: 0
   eventManager: {fileID: 0}
   restrictedToEventID: 0

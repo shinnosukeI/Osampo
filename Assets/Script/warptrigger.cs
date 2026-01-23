@@ -31,6 +31,16 @@ public class DoorTeleporter : MonoBehaviour, IFocusable
     [Header("ホラーイベント連携")]
     [SerializeField] private st1_HorrorEventManager eventManager;
 
+    [Header("ワープ時のオーディオリセット")]
+    [Tooltip("ONにすると、ワープした瞬間に鳴りっぱなし/重なり/フィルターをリセットします。")]
+    [SerializeField] private bool resetAudioOnWarp = true;
+
+    [Tooltip("BGMだけ残したい場合はON。BGMオブジェクトのTagを \"BGM\" にしてください。")]
+    [SerializeField] private bool keepBGM = true;
+
+    [Tooltip("AudioSource.loop を強制的にOFFにしてから止めます（鳴りっぱなし対策）")]
+    [SerializeField] private bool forceStopLoopSounds = true;
+
     public static int teleportCount = 0;
 
     [HideInInspector] public bool isDoorOpen = false;
@@ -86,6 +96,12 @@ public class DoorTeleporter : MonoBehaviour, IFocusable
     {
         if (player == null) return;
         Debug.Log("ドアクリックされた");
+
+        // ★ ワープの瞬間に音をリセット（鳴りっぱなし/重なり/フィルター残り対策）
+        if (resetAudioOnWarp)
+        {
+            ResetAudioOnWarp();
+        }
 
         // ワープ
         var cc = player.GetComponent<CharacterController>();
@@ -157,6 +173,61 @@ public class DoorTeleporter : MonoBehaviour, IFocusable
     {
         if (doorOpenSE == null || audioSource == null) return;
         audioSource.PlayOneShot(doorOpenSE, seVolume);
+    }
+
+    // ★ ワープ時のオーディオリセット本体
+    private void ResetAudioOnWarp()
+    {
+        // 進行中のSE/環境音が「重なって崩壊」するのを止める
+        AudioSource[] sources = FindObjectsOfType<AudioSource>();
+
+        foreach (var s in sources)
+        {
+            if (s == null) continue;
+
+            // BGMだけ残したい場合：Tagが "BGM" のものはスキップ
+            if (keepBGM && s.CompareTag("BGM")) continue;
+
+            if (forceStopLoopSounds) s.loop = false;
+            s.Stop();
+
+            // フィルター類（こもり/エコー/残響）を初期化
+            if (s.TryGetComponent<AudioLowPassFilter>(out var low))
+            {
+                low.cutoffFrequency = 22000f;
+                low.lowpassResonanceQ = 1f;
+                low.enabled = false; // 使ってるなら true のままでもOK。基本はオフでリセット。
+            }
+
+            if (s.TryGetComponent<AudioHighPassFilter>(out var high))
+            {
+                high.cutoffFrequency = 10f;
+                high.highpassResonanceQ = 1f;
+                high.enabled = false;
+            }
+
+            if (s.TryGetComponent<AudioEchoFilter>(out var echo))
+            {
+                echo.enabled = false;
+            }
+
+            if (s.TryGetComponent<AudioReverbFilter>(out var reverb))
+            {
+                reverb.enabled = false;
+            }
+
+            if (s.TryGetComponent<AudioDistortionFilter>(out var dist))
+            {
+                dist.enabled = false;
+            }
+
+            if (s.TryGetComponent<AudioChorusFilter>(out var chorus))
+            {
+                chorus.enabled = false;
+            }
+        }
+
+        // Debug.Log($"🔊 Audio reset on warp. AudioSource count={sources.Length}");
     }
 
     // ★ 全ドアを閉じる static 関数
