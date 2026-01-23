@@ -8,6 +8,8 @@ public class Footstep : MonoBehaviour
     public float stepInterval = 0.5f;
     public float moveThreshold = 0.05f;
 
+    [Range(0f, 1f)] public float volume = 1.0f; // ★ 音量追加
+
     private float stepTimer = 0f;
     private CharacterController cc;
     private Vector3 lastPos;
@@ -20,7 +22,7 @@ public class Footstep : MonoBehaviour
         lastPos = transform.position;
 
         // ★ ループはしない（1歩ずつ鳴らす）
-        audioSource.loop = false;
+        if (audioSource != null) audioSource.loop = false;
     }
 
     void Update()
@@ -68,12 +70,14 @@ public class Footstep : MonoBehaviour
     void PlayFootstep()
     {
         if (footstepSounds == null || footstepSounds.Length == 0) return;
+        if (audioSource == null) return;
 
         // 再生中なら新しく鳴らさない
         if (audioSource.isPlaying) return;
 
         audioSource.clip = footstepSounds[Random.Range(0, footstepSounds.Length)];
         audioSource.pitch = Random.Range(0.95f, 1.05f);
+        audioSource.volume = volume; // ★ 音量適用
         audioSource.Play();
     }
 

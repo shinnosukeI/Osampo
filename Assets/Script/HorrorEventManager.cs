@@ -262,6 +262,11 @@ public class HorrorEventManager : MonoBehaviour
     // 22: クマ移動2?
     // 12: 死体引きずり?
 
+    // ★ Coroutine references for cleanup
+    private Coroutine bloodDripCoroutine;
+    private Coroutine thunderFlashCoroutine;
+    private Coroutine walkingPersonSoundCoroutine;
+
     void Start()
     {
         // 照明の初期値を保存 (RenderSettings)
@@ -351,7 +356,7 @@ public class HorrorEventManager : MonoBehaviour
         // 2. ProximityLogTrigger (接近検知式の新しいトリガー)
         ProximityLogTrigger[] proxTriggers = FindObjectsByType<ProximityLogTrigger>(FindObjectsInactive.Include, FindObjectsSortMode.None);
 
-        Debug.Log($"👀 [Prune] Searching triggers for ActiveID: {activeEventID}. Found Standard: {allTriggers.Length}, Proximity: {proxTriggers.Length}");
+        // Debug.Log($"👀 [Prune] Searching triggers for ActiveID: {activeEventID}. Found Standard: {allTriggers.Length}, Proximity: {proxTriggers.Length}");
         
         int disabledCount = 0;
         bool foundActive = false;
@@ -372,7 +377,7 @@ public class HorrorEventManager : MonoBehaviour
                 trigger.gameObject.SetActive(true);
                 trigger.ResetTrigger();
                 foundActive = true;
-                Debug.Log($"✅ [Prune] ACTIVATED Standard Trigger for Event {activeEventID} (Obj: {trigger.gameObject.name})");
+                // Debug.Log($"✅ [Prune] ACTIVATED Standard Trigger for Event {activeEventID} (Obj: {trigger.gameObject.name})");
             }
         }
 
@@ -396,11 +401,11 @@ public class HorrorEventManager : MonoBehaviour
                 // ProximityLogTriggerにはResetTriggerがないが、Enable時にログ済みフラグが残っている場合があるため、
                 // 必要ならリセット機能を追加すべきだが、今回はActive化のみ行う
                 foundActive = true; 
-                Debug.Log($"✅ [Prune] ACTIVATED Proximity Trigger for Event {activeEventID} (Obj: {trigger.gameObject.name})");
+                // Debug.Log($"✅ [Prune] ACTIVATED Proximity Trigger for Event {activeEventID} (Obj: {trigger.gameObject.name})");
             }
         }
 
-        Debug.Log($"🗑 [HorrorEventManager] 現在のイベント({activeEventID})以外のトリガー {disabledCount} 個を無効化しました。");
+        // Debug.Log($"🗑 [HorrorEventManager] 現在のイベント({activeEventID})以外のトリガー {disabledCount} 個を無効化しました。");
         return foundActive;
     }
 
@@ -515,7 +520,7 @@ public class HorrorEventManager : MonoBehaviour
             }
         }
 
-        Debug.Log($"👻 [HorrorEventManager] イベント({activeEventID}) 以外のオブジェクト {disabledCount} 個を非表示にし、アクティブ対象を表示しました。");
+        // Debug.Log($"👻 [HorrorEventManager] イベント({activeEventID}) 以外のオブジェクト {disabledCount} 個を非表示にし、アクティブ対象を表示しました。");
     }
 
     /// <summary>
@@ -592,7 +597,7 @@ public class HorrorEventManager : MonoBehaviour
         if (radioController != null) radioController.gameObject.SetActive(false); 
         // 45はトリガーで開始するならOK。RadioEventControllerの実装次第。
 
-        Debug.Log("🔒 [HorrorEventManager] イベントオブジェクトの初期表示状態をリセットしました");
+        // Debug.Log("🔒 [HorrorEventManager] イベントオブジェクトの初期表示状態をリセットしました");
     }
 
     /// <summary>
@@ -632,7 +637,7 @@ public class HorrorEventManager : MonoBehaviour
     // 22: マネキン
     public void TriggerMannequin()
     {
-        Debug.Log("🎃 [HorrorEventManager] TriggerMannequin (22) が呼ばれました");
+        Debug.Log("🎃 [HorrorEventManager] TriggerMannequin (22)");
         if (mannequinTarget != null)
         {
             mannequinTarget.SetActive(true);
@@ -674,13 +679,11 @@ public class HorrorEventManager : MonoBehaviour
         if (scenario != null && scenario.loopSettings != null && scenario.loopSettings.Count > 0)
         {
             currentStageSchedule.AddRange(scenario.loopSettings);
-            Debug.Log($"📅 [HorrorEventManager] アンケート結果 {result} に基づく設定をロードしました。設定数: {currentStageSchedule.Count}");
+            // Debug.Log($"📅 [HorrorEventManager] アンケート結果 {result} に基づく設定をロードしました。設定数: {currentStageSchedule.Count}");
         }
         else
         {
-            Debug.LogWarning($"⚠️ [HorrorEventManager] アンケート結果 {result} に対応するイベント設定がInspectorで見つかりません。" +
-                             "デフォルトのハードコード設定を使用します（設定されている場合）。" +
-                             "UnityエディタのInspectorで 'Scenario Settings' を設定してください。");
+            if (debugMode) Debug.LogWarning($"⚠️ [HorrorEventManager] アンケート結果 {result} に対応するイベント設定がInspectorで見つかりません。デフォルトのハードコード設定を使用します。");
 
             // フォールバック（既存のハードコード設定を念のため残すか、完全に空にするか）
             // ユーザーのリクエストは「Unity上で指定したい」なので、基本はInspector優先。
@@ -689,6 +692,7 @@ public class HorrorEventManager : MonoBehaviour
             SwitchFallbackSchedule(result);
         }
 
+        /*
         StringBuilder sb = new StringBuilder();
         sb.AppendLine($"📅 [HorrorEventManager] Schedule Setup Finalized. Result: {result}, Steps: {currentStageSchedule.Count}");
         for(int i=0; i<currentStageSchedule.Count; i++)
@@ -696,6 +700,7 @@ public class HorrorEventManager : MonoBehaviour
             sb.AppendLine($"  Loop {i+1}: Event {currentStageSchedule[i].eventID}, Light {currentStageSchedule[i].lighting}");
         }
         Debug.Log(sb.ToString());
+        */
     }
 
     private void SwitchFallbackSchedule(int result)
@@ -765,7 +770,7 @@ public class HorrorEventManager : MonoBehaviour
 
         StageLoopData data = currentStageSchedule[index];
 
-        Debug.Log($"🔄 [HorrorEventManager] Applying Loop {loopIndex} Setting (AryIndex {index}). Event: {data.eventID}, Light: {data.lighting}");
+        // Debug.Log($"🔄 [HorrorEventManager] Applying Loop {loopIndex} Setting (AryIndex {index}). Event: {data.eventID}, Light: {data.lighting}");
 
         // ★ ループ切り替え時にステージ状態をリセットする
         
@@ -778,7 +783,10 @@ public class HorrorEventManager : MonoBehaviour
 
         // ★ ループ切替時にログ済み履歴をリセット
         currentLoopLoggedEvents.Clear();
-        Debug.Log("🔄 [HorrorEventManager] Duplicate Log History Cleared.");
+        // Debug.Log("🔄 [HorrorEventManager] Duplicate Log History Cleared.");
+
+        // ★ 実行中のイベントコルーチンを停止
+        StopAllEventCoroutines();
 
         // 1. 全イベントオブジェクトを初期状態（基本非表示）に戻す
         InitializeObjectStates();
@@ -789,7 +797,7 @@ public class HorrorEventManager : MonoBehaviour
         // ★ トリガーが見つからない（配置していない）場合、ループ開始と同時にイベントを即時実行する
              if (!triggerFound)
         {
-             Debug.Log($"⚡ [HorrorEventManager] イベント {data.eventID} のトリガーが見つからないため、即時実行します。");
+             // Debug.Log($"⚡ [HorrorEventManager] イベント {data.eventID} のトリガーが見つからないため、即時実行します。");
              if (eventActionMap.ContainsKey(data.eventID))
              {
                  eventActionMap[data.eventID]?.Invoke();
@@ -940,7 +948,7 @@ public class HorrorEventManager : MonoBehaviour
             return;
         }
 
-        Debug.Log($"🎃 イベント発生: {data.eventName} (Type: {eventType})");
+        // Debug.Log($"🎃 イベント発生: {data.eventName} (Type: {eventType})");
 
         // ログ保存
         LogEvent(eventType);
@@ -981,7 +989,7 @@ public class HorrorEventManager : MonoBehaviour
 
         if (spiderWallEvent != null)
         {
-            Debug.Log("🕷️ [HorrorEventManager] 蜘蛛イベント(13)発生");
+            // Debug.Log("🕷️ [HorrorEventManager] 蜘蛛イベント(13)発生");
             spiderWallEvent.gameObject.SetActive(true);
             spiderWallEvent.PrepareEvent(); // 準備（壁汚れ消しなど）
             spiderWallEvent.ActivateEvent();
@@ -1001,7 +1009,7 @@ public class HorrorEventManager : MonoBehaviour
             return;
         }
 
-        Debug.Log("😱 ゾンビが降ってきます！");
+        // Debug.Log("😱 ゾンビが降ってきます！");
         // 14はプレハブ生成なのでSetActive不要
         GameObject zombie = Instantiate(zombiePrefab, zombieSpawnPoint.position, zombieSpawnPoint.rotation);
         spawnedObjects.Add(zombie); // 追跡リストに追加
@@ -1025,11 +1033,12 @@ public class HorrorEventManager : MonoBehaviour
     {
         if (bloodDripObject != null)
         {
-            Debug.Log("🩸 血が滴り始めました...");
+            // Debug.Log("🩸 血が滴り始めました...");
             bloodDripObject.SetActive(true);
 
             // コルーチンで間隔をあけて再生
-            StartCoroutine(PlayBloodDripLoop());
+            if (bloodDripCoroutine != null) StopCoroutine(bloodDripCoroutine);
+            bloodDripCoroutine = StartCoroutine(PlayBloodDripLoop());
         }
         else
         {
@@ -1072,7 +1081,7 @@ public class HorrorEventManager : MonoBehaviour
     {
         if (bloodSplashObject != null)
         {
-            Debug.Log("🩸 血痕が現れました！");
+            // Debug.Log("🩸 血痕が現れました！");
             bloodSplashObject.SetActive(true);
         }
         else
@@ -1114,7 +1123,7 @@ public class HorrorEventManager : MonoBehaviour
     {
         if (normalWindowObject != null && brokenWindowObject != null)
         {
-            Debug.Log("💥 窓ガラスが割れます！");
+            // Debug.Log("💥 窓ガラスが割れます！");
             normalWindowObject.SetActive(false);
             brokenWindowObject.SetActive(true);
         }
@@ -1129,15 +1138,19 @@ public class HorrorEventManager : MonoBehaviour
     {
         if (ballPrefab != null && ballSpawnPoint != null)
         {
-            Debug.Log("⚽ ボールが転がってきます！");
+            // Debug.Log("⚽ ボールが転がってきます！");
             GameObject ball = Instantiate(ballPrefab, ballSpawnPoint.position, ballSpawnPoint.rotation);
             spawnedObjects.Add(ball); // 追跡リストに追加
             
             // RollingBallコンポーネントを取得して転がす
-            RollingBall56 rbScript = ball.GetComponent<RollingBall56>();
+            RollingBall56 rbScript = ball.GetComponentInChildren<RollingBall56>();
             if (rbScript != null)
             {
                 rbScript.StartRoll();
+            }
+            else
+            {
+                 Debug.LogError($"❌ [HorrorEventManager] RollingBall56 component missing on instantiated object: {ball.name}");
             }
         }
         else
@@ -1227,20 +1240,21 @@ public class HorrorEventManager : MonoBehaviour
     {
         if (thunderAudioSource != null && thunderSound != null)
         {
-            Debug.Log("⚡ 雷が鳴りました！");
+            // Debug.Log("⚡ 雷が鳴りました！");
              // AudioSourceはComponentなのでGameObjectをActiveにする
             thunderAudioSource.gameObject.SetActive(true);
             thunderAudioSource.PlayOneShot(thunderSound, thunderVolume);
             
             // ★ 雷の点滅開始
-            StartCoroutine(ThunderFlashSequence());
+            if (thunderFlashCoroutine != null) StopCoroutine(thunderFlashCoroutine);
+            thunderFlashCoroutine = StartCoroutine(ThunderFlashSequence());
         }
         else
         {
             Debug.LogError("46: 雷のAudioSourceまたはAudioClipが設定されていません。");
         }
     }
-
+    
     // ★ 雷の点滅コルーチン
     private System.Collections.IEnumerator ThunderFlashSequence()
     {
@@ -1299,7 +1313,7 @@ public class HorrorEventManager : MonoBehaviour
     {
         if (laughAudioSource != null && laughSound != null)
         {
-            Debug.Log("😈 笑い声が聞こえます...");
+            // Debug.Log("😈 笑い声が聞こえます...");
             laughAudioSource.gameObject.SetActive(true);
             laughAudioSource.PlayOneShot(laughSound);
         }
@@ -1314,7 +1328,7 @@ public class HorrorEventManager : MonoBehaviour
     {
         if (footstepsSound != null && Camera.main != null)
         {
-            Debug.Log("👣 背後から足音が聞こえます...");
+            // Debug.Log("👣 背後から足音が聞こえます...");
             // プレイヤーの2メートル後ろ
             Vector3 spawnPos = Camera.main.transform.position - Camera.main.transform.forward * 2.0f;
             AudioSource.PlayClipAtPoint(footstepsSound, spawnPos);
@@ -1328,7 +1342,7 @@ public class HorrorEventManager : MonoBehaviour
     // 35: 壁の集合体
     public void TriggerClusterWall()
     {
-        Debug.Log("🌑 [HorrorEventManager] TriggerClusterWall が呼ばれました");
+        // Debug.Log("🌑 [HorrorEventManager] TriggerClusterWall が呼ばれました");
         if (clusterWallRootObject != null) clusterWallRootObject.SetActive(true); // Rootを表示
 
         if (clusterWallEvent != null)
@@ -1341,7 +1355,7 @@ public class HorrorEventManager : MonoBehaviour
     // 44: 接近する人影
     public void TriggerApproachingPerson()
     {
-        Debug.Log("🎃 [HorrorEventManager] TriggerApproachingPerson が呼ばれました");
+        // Debug.Log("🎃 [HorrorEventManager] TriggerApproachingPerson が呼ばれました");
         if (approachingPersonEvent != null)
         {
             approachingPersonEvent.gameObject.SetActive(true);
@@ -1379,7 +1393,7 @@ public class HorrorEventManager : MonoBehaviour
                 soundFromLocationSource.Play();
                 
                 string camInfo = (Camera.main != null) ? Camera.main.transform.position.ToString() : "No Camera";
-                Debug.Log($"🔊 [Event34] Audio Started. Source Pos: {soundFromLocationSource.transform.position}, Player(Cam) Pos: {camInfo}");
+                // Debug.Log($"🔊 [Event34] Audio Started. Source Pos: {soundFromLocationSource.transform.position}, Player(Cam) Pos: {camInfo}");
                 
                 if (Camera.main != null && Vector3.Distance(soundFromLocationSource.transform.position, Camera.main.transform.position) < 0.1f)
                 {
@@ -1392,7 +1406,7 @@ public class HorrorEventManager : MonoBehaviour
     // 51: 通行人
     public void TriggerWalkingPerson()
     {
-        Debug.Log("🌑 [HorrorEventManager] TriggerWalkingPerson が呼ばれました");
+        // Debug.Log("🌑 [HorrorEventManager] TriggerWalkingPerson が呼ばれました");
         if (walkingPersonEvent != null)
         {
             walkingPersonEvent.gameObject.SetActive(true);
@@ -1402,7 +1416,8 @@ public class HorrorEventManager : MonoBehaviour
             if (walkingPersonAudioSource != null && walkingPersonSound != null)
             {
                 walkingPersonAudioSource.gameObject.SetActive(true);
-                StartCoroutine(WalkingPersonSoundSequence());
+                if (walkingPersonSoundCoroutine != null) StopCoroutine(walkingPersonSoundCoroutine);
+                walkingPersonSoundCoroutine = StartCoroutine(WalkingPersonSoundSequence());
             }
         }
         else
@@ -1423,7 +1438,7 @@ public class HorrorEventManager : MonoBehaviour
         float fadeOutStartTime = 5.0f;
         float fadeOutDuration = 2.0f;
 
-        Debug.Log("👣 足音フェードイン開始");
+        // Debug.Log("👣 足音フェードイン開始");
 
         // 0秒〜5秒のループ
         while (timer < fadeOutStartTime + fadeOutDuration) // フェードアウト完了まで回す
@@ -1456,13 +1471,13 @@ public class HorrorEventManager : MonoBehaviour
         walkingPersonAudioSource.Stop();
         walkingPersonAudioSource.volume = 1.0f; // 次回のために戻しておく（必要なら）
         // walkingPersonAudioSource.gameObject.SetActive(false); // 表示は維持するかもしれないのでコメントアウト、あるいは非表示にしてもよい
-        Debug.Log("👣 足音終了");
+        // Debug.Log("👣 足音終了");
     }
 
     // 52: ドアの隙間から女
     public void TriggerDoorGap()
     {
-        Debug.Log("🌑 [HorrorEventManager] TriggerDoorGap が呼ばれました");
+        // Debug.Log("🌑 [HorrorEventManager] TriggerDoorGap が呼ばれました");
         if (doorGapEvent != null)
         {
             doorGapEvent.gameObject.SetActive(true);
@@ -1477,7 +1492,7 @@ public class HorrorEventManager : MonoBehaviour
     // 43: 鏡の中の幽霊
     public void TriggerMirrorGhost()
     {
-        Debug.Log("🌑 [HorrorEventManager] TriggerMirrorGhost が呼ばれました");
+        // Debug.Log("🌑 [HorrorEventManager] TriggerMirrorGhost が呼ばれました");
         if (mirrorGhostEvent != null)
         {
             mirrorGhostEvent.gameObject.SetActive(true);
@@ -1487,6 +1502,34 @@ public class HorrorEventManager : MonoBehaviour
         {
             Debug.LogError("❌ [HorrorEventManager] mirrorGhostEvent is not assigned!");
         }
+    }
+
+    private void StopAllEventCoroutines()
+    {
+        if (bloodDripCoroutine != null) 
+        {
+            StopCoroutine(bloodDripCoroutine);
+            bloodDripCoroutine = null;
+        }
+        if (bloodDripObject != null)
+        {
+             var src = bloodDripObject.GetComponent<AudioSource>();
+             if(src != null) src.Stop();
+        }
+
+        if (thunderFlashCoroutine != null)
+        {
+            StopCoroutine(thunderFlashCoroutine);
+            thunderFlashCoroutine = null;
+        }
+        if (thunderAudioSource != null) thunderAudioSource.Stop();
+
+        if (walkingPersonSoundCoroutine != null)
+        {
+            StopCoroutine(walkingPersonSoundCoroutine);
+            walkingPersonSoundCoroutine = null;
+        }
+        if (walkingPersonAudioSource != null) walkingPersonAudioSource.Stop();
     }
 
 
@@ -1499,10 +1542,18 @@ public class HorrorEventManager : MonoBehaviour
     // 12: 死体の腐敗（別バージョン）
     public void TriggerCorpseRot()
     {
-        Debug.Log("🌑 [HorrorEventManager] TriggerCorpseRot (12) が呼ばれました");
+        // Debug.Log("🌑 [HorrorEventManager] TriggerCorpseRot (12) が呼ばれました");
         if (corpseRotTarget != null)
         {
             corpseRotTarget.SetActive(true);
+            
+            // ★ コンポーネントの状態もリセット（再有効化）するために ActivateEvent を呼ぶ
+            //    オブジェクトが非アクティブだとGetComponentできない場合があるが、直前でSetActive(true)しているのでOK。
+            var script = corpseRotTarget.GetComponent<DecayingCorpseEvent>();
+            if (script != null)
+            {
+                script.ActivateEvent();
+            }
         }
         else
         {
@@ -1517,7 +1568,7 @@ public class HorrorEventManager : MonoBehaviour
     {
         // 周回カウントを増やす
         cycleCount++;
-        Debug.Log($"🚪 ドア/ワープで周期カウント: {cycleCount}");
+        // Debug.Log($"🚪 ドア/ワープで周期カウント: {cycleCount}");
 
         // スケジュールに基づいてイベント適用
         ApplyLoopSetting(cycleCount);
@@ -1551,7 +1602,7 @@ public class HorrorEventManager : MonoBehaviour
             eventLogWriter = new StreamWriter(fullPath, false, Encoding.UTF8);
             eventLogWriter.WriteLine("Timestamp,EventID"); // ヘッダー
             eventLogWriter.Flush();
-            Debug.Log($"📄 [HorrorEventManager] ログファイルを作成しました: {fullPath}");
+            if (debugMode) Debug.Log($"📄 [HorrorEventManager] ログファイルを作成しました: {fullPath}");
         }
         catch (Exception e)
         {
@@ -1564,7 +1615,7 @@ public class HorrorEventManager : MonoBehaviour
         // ★ 追加: 既にログ済みなら何もしない
         if (currentLoopLoggedEvents.Contains(eventType))
         {
-            if (debugMode) Debug.Log($"ℹ [HorrorEventManager] Event {eventType} log skipped (Duplicate).");
+            // if (debugMode) Debug.Log($"ℹ [HorrorEventManager] Event {eventType} log skipped (Duplicate).");
             return;
         }
 
@@ -1586,8 +1637,9 @@ public class HorrorEventManager : MonoBehaviour
             eventLogWriter.Flush();
             eventLogWriter.Close();
             eventLogWriter = null;
-            Debug.Log("📄 [HorrorEventManager] ログファイルを閉じました。");
-        }
+            if (debugMode) Debug.Log("📄 [HorrorEventManager] ログファイルを閉じました。");
+    }
+
     }
 
     void OnDestroy()

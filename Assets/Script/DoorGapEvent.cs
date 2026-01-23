@@ -152,6 +152,14 @@ public class DoorGapEvent : MonoBehaviour, IFocusable
         if (doorRigidbody != null)
         {
             doorRigidbody.isKinematic = true; 
+            doorRigidbody.linearVelocity = Vector3.zero; // Unity 6未満互換
+            doorRigidbody.angularVelocity = Vector3.zero;
+            doorRigidbody.constraints = RigidbodyConstraints.FreezeAll;
+            Debug.Log("🔒 [DoorGapEvent] Rigidbody locked (Kinematic + FreezeAll).");
+        }
+        else
+        {
+             Debug.LogWarning("⚠️ [DoorGapEvent] Rigidbody not found on door! Physics lock might fail.");
         }
 
         // Awakeで取れなかった場合の保険
