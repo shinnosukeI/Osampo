@@ -423,92 +423,80 @@ public class ResultSceneManager : MonoBehaviour
     private struct PeakInfo
     {
         public int bpm;
+        public long bpmSum; // 20秒間のBPM合計値 (同率順位の判定用)
         public System.DateTime timestamp;
         public int eventId; // 推定された原因イベントID
     }
 
     /// <summary>
-    /// CSVデータを用いてピーク抽出＆イベント照合を行う
+    /// イベントログを基準に、発生後20秒間の最大心拍数を取得し、降順ソートして返す
     /// </summary>
     private List<PeakInfo> CalculateTopPeaksWithEvents(List<BpmData> bpmData, List<EventData> eventData, int count)
     {
-        if (bpmData == null || bpmData.Count == 0) return new List<PeakInfo>();
+        if (bpmData == null || bpmData.Count == 0 || eventData == null || eventData.Count == 0) 
+            return new List<PeakInfo>();
 
-        // 1. ピーク抽出 (Timestamp付き)
-        // 既存のCalculateTopPeaksのロジックを踏襲しつつ、BpmDataインスタンスを保持する
-        
-        // 連続重複除去
-        var compressed = new List<BpmData>();
-        compressed.Add(bpmData[0]);
-        for (int i = 1; i < bpmData.Count; i++)
+        var eventPeaks = new List<PeakInfo>();
+        double latencyWindow = 20.0; // 秒 (イベント発生後20秒間)
+
+        foreach (var evt in eventData)
         {
-            if (bpmData[i].bpm != bpmData[i - 1].bpm)
+            // イベント発生時刻(evt.timestamp) ～ +20秒 の範囲のBPMデータを取得
+            var windowBpm = bpmData
+                .Where(b => b.timestamp >= evt.timestamp && b.timestamp <= evt.timestamp.AddSeconds(latencyWindow))
+                .ToList();
+
+            int maxBpm = 0;
+            long currentSum = 0;
+            System.DateTime maxBpmTime = evt.timestamp;
+
+            if (windowBpm.Count > 0)
             {
-                compressed.Add(bpmData[i]);
-            }
-        }
-
-        // ピーク（極大値）を探す
-        var peaks = new List<BpmData>();
-        for (int i = 1; i < compressed.Count - 1; i++)
-        {
-            if (compressed[i].bpm > compressed[i - 1].bpm && compressed[i].bpm > compressed[i + 1].bpm)
-            {
-                peaks.Add(compressed[i]);
-            }
-        }
-
-        // 足りない場合は全体から補充 (重複しないように)
-        var candidates = peaks.ToList();
-        if (candidates.Count < count)
-        {
-             // 構造体の等価比較はデフォルトでフィールド比較ではないため、BPM値の重複を除外する工夫が必要
-             // ここでは簡易的にBPM値でフィルタリング
-             var existingBpms = new HashSet<int>(peaks.Select(p => p.bpm));
-
-             var others = compressed
-                .Where(x => !existingBpms.Contains(x.bpm)) // 既にピークとして選ばれたBPM値は除外
-                .OrderByDescending(x => x.bpm);
-             
-             foreach(var o in others)
-             {
-                 if (candidates.Count >= count) break;
-                 candidates.Add(o);
-             }
-        }
-
-        // 上位count個を取得
-        var topPeaks = candidates.OrderByDescending(x => x.bpm).Take(count).ToList();
-
-        // 2. イベント照合 (Reaction Latency: 0s ~ 20s)
-        var result = new List<PeakInfo>();
-        double latencyWindow = 20.0; // 秒
-
-        foreach (var p in topPeaks)
-        {
-            int causedEventId = -1;
-            
-            // ピーク時刻 <= イベント時刻 <= ピーク時刻 - Window
-            // 一番新しい（ピークに近い）ものを選ぶ
-             var targetEvent = eventData
-                .Where(e => e.timestamp <= p.timestamp && e.timestamp >= p.timestamp.AddSeconds(-latencyWindow))
-                .OrderByDescending(e => e.timestamp)
-                .FirstOrDefault();
-            
-            if (targetEvent.eventId != 0) // struct default check (0 is invalid if IDs start from 1)
-            {
-                causedEventId = targetEvent.eventId;
-                Debug.Log($"Peak BPM {p.bpm} at {p.timestamp} caused by Event {causedEventId} at {targetEvent.timestamp}");
+                // 期間内の最大値を取得
+                var maxEntry = windowBpm.OrderByDescending(b => b.bpm).First();
+                maxBpm = maxEntry.bpm;
+                maxBpmTime = maxEntry.timestamp;
+                
+                // 期間内の合計値を計算 (タイブレーカー用)
+                currentSum = windowBpm.Sum(b => (long)b.bpm);
             }
             else
             {
-                Debug.Log($"Peak BPM {p.bpm} at {p.timestamp} has NO correlated event in window.");
+                // データがない場合は、イベント発生直前の最新の値を採用する（あるいは0）
+                // ここでは「期間内のデータがない」＝「計測漏れ」として扱い、
+                // イベント発生時点に最も近い過去のデータをフォールバックとして探す
+                var fallback = bpmData.Where(b => b.timestamp < evt.timestamp).OrderByDescending(b => b.timestamp).FirstOrDefault();
+                if (fallback.bpm != 0) // struct default check
+                {
+                    maxBpm = fallback.bpm;
+                    maxBpmTime = fallback.timestamp;
+                    currentSum = fallback.bpm; // 1点のみなので合計もその値
+                }
             }
 
-            result.Add(new PeakInfo { bpm = p.bpm, timestamp = p.timestamp, eventId = causedEventId });
+            // PeakInfoとしてリストに追加
+            eventPeaks.Add(new PeakInfo 
+            { 
+                bpm = maxBpm, 
+                bpmSum = currentSum, 
+                timestamp = maxBpmTime, 
+                eventId = evt.eventId 
+            });
+            
+            Debug.Log($"Event {evt.eventId} at {evt.timestamp} -> Max BPM {maxBpm} (Sum: {currentSum}, Time: {maxBpmTime})");
         }
 
-        return result;
+        // 1. BPMが高い順
+        // 2. BPM合計値が高い順 (ここでタイブレーク)
+        // 3. 発生時刻順
+        var sortedPeaks = eventPeaks
+            .OrderByDescending(x => x.bpm)
+            .ThenByDescending(x => x.bpmSum)
+            .ThenBy(x => x.timestamp)
+            .ToList();
+
+        // 指定された数だけ返す
+        return sortedPeaks.Take(count).ToList();
     }
 
     /// <summary>
