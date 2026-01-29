@@ -480,9 +480,9 @@ public class ResultSceneManager : MonoBehaviour
         // 上位count個を取得
         var topPeaks = candidates.OrderByDescending(x => x.bpm).Take(count).ToList();
 
-        // 2. イベント照合 (Reaction Latency: 0s ~ 15s)
+        // 2. イベント照合 (Reaction Latency: 0s ~ 20s)
         var result = new List<PeakInfo>();
-        double latencyWindow = 15.0; // 秒
+        double latencyWindow = 20.0; // 秒
 
         foreach (var p in topPeaks)
         {
