@@ -2114,6 +2114,9 @@ MonoBehaviour:
   doorOpenSE: {fileID: 0}
   seVolume: 1
   eventManager: {fileID: 0}
+  resetAudioOnWarp: 1
+  keepBGM: 1
+  forceStopLoopSounds: 1
   isDoorOpen: 0
 --- !u!82 &232013997
 AudioSource:
@@ -13264,7 +13267,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 8300000, guid: 72e5109a03a76234bb62c0795a919938, type: 3}
+  m_Resource: {fileID: 8300000, guid: c194482bce6475a47b39bd82ec6ad0a8, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 0.036
   m_Pitch: 1
@@ -14000,6 +14003,9 @@ MonoBehaviour:
   doorOpenSE: {fileID: 0}
   seVolume: 1
   eventManager: {fileID: 0}
+  resetAudioOnWarp: 1
+  keepBGM: 1
+  forceStopLoopSounds: 1
   isDoorOpen: 0
 --- !u!65 &1008614467
 BoxCollider:
@@ -14697,6 +14703,9 @@ MonoBehaviour:
   doorOpenSE: {fileID: 0}
   seVolume: 1
   eventManager: {fileID: 681097501}
+  resetAudioOnWarp: 1
+  keepBGM: 1
+  forceStopLoopSounds: 1
   isDoorOpen: 0
 --- !u!65 &1045867224
 BoxCollider:
@@ -20833,8 +20842,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\u79FB\u52D5"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 7971420d8442e7d4c86237095e0955dd, type: 2}
-  m_sharedMaterial: {fileID: -4319084813079036256, guid: 7971420d8442e7d4c86237095e0955dd, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -22145,8 +22154,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 7971420d8442e7d4c86237095e0955dd, type: 2}
-  m_sharedMaterial: {fileID: -4319084813079036256, guid: 7971420d8442e7d4c86237095e0955dd, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -28041,6 +28050,9 @@ MonoBehaviour:
   doorOpenSE: {fileID: 0}
   seVolume: 1
   eventManager: {fileID: 0}
+  resetAudioOnWarp: 1
+  keepBGM: 1
+  forceStopLoopSounds: 1
   isDoorOpen: 0
 --- !u!82 &2080878058
 AudioSource:
