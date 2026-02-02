@@ -17,6 +17,9 @@ public class GameManager : MonoBehaviour
     // シーン遷移時のフェードタイプを保持
     private static FadeType nextFadeType = FadeType.Simple;
 
+    // 心拍計なしテストモード (TitleManagerで設定)
+    public static bool IsNoHeartRateMode = false;
+
     // シーン名の定数定義
     public static class SceneNames
     {
