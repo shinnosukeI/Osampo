@@ -996,7 +996,7 @@ MonoBehaviour:
   settingsButton: {fileID: 337135781}
   settingsPanel: {fileID: 1160969949}
   gameManager: {fileID: 1541024651}
-  enableNoHeartRateMode: 1
+  enableNoHeartRateMode: 0
 --- !u!4 &1003478098
 Transform:
   m_ObjectHideFlags: 0
