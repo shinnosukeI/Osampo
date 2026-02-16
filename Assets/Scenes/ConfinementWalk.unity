@@ -1807,7 +1807,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1541024651}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: LoadSurveyScene
+        m_MethodName: LoadRestScene1
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3246,7 +3246,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6957114999365149334, guid: bdd5f1bfeca19e44cadfaa174cb06416, type: 3}
       propertyPath: simpleFadeDuration
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

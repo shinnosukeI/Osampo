@@ -38,14 +38,22 @@ public class FadeToWhiteTrigger : MonoBehaviour
 
     Debug.Log("[FadeTrigger] フェード実行");
 
-    if (FadeToWhiteManager.Instance != null)
-    {
-        FadeToWhiteManager.Instance.FadeToWhiteAndLoad(nextSceneName);
-    }
-    else
-    {
-        Debug.LogWarning("[FadeTrigger] FadeToWhiteManager.Instance が null");
-        SceneManager.LoadScene(nextSceneName);
-    }
+        string targetSceneName = nextSceneName;
+
+        // Stage1の場合はResultSceneへ
+        if (SceneManager.GetActiveScene().name == "Stage1")
+        {
+            targetSceneName = "ResultScene";
+        }
+
+        if (FadeToWhiteManager.Instance != null)
+        {
+            FadeToWhiteManager.Instance.FadeToWhiteAndLoad(targetSceneName);
+        }
+        else
+        {
+            Debug.LogWarning("[FadeTrigger] FadeToWhiteManager.Instance が null");
+            SceneManager.LoadScene(targetSceneName);
+        }
 }
 }
