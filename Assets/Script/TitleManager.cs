@@ -14,8 +14,18 @@ public class TitleManager : MonoBehaviour
     [SerializeField] private GameObject settingsPanel; // Settingsパネルの参照
     [SerializeField] private GameManager gameManager;
 
+    [Header("Debug Settings")]
+    [SerializeField] private bool enableNoHeartRateMode = false;
+
     void Start()
     {
+        // 0. テストモード設定の適用
+        GameManager.IsNoHeartRateMode = enableNoHeartRateMode;
+        if (enableNoHeartRateMode)
+        {
+            Debug.LogWarning("【TitleManager】心拍計なしテストモードが有効です。センサー接続確認はスキップされます。");
+        }
+
         // 1. カーソルを強制的に表示・ロック解除
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;

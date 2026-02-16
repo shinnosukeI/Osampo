@@ -57,15 +57,24 @@ public class HeartRateManager : BaseHeartRateManager
         float timer = 0f;
         bool connected = false;
 
-        while (timer < 3.0f)
+        // ★★★ No Heart Rate Mode Bypass ★★★
+        if (GameManager.IsNoHeartRateMode)
         {
-            if (IsSensorActive && CurrentBPM > 0)
+            Debug.Log("【HeartRateManager】心拍計なしモード: 接続確認をスキップして成功とします");
+            connected = true;
+        }
+        else
+        {
+            while (timer < 3.0f)
             {
-                connected = true;
-                break;
+                if (IsSensorActive && CurrentBPM > 0)
+                {
+                    connected = true;
+                    break;
+                }
+                timer += Time.deltaTime;
+                yield return null;
             }
-            timer += Time.deltaTime;
-            yield return null;
         }
 
         if (!connected)
@@ -106,11 +115,20 @@ public class HeartRateManager : BaseHeartRateManager
         
         for (int i = 0; i < durationSeconds; i++)
         {
-            if (IsSensorActive)
+            int bpmToRecord = CurrentBPM;
+            
+            // ★★★ No Heart Rate Mode Logic ★★★
+            if (GameManager.IsNoHeartRateMode)
             {
-                bpmList.Add(CurrentBPM);
-                dataRecorder?.RecordHeartRate(CurrentBPM);
-                Debug.Log($"計測: {CurrentBPM} BPM"); // 確認用ログ
+                // ダミーBPM (60-70の間でランダム変動)
+                bpmToRecord = UnityEngine.Random.Range(60, 71);
+            }
+
+            if (IsSensorActive || GameManager.IsNoHeartRateMode)
+            {
+                bpmList.Add(bpmToRecord);
+                dataRecorder?.RecordHeartRate(bpmToRecord);
+                Debug.Log($"計測: {bpmToRecord} BPM"); // 確認用ログ
             }
             
             // 1秒待機 (これで重複を防ぐ)

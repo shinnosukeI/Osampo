@@ -112,11 +112,22 @@ public class StageHeartRateManager : BaseHeartRateManager
     {
         while (isLogging)
         {
-            dataRecorder.RecordHeartRate(currentBPM);
+            int bpmToRecord = currentBPM;
 
-            if (currentBPM > 0)
+            // ★★★ No Heart Rate Mode Logic ★★★
+            if (GameManager.IsNoHeartRateMode)
             {
-                currentStageBpmList.Add(currentBPM);
+                // ダミーBPM (ちょっと変動させる 60-80)
+                bpmToRecord = UnityEngine.Random.Range(60, 81);
+                // 内部状態も更新しておくとアニメーション等が動くかも？
+                currentBPM = bpmToRecord; 
+            }
+
+            dataRecorder.RecordHeartRate(bpmToRecord);
+
+            if (bpmToRecord > 0)
+            {
+                currentStageBpmList.Add(bpmToRecord);
             }
             
             yield return new WaitForSeconds(1.0f);
