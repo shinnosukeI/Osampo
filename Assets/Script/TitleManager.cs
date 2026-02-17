@@ -127,7 +127,7 @@ public class TitleManager : MonoBehaviour
         {
             // 新しいゲームを始めるので、前回のデータをリセット
             gameManager.ResetData();
-            gameManager.LoadSurveyScene();
+            gameManager.LoadRestScene1();
         }
         else
         {
